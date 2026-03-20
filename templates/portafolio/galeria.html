@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portafolio del Estudio</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+
+    <h1>Galería de Tatuajes</h1>
+    <p>Conoce el trabajo de nuestros artistas.</p>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        {% for trabajo in trabajos %}
+            <div style="border: 1px solid #ccc; padding: 10px; border-radius: 8px; max-width: 300px;">
+                <img src="{{ trabajo.imagen.url }}" alt="Tatuaje" style="width: 100%; border-radius: 4px;">
+                <h3>Estilo: {{ trabajo.estilo }}</h3>
+                <p>Tatuador: <strong>{{ trabajo.tatuador.username }}</strong></p>
+                <p>{{ trabajo.descripcion }}</p>
+            </div>
+        {% empty %}
+            <p>Aún no hay trabajos en el portafolio.</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

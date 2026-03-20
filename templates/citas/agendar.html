@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agendar Cita</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto;">
+
+    <h1>Confirmar Pago y Agendar</h1>
+    <p>Cliente: <strong>{{ cotizacion.cliente.username }}</strong></p>
+    <p>Tatuaje: {{ cotizacion.estilo }} ({{ cotizacion.zona_cuerpo }})</p>
+    
+    <div style="background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h3>Comprobante de Anticipo:</h3>
+        {% if cotizacion.comprobante_anticipo %}
+            <img src="{{ cotizacion.comprobante_anticipo.url }}" alt="Comprobante" style="width: 100%; max-width: 300px;">
+        {% else %}
+            <p>No se subió imagen.</p>
+        {% endif %}
+    </div>
+
+    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        <div>
+            <label><strong>Fecha y Hora de Inicio:</strong></label><br>
+            <input type="datetime-local" name="fecha_inicio" required style="width: 100%; padding: 8px;">
+        </div>
+
+        <div>
+            <label><strong>Fecha y Hora de Finalización (Estimada):</strong></label><br>
+            <input type="datetime-local" name="fecha_fin" required style="width: 100%; padding: 8px;">
+        </div>
+        
+        <button type="submit" style="padding: 10px; background-color: #28a745; color: white; border: none; cursor: pointer;">
+            Confirmar Pago y Crear Cita
+        </button>
+    </form>
+
+</body>
+</html>

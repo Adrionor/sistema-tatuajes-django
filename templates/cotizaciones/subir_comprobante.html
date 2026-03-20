@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Subir Comprobante</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto;">
+
+    <h1>Subir Comprobante de Pago</h1>
+    <p>Para agendar tu tatuaje de <strong>{{ cotizacion.estilo }}</strong>, por favor transfiere el anticipo y sube tu comprobante.</p>
+    
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <p><strong>Monto a transferir:</strong> ${{ cotizacion.monto_anticipo }}</p>
+        <p><strong>Banco:</strong> BBVA Bancomer (Ejemplo)</p>
+        <p><strong>CLABE:</strong> 012345678901234567</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit" style="padding: 10px; background-color: #007BFF; color: white; border: none; cursor: pointer;">
+            Enviar Comprobante
+        </button>
+    </form>
+
+</body>
+</html>
