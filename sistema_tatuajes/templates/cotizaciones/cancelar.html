@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cancelar Solicitud — Ink Studio{% endblock %}
+
+{% block contenido %}
+<div style="max-width:520px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:2rem;">
+        <h1 style="font-size:clamp(2rem,5vw,3rem);">CANCELAR <span style="color:var(--red);">SOLICITUD</span></h1>
+        <p style="color:var(--text-muted);">Esta acción no se puede deshacer.</p>
+        <div style="width:40px;height:2px;background:var(--red);margin:.75rem auto 0;"></div>
+    </div>
+
+    <!-- Resumen de la cotización -->
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.75rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.5rem;">
+            <div>
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Cliente</div>
+                <div>{{ cotizacion.nombre_cliente }}</div>
+            </div>
+            <div>
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Estilo</div>
+                <span class="badge badge-gold">{{ cotizacion.estilo }}</span>
+            </div>
+            <div>
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Artista</div>
+                <div>{{ cotizacion.tatuador.get_full_name|default:cotizacion.tatuador.username }}</div>
+            </div>
+            {% if cotizacion.fecha_solicitada %}
+            <div>
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Fecha</div>
+                <div>{{ cotizacion.fecha_solicitada|date:"d M Y" }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_notas">Motivo de cancelación (opcional)</label>
+                <textarea name="notas" id="id_notas" rows="3" placeholder="Ej: El cliente no puede en esas fechas, cambio de decisión..."></textarea>
+            </div>
+            <div style="display:flex;gap:.75rem;">
+                <button type="submit" class="btn btn-red" style="flex:1;text-align:center;">Confirmar cancelación</button>
+                <a href="javascript:history.back()" class="btn btn-muted" style="flex:1;text-align:center;">Volver</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

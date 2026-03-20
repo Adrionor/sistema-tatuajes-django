@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acceso Tatuadores — Ink Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .login-wrapper {
+        max-width: 420px;
+        margin: 2rem auto 0;
+    }
+    .login-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 2.5rem 2rem;
+    }
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .login-header h1 { font-size: 2.4rem; }
+    .login-header p { color: var(--text-muted); font-size: .9rem; margin-top: .4rem; }
+    .divider-small { width: 40px; height: 2px; background: var(--gold); margin: .75rem auto 0; }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<div class="login-wrapper">
+    <div class="login-header">
+        <h1>ÁREA <span style="color:var(--gold);">ARTISTAS</span></h1>
+        <p>Accede a tu panel de recepción y gestión de citas.</p>
+        <div class="divider-small"></div>
+    </div>
+
+    <div class="login-card">
+        {% if form.errors %}
+        <div class="alert alert-danger" style="margin-bottom:1.5rem;">
+            Usuario o contraseña incorrectos. Intenta de nuevo.
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <div class="form-group">
+                <label for="id_username">Usuario</label>
+                <input type="text" name="username" id="id_username" autofocus placeholder="Tu usuario">
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Contraseña</label>
+                <input type="password" name="password" id="id_password" placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-block" style="margin-top: .5rem;">
+                Entrar al Panel
+            </button>
+        </form>
+    </div>
+
+    <p style="text-align:center;margin-top:1.5rem;font-size:.82rem;color:var(--text-muted);">
+        ¿Eres cliente? <a href="{% url 'nueva_cotizacion' %}">Solicita tu cotización aquí</a>
+    </p>
+</div>
+{% endblock %}

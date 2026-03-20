@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block titulo %}Agenda {{ mes_nombre }} {{ anio }} — Ink Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .agenda-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 2rem;
+        align-items: start;
+    }
+    @media(max-width: 860px) { .agenda-layout { grid-template-columns: 1fr; } }
+
+    /* ── Calendario ── */
+    .cal-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+    }
+
+    .cal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .cal-header h2 { font-size: 1.5rem; }
+    .cal-nav {
+        display: flex;
+        gap: .5rem;
+    }
+    .cal-nav a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px; height: 32px;
+        border-radius: var(--radius);
+        background: var(--bg-muted);
+        color: var(--text-muted);
+        font-size: 1rem;
+        border: 1px solid var(--border);
+        transition: color .2s, border-color .2s;
+        text-decoration: none;
+    }
+    .cal-nav a:hover { color: var(--gold); border-color: var(--gold); }
+
+    .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .cal-dow {
+        text-align: center;
+        font-size: .67rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        padding: .6rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .cal-cell {
+        min-height: 72px;
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: .4rem .35rem;
+        vertical-align: top;
+        position: relative;
+    }
+    .cal-cell:nth-child(7n) { border-right: none; }
+
+    .cal-cell.empty { background: var(--bg); }
+    .cal-cell.today { background: rgba(201,168,76,.06); }
+
+    .day-num {
+        font-size: .78rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: .3rem;
+    }
+    .cal-cell.today .day-num {
+        color: var(--gold);
+        background: rgba(201,168,76,.18);
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    .cita-pill {
+        display: block;
+        background: rgba(46,204,113,.15);
+        border-left: 2px solid var(--green);
+        border-radius: 3px;
+        padding: .15rem .35rem;
+        font-size: .65rem;
+        color: var(--green);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: .2rem;
+        cursor: default;
+    }
+    .cita-pill.cancelada {
+        background: rgba(230,48,48,.1);
+        border-color: var(--red);
+        color: var(--red);
+    }
+
+    /* ── Lista próximas ── */
+    .proximas-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+    }
+    .proximas-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+    .proxima-item {
+        padding: .9rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: .2rem;
+    }
+    .proxima-item:last-child { border-bottom: none; }
+
+    .proxima-fecha {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--gold);
+    }
+    .proxima-cliente {
+        font-size: .95rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+    .proxima-meta {
+        font-size: .78rem;
+        color: var(--text-muted);
+    }
+    .proxima-actions {
+        display: flex;
+        gap: .5rem;
+        margin-top: .4rem;
+    }
+    .proxima-actions a {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        padding: .25rem .75rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        transition: color .2s, border-color .2s;
+    }
+    .proxima-actions a:hover { color: var(--red); border-color: var(--red); }
+
+    .empty-proximas {
+        padding: 2.5rem 1.25rem;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: .9rem;
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<div class="page-header" style="margin-bottom:2rem;">
+    <h1>MI <span class="accent">AGENDA</span></h1>
+    <p>Citas confirmadas y próximas sesiones.</p>
+    <div class="divider"></div>
+</div>
+
+<div class="agenda-layout">
+
+    <!-- ── CALENDARIO ── -->
+    <div class="cal-card">
+        <div class="cal-header">
+            <h2>{{ mes_nombre|upper }} <span style="color:var(--gold);">{{ anio }}</span></h2>
+            <div class="cal-nav">
+                <a href="?anio={{ prev_anio }}&mes={{ prev_mes }}" title="Mes anterior">&#8249;</a>
+                <a href="?anio={{ hoy.year }}&mes={{ hoy.month }}" title="Hoy" style="font-size:.7rem;font-weight:700;letter-spacing:.04em;color:var(--gold);border-color:var(--gold-dim);width:auto;padding:0 .6rem;">HOY</a>
+                <a href="?anio={{ next_anio }}&mes={{ next_mes }}" title="Mes siguiente">&#8250;</a>
+            </div>
+        </div>
+
+        <div class="cal-grid">
+            <!-- Días de la semana -->
+            {% for d in "LMXJVSD" %}
+            <div class="cal-dow">{{ d }}</div>
+            {% endfor %}
+
+            <!-- Semanas -->
+            {% for semana in cal %}
+                {% for dia in semana %}
+                    {% if dia == 0 %}
+                    <div class="cal-cell empty"></div>
+                    {% else %}
+                    <div class="cal-cell {% if dia == hoy.day and mes == hoy.month and anio == hoy.year %}today{% endif %}">
+                        <div class="day-num">{{ dia }}</div>
+                        {% for cita_dia, citas_lista in citas_por_dia.items %}
+                            {% if cita_dia == dia %}
+                                {% for cita in citas_lista %}
+                                <span class="cita-pill {% if cita.estado == 'cancelada' %}cancelada{% endif %}"
+                                      title="{{ cita.fecha_hora_inicio|date:'H:i' }} — {{ cita.cotizacion.nombre_cliente }} ({{ cita.cotizacion.estilo }})">
+                                    {{ cita.fecha_hora_inicio|date:"H:i" }} {{ cita.cotizacion.nombre_cliente|truncatechars:10 }}
+                                </span>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ── PRÓXIMAS CITAS (60 días) ── -->
+    <div class="proximas-card">
+        <div class="proximas-header">Próximas citas (60 días)</div>
+        {% if proximas %}
+            {% for cita in proximas %}
+            <div class="proxima-item">
+                <div class="proxima-fecha">{{ cita.fecha_hora_inicio|date:"l d M Y" }}</div>
+                <div class="proxima-cliente">{{ cita.cotizacion.nombre_cliente }}</div>
+                <div class="proxima-meta">
+                    {{ cita.fecha_hora_inicio|date:"H:i" }}{% if cita.fecha_hora_fin %} — {{ cita.fecha_hora_fin|date:"H:i" }}{% endif %}
+                    &nbsp;·&nbsp; <span class="badge badge-gold" style="font-size:.65rem;">{{ cita.cotizacion.estilo }}</span>
+                </div>
+                <div class="proxima-meta">{{ cita.cotizacion.zona_cuerpo }} · {{ cita.cotizacion.tamano }}</div>
+                <div class="proxima-meta">
+                    📧 {{ cita.cotizacion.email_cliente }}
+                    {% if cita.cotizacion.telefono_cliente %}· 📱 {{ cita.cotizacion.telefono_cliente }}{% endif %}
+                </div>
+                <div class="proxima-actions">
+                    <a href="{% url 'cancelar_cita' cita.id %}">Cancelar</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-proximas">
+                Sin citas en los próximos 60 días.
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

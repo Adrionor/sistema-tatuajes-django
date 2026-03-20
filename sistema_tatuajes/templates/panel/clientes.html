@@ -1,0 +1,75 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Clientes — Panel{% endblock %}
+{% block active_clientes %}active{% endblock %}
+
+{% block panel_content %}
+<h1 class="panel-title">CLIENTES <span class="accent">DEL ESTUDIO</span></h1>
+<p class="panel-subtitle">Directorio de todos los clientes que han enviado cotizaciones.</p>
+
+<!-- Buscador -->
+<form method="get" style="margin-bottom:1.25rem;display:flex;gap:.75rem;align-items:center;">
+    <input type="text" name="q" value="{{ busqueda }}" placeholder="Buscar por nombre o correo…"
+           class="search-box" style="max-width:360px;">
+    <button type="submit" class="btn btn-gold" style="padding:.5rem 1.2rem;">Buscar</button>
+    {% if busqueda %}
+        <a href="{% url 'panel_clientes' %}" class="btn btn-muted" style="padding:.5rem 1rem;">Limpiar</a>
+    {% endif %}
+</form>
+
+<div class="section-card">
+    <div style="overflow-x:auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Cotizaciones</th>
+                    <th>Última solicitud</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in clientes %}
+                <tr>
+                    <td style="font-weight:600;">{{ c.nombre_cliente }}</td>
+                    <td style="color:var(--text-muted);font-size:.85rem;">{{ c.email_cliente|default:"—" }}</td>
+                    <td style="color:var(--text-muted);font-size:.85rem;">{{ c.telefono_cliente|default:"—" }}</td>
+                    <td style="text-align:center;">
+                        <span style="color:var(--gold);font-weight:700;">{{ c.total }}</span>
+                    </td>
+                    <td style="font-size:.82rem;color:var(--text-muted);">
+                        {% if c.ultima %}{{ c.ultima.fecha_creacion|date:"d/m/Y" }}{% else %}—{% endif %}
+                    </td>
+                    <td>
+                        {% if c.ultima %}
+                            <span class="badge
+                                {% if c.ultima.estado == 'pendiente' %}badge-pendiente
+                                {% elif c.ultima.estado == 'cotizada' %}badge-cotizada
+                                {% elif c.ultima.estado == 'anticipo_subido' %}badge-anticipo
+                                {% elif c.ultima.estado == 'confirmada' %}badge-confirmada
+                                {% elif c.ultima.estado == 'cancelada' %}badge-cancelada
+                                {% else %}badge-muted{% endif %}">
+                                {{ c.ultima.get_estado_display }}
+                            </span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                        {% if busqueda %}No se encontraron clientes con "{{ busqueda }}".{% else %}Sin clientes registrados.{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<p style="color:var(--text-muted);font-size:.78rem;margin-top:.75rem;">
+    Mostrando {{ clientes|length }} cliente{% if clientes|length != 1 %}s{% endif %}.
+</p>
+{% endblock %}

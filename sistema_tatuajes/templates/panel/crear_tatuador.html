@@ -1,0 +1,144 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Nuevo Tatuador — Panel{% endblock %}
+{% block active_tatuadores %}active{% endblock %}
+
+{% block panel_content %}
+<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;">
+    <a href="{% url 'panel_tatuadores' %}" style="color:var(--text-muted);font-size:.85rem;">← Tatuadores</a>
+    <span style="color:var(--border);">/</span>
+    <span style="color:var(--text-muted);font-size:.85rem;">Nuevo</span>
+</div>
+
+<h1 class="panel-title">AGREGAR <span class="accent">TATUADOR</span></h1>
+<p class="panel-subtitle">Crea una nueva cuenta de artista para el estudio.</p>
+
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- Datos de cuenta -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Datos de Cuenta</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ user_form.first_name.id_for_label }}">Nombre *</label>
+                {{ user_form.first_name }}
+                {% if user_form.first_name.errors %}<p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ user_form.first_name.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ user_form.last_name.id_for_label }}">Apellido</label>
+                {{ user_form.last_name }}
+            </div>
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ user_form.username.id_for_label }}">Usuario *</label>
+                {{ user_form.username }}
+                {% if user_form.username.errors %}<p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ user_form.username.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ user_form.email.id_for_label }}">Correo electrónico</label>
+                {{ user_form.email }}
+            </div>
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ user_form.password1.id_for_label }}">Contraseña *</label>
+                {{ user_form.password1 }}
+                {% if user_form.password1.errors %}<p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ user_form.password1.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ user_form.password2.id_for_label }}">Confirmar contraseña *</label>
+                {{ user_form.password2 }}
+                {% if user_form.password2.errors %}<p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ user_form.password2.errors.0 }}</p>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Perfil artístico -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Perfil Artístico</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ perfil_form.rol.id_for_label }}">Rol</label>
+                {{ perfil_form.rol }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.telefono.id_for_label }}">Teléfono / WhatsApp</label>
+                {{ perfil_form.telefono }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="{{ perfil_form.especialidad.id_for_label }}">Especialidad</label>
+            {{ perfil_form.especialidad }}
+        </div>
+        <div class="form-group">
+            <label for="{{ perfil_form.bio.id_for_label }}">Bio pública</label>
+            {{ perfil_form.bio }}
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ perfil_form.instagram.id_for_label }}">Instagram (@usuario)</label>
+                {{ perfil_form.instagram }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.foto_perfil.id_for_label }}">Foto de perfil</label>
+                {{ perfil_form.foto_perfil }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Colaboración -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title" style="color:#b07ef5;">Colaboración Temporal</span>
+        <span style="font-size:.78rem;color:var(--text-muted);">Opcional — para artistas invitados</span>
+    </div>
+    <div class="section-card-body">
+        <div class="check-row" style="margin-bottom:1rem;">
+            {{ perfil_form.es_colaboracion }}
+            <label for="{{ perfil_form.es_colaboracion.id_for_label }}">
+                Este artista viene como colaboración temporal / artista invitado
+            </label>
+        </div>
+        <div class="form-grid-2" id="colab-dates" style="display:none;">
+            <div class="form-group">
+                <label for="{{ perfil_form.fecha_inicio_colab.id_for_label }}">Fecha inicio</label>
+                {{ perfil_form.fecha_inicio_colab }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.fecha_fin_colab.id_for_label }}">Fecha fin</label>
+                {{ perfil_form.fecha_fin_colab }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;gap:1rem;">
+    <button type="submit" class="btn btn-gold">Crear Tatuador</button>
+    <a href="{% url 'panel_tatuadores' %}" class="btn btn-muted">Cancelar</a>
+</div>
+
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const esColabCheck = document.getElementById('{{ perfil_form.es_colaboracion.id_for_label }}');
+const colabDates   = document.getElementById('colab-dates');
+function toggleColab() {
+    colabDates.style.display = esColabCheck.checked ? 'grid' : 'none';
+}
+if (esColabCheck) {
+    esColabCheck.addEventListener('change', toggleColab);
+    toggleColab();
+}
+</script>
+{% endblock %}

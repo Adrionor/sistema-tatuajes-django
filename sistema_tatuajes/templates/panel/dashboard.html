@@ -1,0 +1,127 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Dashboard — Panel de Administración{% endblock %}
+{% block active_dashboard %}active{% endblock %}
+
+{% block panel_content %}
+<h1 class="panel-title">PANEL DE <span class="accent">ADMINISTRACIÓN</span></h1>
+<p class="panel-subtitle">Bienvenido al centro de control del estudio.</p>
+
+<!-- Stats -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_tatuadores }}</div>
+        <div class="stat-label">Tatuadores activos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" style="color:#b07ef5;">{{ colaboraciones }}</div>
+        <div class="stat-label">Colaboraciones</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" style="color:#ffaa33;">{{ pendientes }}</div>
+        <div class="stat-label">Cotizaciones pendientes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" style="color:#80c0ff;">{{ anticipo_subido }}</div>
+        <div class="stat-label">Anticipo subido</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" style="color:var(--green);">{{ citas_hoy }}</div>
+        <div class="stat-label">Citas hoy</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ confirmadas_total }}</div>
+        <div class="stat-label">Total confirmadas</div>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
+
+    <!-- Últimas cotizaciones -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <span class="section-card-title">Últimas Cotizaciones</span>
+            <a href="{% url 'panel_cotizaciones' %}" class="btn btn-muted" style="padding:.35rem .8rem;font-size:.75rem;">Ver todas</a>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Artista</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in ultimas_cotizaciones %}
+                    <tr>
+                        <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            {{ c.nombre_cliente }}
+                        </td>
+                        <td style="color:var(--text-muted);font-size:.82rem;">
+                            {{ c.tatuador.first_name|default:c.tatuador.username }}
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ c.estado }}
+                                {% if c.estado == 'anticipo_subido' %}badge-anticipo{% elif c.estado == 'pendiente' %}badge-pendiente{% elif c.estado == 'cotizada' %}badge-cotizada{% elif c.estado == 'confirmada' %}badge-confirmada{% elif c.estado == 'cancelada' %}badge-cancelada{% else %}badge-abierta{% endif %}">
+                                {{ c.get_estado_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem;">Sin cotizaciones</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Próximas citas -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <span class="section-card-title">Próximas Citas</span>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Artista</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in proximas_citas %}
+                    <tr>
+                        <td style="white-space:nowrap;font-size:.82rem;color:var(--gold);">
+                            {{ cita.fecha_hora_inicio|date:"d M, H:i" }}
+                        </td>
+                        <td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            {{ cita.cotizacion.nombre_cliente }}
+                        </td>
+                        <td style="color:var(--text-muted);font-size:.82rem;">
+                            {{ cita.tatuador.first_name|default:cita.tatuador.username }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem;">Sin citas próximas</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Accesos rápidos -->
+<div class="section-card" style="margin-top:1rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Acciones Rápidas</span>
+    </div>
+    <div class="section-card-body" style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="{% url 'panel_crear_tatuador' %}" class="btn btn-gold">+ Agregar Tatuador</a>
+        <a href="{% url 'panel_tatuadores' %}?filtro=colaboracion" class="btn btn-outline" style="border-color:#b07ef5;color:#b07ef5;">Ver Colaboraciones</a>
+        <a href="{% url 'panel_cotizaciones' %}?estado=pendiente" class="btn btn-outline">Cotizaciones Pendientes</a>
+        <a href="{% url 'panel_configuracion' %}" class="btn btn-muted">Configurar Estudio</a>
+    </div>
+</div>
+{% endblock %}

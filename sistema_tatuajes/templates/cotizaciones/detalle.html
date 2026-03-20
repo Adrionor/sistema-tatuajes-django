@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block titulo %}Detalle #{{ cotizacion.id }} — {{ cotizacion.nombre_cliente }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── Layout ─────────────────────────────────────────── */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        align-items: start;
+    }
+    @media(max-width:700px) { .detail-grid { grid-template-columns: 1fr; } }
+
+    /* ── Cards ──────────────────────────────────────────── */
+    .d-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+    }
+    .d-card-title {
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1.2rem;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: .75rem;
+    }
+
+    /* ── Info rows ──────────────────────────────────────── */
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: .5rem;
+        padding: .55rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: .875rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .lbl { color: var(--text-muted); flex-shrink: 0; }
+    .info-row .val { color: var(--text); font-weight: 600; text-align: right; word-break: break-word; }
+
+    /* ── Status badge ───────────────────────────────────── */
+    .status-pill {
+        display: inline-block;
+        padding: .25rem .8rem;
+        border-radius: 99px;
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+    .sp-pendiente      { background:#4b3f10; color:#f0c040; }
+    .sp-cotizada       { background:#0d3348; color:#5bc8f5; }
+    .sp-anticipo_subido{ background:#1a2e3d; color:#7ec8e3; }
+    .sp-confirmada     { background:#0d3320; color:#4ada9b; }
+    .sp-cancelada      { background:#3d100d; color:#f57373; }
+    .sp-abierta        { background:#1d1a3a; color:#a48fff; }
+
+    /* ── Reference / comprobante images ────────────────── */
+    .thumb {
+        width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: var(--radius);
+        margin-bottom: .75rem;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: opacity .2s;
+    }
+    .thumb:hover { opacity: .85; }
+
+    /* ── Lightbox ───────────────────────────────────────── */
+    #lightbox {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.88);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        cursor: zoom-out;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--radius); }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- Back link -->
+<a href="{% url 'recepcion_tatuador' %}"
+   style="display:inline-flex;align-items:center;gap:.4rem;color:var(--text-muted);font-size:.85rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2rem;transition:color .2s;"
+   onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
+    &larr; Volver a Recepción
+</a>
+
+<!-- Header -->
+<div style="display:flex;align-items:center;justify-content:space-between;max-width:1000px;margin:0 auto 1.5rem;">
+    <h1 style="font-size:2rem;color:var(--text);margin:0;">
+        COTIZACIÓN <span style="color:var(--gold);">#{{ cotizacion.id }}</span>
+    </h1>
+    <span class="status-pill sp-{{ cotizacion.estado }}">{{ cotizacion.get_estado_display }}</span>
+</div>
+
+<div class="detail-grid">
+
+    <!-- ── LEFT COLUMN: Specs ───────────────────────────── -->
+    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+
+        <!-- Client info -->
+        <div class="d-card">
+            <div class="d-card-title">Cliente</div>
+            <div class="info-row">
+                <span class="lbl">Nombre</span>
+                <span class="val">{{ cotizacion.nombre_cliente }}</span>
+            </div>
+            <div class="info-row">
+                <span class="lbl">Email</span>
+                <span class="val">{{ cotizacion.email_cliente }}</span>
+            </div>
+            <div class="info-row">
+                <span class="lbl">Teléfono</span>
+                <span class="val">{{ cotizacion.telefono_cliente }}</span>
+            </div>
+            <div class="info-row">
+                <span class="lbl">Solicitud enviada</span>
+                <span class="val">{{ cotizacion.fecha_creacion|date:"d M Y, H:i" }}</span>
+            </div>
+        </div>
+
+        <!-- Tattoo specs -->
+        <div class="d-card">
+            <div class="d-card-title">Especificaciones del Tatuaje</div>
+            <div class="info-row">
+                <span class="lbl">Estilo</span>
+                <span class="val"><span class="badge badge-gold">{{ cotizacion.estilo }}</span></span>
+            </div>
+            <div class="info-row">
+                <span class="lbl">Zona del cuerpo</span>
+                <span class="val">{{ cotizacion.zona_cuerpo }}</span>
+            </div>
+            <div class="info-row">
+                <span class="lbl">Tamaño</span>
+                <span class="val">{{ cotizacion.tamano }}</span>
+            </div>
+            <div class="info-row">
+                <span class="lbl">Fecha solicitada</span>
+                <span class="val">
+                    {% if cotizacion.fecha_solicitada %}
+                        {{ cotizacion.fecha_solicitada|date:"d M Y" }}
+                    {% else %}
+                        <em style="opacity:.6;">Fecha abierta</em>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Pricing -->
+        {% if cotizacion.monto_total %}
+        <div class="d-card">
+            <div class="d-card-title">Cotización Económica</div>
+            <div class="info-row">
+                <span class="lbl">Costo total</span>
+                <span class="val" style="color:var(--gold);">${{ cotizacion.monto_total }} MXN</span>
+            </div>
+            {% if cotizacion.monto_anticipo %}
+            <div class="info-row">
+                <span class="lbl">Anticipo requerido</span>
+                <span class="val">${{ cotizacion.monto_anticipo }} MXN</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Cancellation note -->
+        {% if cotizacion.estado == 'cancelada' %}
+        <div class="d-card" style="border-color:#f57373;background:#1a0a0a;">
+            <div class="d-card-title" style="color:#f57373;">Motivo de Cancelación</div>
+            <p style="margin:0;font-size:.9rem;color:var(--text);">
+                Cancelada por: <strong>{{ cotizacion.get_cancelada_por_display }}</strong>
+            </p>
+            {% if cotizacion.notas_cancelacion %}
+            <p style="margin:.75rem 0 0;font-size:.875rem;color:var(--text-muted);">
+                "{{ cotizacion.notas_cancelacion }}"
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Notas libres del cliente -->
+        <div class="d-card" style="border-color: rgba(201,168,76,.4);">
+            <div class="d-card-title">Descripción del cliente</div>
+            {% if cotizacion.notas_cliente %}
+                <p style="margin:0;font-size:.9rem;color:var(--text);line-height:1.65;white-space:pre-line;">{{ cotizacion.notas_cliente }}</p>
+            {% else %}
+                <p style="margin:0;font-size:.875rem;color:var(--text-muted);font-style:italic;">El cliente no dejó descripción adicional.</p>
+            {% endif %}
+        </div>
+
+        <!-- Reference image -->
+        {% if cotizacion.imagen_referencia %}
+        <div class="d-card">
+            <div class="d-card-title">Imagen de Referencia</div>
+            <img src="{{ cotizacion.imagen_referencia.url }}"
+                 alt="Referencia" class="thumb"
+                 onclick="openLightbox(this.src)" />
+        </div>
+        {% endif %}
+
+        <!-- Payment proof -->
+        {% if cotizacion.comprobante_anticipo %}
+        <div class="d-card">
+            <div class="d-card-title">Comprobante de Anticipo</div>
+            <img src="{{ cotizacion.comprobante_anticipo.url }}"
+                 alt="Comprobante" class="thumb"
+                 onclick="openLightbox(this.src)" />
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ── RIGHT COLUMN: Contact ─────────────────────────── -->
+    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+
+        <!-- WhatsApp CTA -->
+        <div class="d-card" style="text-align:center; border-color:rgba(37,211,102,.35);">
+            <div class="d-card-title" style="color:#25d366; text-align:left;">Chatear con el cliente</div>
+
+            <p style="font-size:.9rem;color:var(--text-muted);margin:0 0 1.5rem;">
+                {{ cotizacion.nombre_cliente }} — {{ cotizacion.telefono_cliente }}
+            </p>
+
+            <a href="https://wa.me/{{ cotizacion.telefono_cliente|cut:' '|cut:'+'|cut:'-'|cut:'('|cut:')' }}"
+               target="_blank" rel="noopener"
+               style="display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+                      background:#25d366;color:#fff;text-decoration:none;
+                      padding:.85rem 2rem;border-radius:var(--radius);
+                      font-weight:700;font-size:1rem;letter-spacing:.04em;
+                      transition:opacity .2s;width:100%;box-sizing:border-box;"
+               onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                </svg>
+                Abrir conversación en WhatsApp
+            </a>
+
+            <p style="margin-top:.85rem;font-size:.75rem;color:var(--text-muted);">
+                Se abrirá WhatsApp con el número registrado en la solicitud.
+            </p>
+        </div>
+
+        <!-- Magic link copy -->
+        <div class="d-card">
+            <div class="d-card-title">Link mágico del cliente</div>
+            <p style="margin:0 0 .75rem;font-size:.8rem;color:var(--text-muted);">
+                Comparte este enlace con {{ cotizacion.nombre_cliente }} para que pueda ver el estado de su cita y subir el comprobante.
+            </p>
+            <div style="display:flex;gap:.5rem;align-items:center;">
+                <input id="magicLinkInput" type="text" readonly
+                       value="{{ request.scheme }}://{{ request.get_host }}{% url 'estado_magico' cotizacion.token_acceso %}"
+                       style="flex:1;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);padding:.4rem .7rem;font-size:.78rem;font-family:monospace;">
+                <button type="button" onclick="copyMagicLink()" id="copyBtn"
+                        style="background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);padding:.4rem .8rem;font-size:.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;"
+                        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)';"
+                        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)';">
+                    Copiar
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="d-card">
+            <div class="d-card-title">Acciones rápidas</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;">
+                {% if cotizacion.estado == 'pendiente' %}
+                <a href="{% url 'aceptar_cotizacion' cotizacion.id %}" class="btn btn-gold btn-block">Cotizar trabajo</a>
+                {% elif cotizacion.estado == 'anticipo_subido' %}
+                <a href="{% url 'agendar_cita' cotizacion.id %}" class="btn btn-green btn-block">Verificar y agendar</a>
+                {% endif %}
+                {% if cotizacion.estado not in 'confirmada,cancelada' %}
+                <a href="{% url 'cancelar_por_tatuador' cotizacion.id %}" class="btn btn-muted btn-block">Cancelar cotización</a>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+    <img id="lightboxImg" src="" alt="Imagen ampliada">
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Lightbox
+    function openLightbox(src) {
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // Copy magic link
+    function copyMagicLink() {
+        const input = document.getElementById('magicLinkInput');
+        navigator.clipboard.writeText(input.value).then(() => {
+            const btn = document.getElementById('copyBtn');
+            btn.textContent = '¡Copiado!';
+            btn.style.color = 'var(--gold)';
+            btn.style.borderColor = 'var(--gold)';
+            setTimeout(() => {
+                btn.textContent = 'Copiar';
+                btn.style.color = 'var(--text-muted)';
+                btn.style.borderColor = 'var(--border)';
+            }, 2000);
+        });
+    }
+</script>
+{% endblock %}

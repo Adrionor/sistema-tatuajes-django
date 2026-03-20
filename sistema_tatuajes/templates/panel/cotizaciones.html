@@ -1,0 +1,102 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Cotizaciones — Panel{% endblock %}
+{% block active_cotizaciones %}active{% endblock %}
+
+{% block panel_content %}
+<h1 class="panel-title">TODAS LAS <span class="accent">COTIZACIONES</span></h1>
+<p class="panel-subtitle">Vista global de todas las solicitudes del estudio.</p>
+
+<!-- Filtros -->
+<form method="get" style="margin-bottom:1.25rem;">
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
+        <input type="text" name="q" value="{{ busqueda }}" placeholder="Cliente o correo…"
+               class="search-box">
+
+        <select name="estado" class="search-box" style="max-width:200px;">
+            <option value="">Todos los estados</option>
+            {% for val, label in ESTADO_LABELS.items %}
+                <option value="{{ val }}" {% if estado == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="artista" class="search-box" style="max-width:200px;">
+            <option value="">Todos los artistas</option>
+            {% for t in tatuadores %}
+                <option value="{{ t.username }}" {% if artista == t.username %}selected{% endif %}>
+                    {{ t.get_full_name|default:t.username }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-gold" style="padding:.5rem 1.2rem;">Filtrar</button>
+        {% if estado or artista or busqueda %}
+            <a href="{% url 'panel_cotizaciones' %}" class="btn btn-muted" style="padding:.5rem .9rem;">Limpiar</a>
+        {% endif %}
+    </div>
+</form>
+
+<div class="section-card">
+    <div style="overflow-x:auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Artista</th>
+                    <th>Zona</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in cotizaciones %}
+                <tr>
+                    <td style="color:var(--text-muted);font-size:.8rem;">{{ c.pk }}</td>
+                    <td style="font-size:.82rem;color:var(--text-muted);white-space:nowrap;">
+                        {{ c.fecha_creacion|date:"d/m/Y" }}
+                    </td>
+                    <td>
+                        <div style="font-weight:600;">{{ c.nombre_cliente }}</div>
+                        <div style="font-size:.78rem;color:var(--text-muted);">{{ c.email_cliente|default:"" }}</div>
+                    </td>
+                    <td style="font-size:.85rem;">
+                        {{ c.tatuador.get_full_name|default:c.tatuador.username }}
+                    </td>
+                    <td style="font-size:.85rem;color:var(--text-muted);">
+                        {{ c.zona_tatuaje|default:"—" }}
+                    </td>
+                    <td style="font-size:.85rem;color:var(--gold);">
+                        {% if c.monto_total %}${{ c.monto_total }}{% else %}—{% endif %}
+                    </td>
+                    <td>
+                        <span class="badge
+                            {% if c.estado == 'pendiente' %}badge-pendiente
+                            {% elif c.estado == 'cotizada' %}badge-cotizada
+                            {% elif c.estado == 'anticipo_subido' %}badge-anticipo
+                            {% elif c.estado == 'confirmada' %}badge-confirmada
+                            {% elif c.estado == 'cancelada' %}badge-cancelada
+                            {% else %}badge-muted{% endif %}">
+                            {{ c.get_estado_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                        Sin cotizaciones con estos filtros.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if cotizaciones %}
+<p style="color:var(--text-muted);font-size:.78rem;margin-top:.75rem;">
+    Mostrando {{ cotizaciones|length }} cotización{% if cotizaciones|length != 1 %}es{% endif %}
+    {% if cotizaciones|length == 100 %} (límite 100 — usa filtros para reducir){% endif %}.
+</p>
+{% endif %}
+{% endblock %}

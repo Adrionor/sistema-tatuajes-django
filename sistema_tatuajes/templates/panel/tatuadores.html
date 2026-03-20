@@ -1,0 +1,123 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Tatuadores — Panel{% endblock %}
+{% block active_tatuadores %}active{% endblock %}
+
+{% block panel_content %}
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <div>
+        <h1 class="panel-title">GESTIÓN DE <span class="accent">TATUADORES</span></h1>
+        <p class="panel-subtitle">Administra el equipo del estudio y colaboraciones temporales.</p>
+    </div>
+    <a href="{% url 'panel_crear_tatuador' %}" class="btn btn-gold" style="white-space:nowrap;">+ Nuevo Tatuador</a>
+</div>
+
+<!-- Filtros -->
+<div class="filter-bar">
+    <a href="?filtro=todos"        class="filter-btn {% if filtro == 'todos' %}active{% endif %}">Todos activos</a>
+    <a href="?filtro=permanente"   class="filter-btn {% if filtro == 'permanente' %}active{% endif %}">Permanentes</a>
+    <a href="?filtro=colaboracion" class="filter-btn {% if filtro == 'colaboracion' %}active{% endif %}" style="{% if filtro == 'colaboracion' %}background:#b07ef5;border-color:#b07ef5;{% else %}color:#b07ef5;border-color:rgba(130,90,200,.4);{% endif %}">Colaboraciones</a>
+    <a href="?filtro=inactivo"     class="filter-btn {% if filtro == 'inactivo' %}active{% endif %}" style="{% if filtro == 'inactivo' %}{% else %}color:var(--red);border-color:rgba(230,48,48,.35);{% endif %}">Inactivos</a>
+</div>
+
+<div class="section-card">
+    <div style="overflow-x:auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Artista</th>
+                    <th>Rol</th>
+                    <th>Especialidad</th>
+                    <th>Cotizaciones</th>
+                    <th>Trabajos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in tatuadores %}
+                {% with u=item.user p=item.perfil %}
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            {% if p.foto_perfil %}
+                                <img src="{{ p.foto_perfil.url }}" alt="" class="avatar-tiny">
+                            {% else %}
+                                <div class="avatar-tiny-placeholder">
+                                    {{ u.first_name|first|upper|default:u.username|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div style="font-weight:600;color:var(--text);">
+                                    {{ u.get_full_name|default:u.username }}
+                                </div>
+                                <div style="font-size:.78rem;color:var(--text-muted);">@{{ u.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if p.rol == 'propietario' %}
+                            <span class="badge badge-gold">Propietario</span>
+                        {% else %}
+                            <span class="badge badge-muted">Tatuador</span>
+                        {% endif %}
+                        {% if p.es_colaboracion %}
+                            <span class="badge-colab" style="margin-top:.25rem;display:inline-block;">Colaboración</span>
+                        {% endif %}
+                    </td>
+                    <td style="color:var(--text-muted);font-size:.85rem;">
+                        {{ p.especialidad|default:"—" }}
+                    </td>
+                    <td style="text-align:center;">
+                        <span style="color:var(--gold);font-weight:700;">{{ item.n_cotizaciones }}</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <span style="color:var(--text-muted);">{{ item.n_trabajos }}</span>
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="badge badge-green">Activo</span>
+                        {% else %}
+                            <span class="badge badge-red">Inactivo</span>
+                        {% endif %}
+                        {% if p.es_colaboracion and p.fecha_fin_colab %}
+                            <div style="font-size:.72rem;color:var(--text-muted);margin-top:.2rem;">
+                                hasta {{ p.fecha_fin_colab|date:"d/m/Y" }}
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="td-actions">
+                            <a href="{% url 'panel_editar_usuario' u.pk %}" class="btn btn-muted" style="padding:.3rem .7rem;font-size:.75rem;">Editar</a>
+                            <a href="{% url 'panel_toggle_activo' u.pk %}"
+                               class="btn {% if u.is_active %}btn-outline{% else %}btn-green{% endif %}"
+                               style="padding:.3rem .7rem;font-size:.75rem;{% if u.is_active %}border-color:var(--red);color:var(--red);{% endif %}"
+                               onclick="return confirm('{% if u.is_active %}¿Desactivar cuenta de {{ u.username }}?{% else %}¿Activar cuenta de {{ u.username }}?{% endif %}')">
+                                {% if u.is_active %}Desactivar{% else %}Activar{% endif %}
+                            </a>
+                            {% if u != request.user %}
+                            <form method="post" action="{% url 'panel_eliminar_tatuador' u.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-red"
+                                        style="padding:.3rem .7rem;font-size:.75rem;"
+                                        onclick="return confirm('¿Eliminar permanentemente la cuenta de @{{ u.username }}? Esta acción no se puede deshacer.')">
+                                    Eliminar
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endwith %}
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                        No hay tatuadores con este filtro. 
+                        <a href="{% url 'panel_crear_tatuador' %}" style="color:var(--gold);">¿Agregar uno?</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cotizar Trabajo #{{ cotizacion.id }} — Ink Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .split-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 2rem;
+        max-width: 860px;
+        margin: 0 auto;
+        align-items: start;
+    }
+    @media(max-width:640px) { .split-layout { grid-template-columns: 1fr; } }
+
+    .info-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: .6rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: .9rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .label { color: var(--text-muted); }
+    .info-row .value { color: var(--text); font-weight: 600; text-align: right; }
+
+    .form-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 2rem 1.75rem;
+    }
+    .form-card h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--text);
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<a href="{% url 'recepcion_tatuador' %}" style="display:inline-flex;align-items:center;gap:.4rem;color:var(--text-muted);font-size:.85rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2rem;transition:color .2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
+    &larr; Volver a Recepción
+</a>
+
+<div class="split-layout">
+
+    <!-- INFO DE LA SOLICITUD -->
+    <div class="info-card">
+        <h2 style="font-size:1.6rem; margin-bottom:1.25rem; color:var(--gold);">SOLICITUD #{{ cotizacion.id }}</h2>
+
+        {% if cotizacion.imagen_referencia %}
+            <img src="{{ cotizacion.imagen_referencia.url }}" alt="Referencia"
+                 style="width:100%;border-radius:var(--radius);margin-bottom:1.25rem;object-fit:cover;max-height:220px;">
+        {% endif %}
+
+        <div class="info-row">
+            <span class="label">Cliente</span>
+            <span class="value">{{ cotizacion.nombre_cliente }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Contacto</span>
+            <span class="value">{{ cotizacion.email_cliente }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Estilo</span>
+            <span class="value"><span class="badge badge-gold">{{ cotizacion.estilo }}</span></span>
+        </div>
+        <div class="info-row">
+            <span class="label">Zona</span>
+            <span class="value">{{ cotizacion.zona_cuerpo }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Tamaño</span>
+            <span class="value">{{ cotizacion.tamano }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Fecha solicitada</span>
+            <span class="value">{% if cotizacion.fecha_solicitada %}{{ cotizacion.fecha_solicitada|date:"d M Y" }}{% else %}Fecha abierta{% endif %}</span>
+        </div>
+    </div>
+
+    <!-- FORMULARIO DE PRECIO -->
+    <div class="form-card">
+        <h2>ASIGNAR <span style="color:var(--gold);">PRECIO</span></h2>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem;">
+            Define el precio total y el anticipo requerido. Se enviará un correo automático al cliente con su enlace de pago.
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="monto_total">Precio Total Estimado ($)</label>
+                <input type="number" step="0.01" name="monto_total" id="monto_total"
+                       placeholder="Ej: 3500.00" required>
+            </div>
+            <div class="form-group">
+                <label for="monto_anticipo">Anticipo Requerido para Agendar ($)</label>
+                <input type="number" step="0.01" name="monto_anticipo" id="monto_anticipo"
+                       placeholder="Ej: 500.00" required>
+            </div>
+            <button type="submit" class="btn btn-gold btn-block" style="margin-top:.5rem;">
+                Aceptar y Enviar Cotización al Cliente
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

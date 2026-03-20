@@ -1,0 +1,151 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Editar Usuario — Panel{% endblock %}
+{% block active_tatuadores %}active{% endblock %}
+
+{% block panel_content %}
+<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;">
+    <a href="{% url 'panel_tatuadores' %}" style="color:var(--text-muted);font-size:.85rem;">← Tatuadores</a>
+    <span style="color:var(--border);">/</span>
+    <span style="color:var(--text-muted);font-size:.85rem;">Editar @{{ usuario.username }}</span>
+</div>
+
+<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+    {% if perfil_form.instance.foto_perfil %}
+        <img src="{{ perfil_form.instance.foto_perfil.url }}" alt=""
+             style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);">
+    {% else %}
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--bg-muted);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:1.5rem;color:var(--gold);">
+            {{ usuario.first_name|first|upper|default:usuario.username|first|upper }}
+        </div>
+    {% endif %}
+    <div>
+        <h1 class="panel-title" style="font-size:1.8rem;">EDITAR <span class="accent">@{{ usuario.username|upper }}</span></h1>
+        <p style="color:var(--text-muted);font-size:.85rem;">{{ usuario.email|default:"Sin correo registrado" }}</p>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- Datos de cuenta -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Datos de Cuenta</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ user_form.first_name.id_for_label }}">Nombre</label>
+                {{ user_form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ user_form.last_name.id_for_label }}">Apellido</label>
+                {{ user_form.last_name }}
+            </div>
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ user_form.email.id_for_label }}">Correo electrónico</label>
+                {{ user_form.email }}
+            </div>
+            <div class="form-group" style="display:flex;flex-direction:column;justify-content:flex-end;">
+                <div class="check-row">
+                    {{ user_form.is_active }}
+                    <label for="{{ user_form.is_active.id_for_label }}">Cuenta activa</label>
+                </div>
+                {% if user_form.is_active.errors %}
+                    <p style="color:var(--red);font-size:.8rem;">{{ user_form.is_active.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Perfil artístico -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Perfil Artístico</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ perfil_form.rol.id_for_label }}">Rol</label>
+                {{ perfil_form.rol }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.telefono.id_for_label }}">Teléfono / WhatsApp</label>
+                {{ perfil_form.telefono }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="{{ perfil_form.especialidad.id_for_label }}">Especialidad</label>
+            {{ perfil_form.especialidad }}
+        </div>
+        <div class="form-group">
+            <label for="{{ perfil_form.bio.id_for_label }}">Bio pública</label>
+            {{ perfil_form.bio }}
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ perfil_form.instagram.id_for_label }}">Instagram (@usuario)</label>
+                {{ perfil_form.instagram }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.foto_perfil.id_for_label }}">Foto de perfil</label>
+                {% if perfil_form.instance.foto_perfil %}
+                    <div style="margin-bottom:.5rem;">
+                        <img src="{{ perfil_form.instance.foto_perfil.url }}" alt="Foto actual"
+                             style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid var(--border);">
+                    </div>
+                {% endif %}
+                {{ perfil_form.foto_perfil }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Colaboración -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title" style="color:#b07ef5;">Colaboración Temporal</span>
+    </div>
+    <div class="section-card-body">
+        <div class="check-row" style="margin-bottom:1rem;">
+            {{ perfil_form.es_colaboracion }}
+            <label for="{{ perfil_form.es_colaboracion.id_for_label }}">
+                Artista invitado / colaboración temporal
+            </label>
+        </div>
+        <div class="form-grid-2" id="colab-dates">
+            <div class="form-group">
+                <label for="{{ perfil_form.fecha_inicio_colab.id_for_label }}">Fecha inicio</label>
+                {{ perfil_form.fecha_inicio_colab }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.fecha_fin_colab.id_for_label }}">Fecha fin</label>
+                {{ perfil_form.fecha_fin_colab }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;gap:1rem;">
+    <button type="submit" class="btn btn-gold">Guardar Cambios</button>
+    <a href="{% url 'panel_tatuadores' %}" class="btn btn-muted">Cancelar</a>
+</div>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const esColabCheck = document.getElementById('{{ perfil_form.es_colaboracion.id_for_label }}');
+const colabDates   = document.getElementById('colab-dates');
+function toggleColab() {
+    colabDates.style.display = esColabCheck.checked ? 'grid' : 'none';
+}
+if (esColabCheck) {
+    esColabCheck.addEventListener('change', toggleColab);
+    toggleColab();
+}
+</script>
+{% endblock %}

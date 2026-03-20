@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cancelar Cita — Ink Studio{% endblock %}
+
+{% block contenido %}
+<div style="max-width:520px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:2rem;">
+        <h1 style="font-size:clamp(2rem,5vw,3rem);">CANCELAR <span style="color:var(--red);">CITA</span></h1>
+        <p style="color:var(--text-muted);">Confirma que deseas cancelar la cita ya agendada.</p>
+        <div style="width:40px;height:2px;background:var(--red);margin:.75rem auto 0;"></div>
+    </div>
+
+    <!-- Resumen de la cita -->
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.75rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.5rem;">
+            <div>
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Cliente</div>
+                <div>{{ cita.cotizacion.nombre_cliente }}</div>
+            </div>
+            <div>
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Estilo</div>
+                <span class="badge badge-gold">{{ cita.cotizacion.estilo }}</span>
+            </div>
+            <div style="grid-column:1/-1;">
+                <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Fecha y hora</div>
+                <div style="font-size:1.1rem;font-weight:700;color:var(--text);">
+                    {{ cita.fecha_hora_inicio|date:"l d \d\e F \d\e Y" }} — {{ cita.fecha_hora_inicio|date:"H:i" }} h
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;">
+        <div class="alert alert-danger" style="margin-bottom:1.25rem;">
+            <strong>⚠ Atención:</strong> Cancelar una cita confirmada enviará una notificación al cliente. Esta acción no se puede deshacer.
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div style="display:flex;gap:.75rem;">
+                <button type="submit" class="btn btn-red" style="flex:1;text-align:center;">Sí, cancelar cita</button>
+                <a href="{% url 'recepcion_tatuador' %}" class="btn btn-muted" style="flex:1;text-align:center;">Volver</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

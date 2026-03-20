@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    /* ── Panel layout ───────────────────────────────────────── */
+    .panel-wrapper {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────── */
+    .panel-sidebar {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        position: sticky;
+        top: 80px;
+    }
+
+    .sidebar-section {
+        padding: .5rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .sidebar-section:last-child { border-bottom: none; }
+
+    .sidebar-label {
+        padding: .6rem 1.2rem .3rem;
+        font-size: .68rem;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        padding: .6rem 1.2rem;
+        font-size: .85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        transition: background .15s, color .15s;
+        border-left: 3px solid transparent;
+    }
+    .sidebar-link:hover {
+        background: var(--bg-muted);
+        color: var(--text);
+    }
+    .sidebar-link.active {
+        background: rgba(201,168,76,.08);
+        color: var(--gold);
+        border-left-color: var(--gold);
+    }
+    .sidebar-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+    /* ── Panel content ──────────────────────────────────────── */
+    .panel-content { min-width: 0; }
+
+    .panel-title {
+        font-size: 2.2rem;
+        color: var(--text);
+        margin-bottom: .3rem;
+    }
+    .panel-title .accent { color: var(--gold); }
+    .panel-subtitle {
+        color: var(--text-muted);
+        font-size: .9rem;
+        margin-bottom: 1.8rem;
+    }
+
+    /* ── Stats row ──────────────────────────────────────────── */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.2rem 1rem;
+        text-align: center;
+    }
+    .stat-number {
+        font-family: var(--font-head);
+        font-size: 2.4rem;
+        color: var(--gold);
+        line-height: 1;
+    }
+    .stat-label {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-top: .3rem;
+    }
+
+    /* ── Data table ─────────────────────────────────────────── */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .data-table th {
+        text-align: left;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        padding: .65rem 1rem;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+    }
+    .data-table td {
+        padding: .75rem 1rem;
+        font-size: .88rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,.02); }
+
+    .td-actions { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+
+    /* ── Section card ───────────────────────────────────────── */
+    .section-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .section-card-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+    .section-card-title {
+        font-family: var(--font-head);
+        font-size: 1.15rem;
+        color: var(--text);
+        letter-spacing: .05em;
+    }
+    .section-card-body { padding: 1.25rem; }
+
+    /* ── Filters bar ────────────────────────────────────────── */
+    .filter-bar {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 1.25rem;
+    }
+    .filter-btn {
+        padding: .35rem .9rem;
+        border-radius: 99px;
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        background: transparent;
+        cursor: pointer;
+        transition: all .15s;
+        text-decoration: none;
+    }
+    .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .filter-btn.active { background: var(--gold); color: #0d0d0d; border-color: var(--gold); }
+
+    /* ── Avatar tiny ─────────────────────────────────────────── */
+    .avatar-tiny {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--border);
+    }
+    .avatar-tiny-placeholder {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: var(--bg-muted);
+        border: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-head);
+        font-size: .95rem;
+        color: var(--gold);
+    }
+
+    /* ── Search input ────────────────────────────────────────── */
+    .search-box {
+        background: var(--bg-muted);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text);
+        padding: .5rem .9rem;
+        font-family: var(--font-body);
+        font-size: .85rem;
+        transition: border-color .2s;
+        flex: 1;
+        min-width: 180px;
+        max-width: 280px;
+    }
+    .search-box:focus { outline: none; border-color: var(--gold); }
+
+    /* ── Form grid ───────────────────────────────────────────── */
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ── Checkbox row ────────────────────────────────────────── */
+    .check-row {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        padding: .5rem 0;
+    }
+    .check-row input[type="checkbox"] {
+        width: 18px; height: 18px;
+        accent-color: var(--gold);
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .check-row label {
+        font-size: .9rem;
+        color: var(--text);
+        cursor: pointer;
+        margin: 0;
+    }
+
+    /* ── Colab badge ─────────────────────────────────────────── */
+    .badge-colab {
+        background: rgba(130,90,200,.18);
+        color: #b07ef5;
+        border: 1px solid rgba(130,90,200,.4);
+        display: inline-block;
+        padding: .2rem .65rem;
+        border-radius: 99px;
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    /* ── Estado badges ───────────────────────────────────────── */
+    .badge-pendiente      { background: rgba(255,165,0,.12); color: #ffaa33; border: 1px solid rgba(255,165,0,.35); }
+    .badge-cotizada       { background: rgba(201,168,76,.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+    .badge-anticipo       { background: rgba(100,180,255,.12); color: #80c0ff; border: 1px solid rgba(100,180,255,.35); }
+    .badge-confirmada     { background: rgba(46,204,113,.12); color: var(--green); border: 1px solid rgba(46,204,113,.4); }
+    .badge-abierta        { background: rgba(200,200,200,.1); color: var(--text-muted); border: 1px solid var(--border); }
+    .badge-cancelada      { background: rgba(230,48,48,.12); color: var(--red); border: 1px solid rgba(230,48,48,.35); }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 860px) {
+        .panel-wrapper { grid-template-columns: 1fr; }
+        .panel-sidebar { position: static; }
+        .form-grid-2   { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<div class="panel-wrapper">
+
+    <!-- ── Sidebar ────────────────────────────────────────── -->
+    <aside class="panel-sidebar">
+        <div class="sidebar-section">
+            <p class="sidebar-label">Panel</p>
+            <a class="sidebar-link {% block active_dashboard %}{% endblock %}"
+               href="{% url 'panel_dashboard' %}">
+                <span class="sidebar-icon">📊</span> Dashboard
+            </a>
+        </div>
+        <div class="sidebar-section">
+            <p class="sidebar-label">Equipo</p>
+            <a class="sidebar-link {% block active_tatuadores %}{% endblock %}"
+               href="{% url 'panel_tatuadores' %}">
+                <span class="sidebar-icon">🎨</span> Tatuadores
+            </a>
+            <a class="sidebar-link {% block active_clientes %}{% endblock %}"
+               href="{% url 'panel_clientes' %}">
+                <span class="sidebar-icon">👥</span> Clientes
+            </a>
+        </div>
+        <div class="sidebar-section">
+            <p class="sidebar-label">Operaciones</p>
+            <a class="sidebar-link {% block active_cotizaciones %}{% endblock %}"
+               href="{% url 'panel_cotizaciones' %}">
+                <span class="sidebar-icon">📋</span> Cotizaciones
+            </a>
+        </div>
+        <div class="sidebar-section">
+            <p class="sidebar-label">Estudio</p>
+            <a class="sidebar-link {% block active_config %}{% endblock %}"
+               href="{% url 'panel_configuracion' %}">
+                <span class="sidebar-icon">⚙️</span> Configuración
+            </a>
+        </div>
+    </aside>
+
+    <!-- ── Main content ────────────────────────────────────── -->
+    <main class="panel-content">
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert alert-{% if msg.tags == 'error' %}danger{% elif msg.tags == 'warning' %}info{% else %}{{ msg.tags }}{% endif %}"
+                     style="margin-bottom:1rem;">
+                    {{ msg }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block panel_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

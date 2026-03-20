@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block titulo %}Mi Portafolio — Ink Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── Layout ───────────────────────────────────────────────── */
+    .mp-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+        align-items: start;
+    }
+    @media(max-width:820px) { .mp-grid { grid-template-columns: 1fr; } }
+
+    /* ── Cards ────────────────────────────────────────────────── */
+    .mp-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+    }
+    .mp-card-title {
+        font-size:.9rem;
+        font-weight:800;
+        letter-spacing:.09em;
+        text-transform:uppercase;
+        color:var(--gold);
+        margin-bottom:1.2rem;
+        border-bottom:1px solid var(--border);
+        padding-bottom:.7rem;
+    }
+
+    /* ── Avatar upload ────────────────────────────────────────── */
+    .avatar-wrap {
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:.75rem;
+        margin-bottom:1.5rem;
+    }
+    .avatar-img {
+        width:110px;
+        height:110px;
+        border-radius:50%;
+        object-fit:cover;
+        border:3px solid var(--gold);
+    }
+    .avatar-placeholder {
+        width:110px;
+        height:110px;
+        border-radius:50%;
+        background:var(--bg-muted);
+        border:2px dashed var(--border);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:2.5rem;
+        color:var(--text-muted);
+    }
+    .avatar-label {
+        font-size:.75rem;
+        color:var(--gold);
+        cursor:pointer;
+        font-weight:700;
+        letter-spacing:.05em;
+        text-transform:uppercase;
+        transition:opacity .2s;
+    }
+    .avatar-label:hover { opacity:.75; }
+    #id_foto_perfil { display:none; }
+
+    /* ── Work grid ────────────────────────────────────────────── */
+    .work-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fill, minmax(160px,1fr));
+        gap:1rem;
+        margin-bottom:1.5rem;
+    }
+    .work-card {
+        position:relative;
+        border-radius:var(--radius);
+        overflow:hidden;
+        background:var(--bg-muted);
+        aspect-ratio:1;
+        border:1px solid var(--border);
+        cursor:pointer;
+        transition:transform .2s;
+    }
+    .work-card:hover { transform:scale(1.02); }
+    .work-card img {
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+    }
+    .work-card-overlay {
+        position:absolute;
+        inset:0;
+        background:rgba(0,0,0,.6);
+        opacity:0;
+        transition:opacity .2s;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:.5rem;
+        padding:.5rem;
+    }
+    .work-card:hover .work-card-overlay { opacity:1; }
+    .work-card-style {
+        font-size:.65rem;
+        font-weight:700;
+        letter-spacing:.07em;
+        text-transform:uppercase;
+        color:var(--gold);
+        background:rgba(0,0,0,.5);
+        padding:.2rem .6rem;
+        border-radius:99px;
+        text-align:center;
+    }
+    .work-card-title {
+        font-size:.72rem;
+        color:#fff;
+        text-align:center;
+        line-height:1.3;
+    }
+    .delete-btn {
+        background:rgba(220,38,38,.85);
+        border:none;
+        color:#fff;
+        font-size:.7rem;
+        font-weight:700;
+        padding:.3rem .8rem;
+        border-radius:6px;
+        cursor:pointer;
+        letter-spacing:.05em;
+        text-transform:uppercase;
+        transition:background .2s;
+    }
+    .delete-btn:hover { background:#dc2626; }
+
+    /* ── Upload drop zone ─────────────────────────────────────── */
+    .upload-zone {
+        border:2px dashed var(--border);
+        border-radius:var(--radius);
+        padding:2rem 1rem;
+        text-align:center;
+        cursor:pointer;
+        transition:border-color .2s, background .2s;
+        background:transparent;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+        border-color:var(--gold);
+        background:rgba(201,168,76,.04);
+    }
+    .upload-zone p { margin:0; color:var(--text-muted); font-size:.85rem; }
+    .upload-zone strong { color:var(--gold); }
+    #id_imagen { display:none; }
+    #upload-preview {
+        max-width:100%;
+        max-height:180px;
+        border-radius:var(--radius);
+        margin:0 auto .75rem;
+        display:none;
+        object-fit:cover;
+    }
+
+    /* ── Empty state ──────────────────────────────────────────── */
+    .empty-state {
+        text-align:center;
+        padding:3rem 1rem;
+        color:var(--text-muted);
+        font-size:.9rem;
+    }
+    .empty-state .big { font-size:2.5rem; margin-bottom:.5rem; }
+
+    /* ── Lightbox ─────────────────────────────────────────────── */
+    #lightbox {
+        display:none;
+        position:fixed;inset:0;
+        background:rgba(0,0,0,.88);
+        z-index:9999;
+        align-items:center;
+        justify-content:center;
+        cursor:zoom-out;
+    }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:90vw; max-height:90vh; border-radius:var(--radius); }
+
+    /* ── Success flash ────────────────────────────────────────── */
+    .flash {
+        background:rgba(46,204,113,.12);
+        border:1px solid rgba(46,204,113,.4);
+        color:#4ada9b;
+        padding:.65rem 1rem;
+        border-radius:var(--radius);
+        font-size:.85rem;
+        margin-bottom:1.25rem;
+        display:none;
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- Header -->
+<div style="display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto 1.5rem;">
+    <h1 style="font-size:2rem;margin:0;">MI <span style="color:var(--gold);">PORTAFOLIO</span></h1>
+    <a href="{% url 'perfil_tatuador' request.user.pk %}"
+       style="font-size:.8rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);transition:color .2s;"
+       onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
+        Ver perfil público →
+    </a>
+</div>
+
+<div class="mp-grid">
+
+    <!-- ── LEFT: Editar perfil ──────────────────────── -->
+    <div class="mp-card">
+        <div class="mp-card-title">Mi Perfil Público</div>
+
+        <form method="post" action="{% url 'editar_perfil' %}" enctype="multipart/form-data" id="perfilForm">
+            {% csrf_token %}
+
+            <!-- Avatar -->
+            <div class="avatar-wrap">
+                {% if request.user.perfil.foto_perfil %}
+                    <img src="{{ request.user.perfil.foto_perfil.url }}" alt="Foto" class="avatar-img" id="avatarPreview">
+                {% else %}
+                    <div class="avatar-placeholder" id="avatarPreview">🎨</div>
+                {% endif %}
+                <label for="id_foto_perfil" class="avatar-label">Cambiar foto</label>
+                {{ perfil_form.foto_perfil }}
+            </div>
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label for="{{ perfil_form.first_name.id_for_label }}">{{ perfil_form.first_name.label }}</label>
+                {{ perfil_form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.last_name.id_for_label }}">{{ perfil_form.last_name.label }}</label>
+                {{ perfil_form.last_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.email.id_for_label }}">{{ perfil_form.email.label }}</label>
+                {{ perfil_form.email }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.especialidad.id_for_label }}">{{ perfil_form.especialidad.label }}</label>
+                {{ perfil_form.especialidad }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.bio.id_for_label }}">{{ perfil_form.bio.label }}</label>
+                {{ perfil_form.bio }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.instagram.id_for_label }}">{{ perfil_form.instagram.label }}</label>
+                {{ perfil_form.instagram }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.telefono.id_for_label }}">{{ perfil_form.telefono.label }}</label>
+                {{ perfil_form.telefono }}
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-block" style="margin-top:.5rem;">
+                Guardar Perfil
+            </button>
+        </form>
+    </div>
+
+    <!-- ── RIGHT: Trabajos ──────────────────────────── -->
+    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
+        <!-- Gallery -->
+        <div class="mp-card">
+            <div class="mp-card-title">
+                Mis Trabajos
+                <span style="font-size:.75rem;font-weight:400;color:var(--text-muted);margin-left:.5rem;">
+                    {{ trabajos|length }} publicado{{ trabajos|length|pluralize }}
+                </span>
+            </div>
+
+            {% if trabajos %}
+            <div class="work-grid">
+                {% for t in trabajos %}
+                <div class="work-card">
+                    <img src="{{ t.imagen.url }}" alt="{{ t.titulo|default:t.estilo }}"
+                         onclick="openLightbox('{{ t.imagen.url }}')">
+                    <div class="work-card-overlay">
+                        <span class="work-card-style">{{ t.estilo }}</span>
+                        {% if t.titulo %}<span class="work-card-title">{{ t.titulo }}</span>{% endif %}
+                        <form method="post" action="{% url 'eliminar_trabajo' t.id %}"
+                              onsubmit="return confirm('¿Eliminar este trabajo del portafolio?')">
+                            {% csrf_token %}
+                            <button class="delete-btn" type="submit">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="big">📸</div>
+                <p>Aún no tienes trabajos. ¡Sube el primero!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Upload new work -->
+        <div class="mp-card">
+            <div class="mp-card-title">Subir Nuevo Trabajo</div>
+
+            <form method="post" action="{% url 'subir_trabajo' %}" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+
+                <!-- Drop zone -->
+                <div class="upload-zone" id="dropZone" onclick="document.getElementById('id_imagen').click()">
+                    <img id="upload-preview" alt="Previsualización">
+                    <p><strong>Haz clic</strong> o arrastra una foto aquí</p>
+                    <p style="margin-top:.3rem;font-size:.75rem;">JPG, PNG, WEBP — máx. 10 MB</p>
+                </div>
+                {{ trabajo_form.imagen }}
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;">
+                    <div class="form-group">
+                        <label for="{{ trabajo_form.estilo.id_for_label }}">{{ trabajo_form.estilo.label }} *</label>
+                        {{ trabajo_form.estilo }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ trabajo_form.titulo.id_for_label }}">{{ trabajo_form.titulo.label }}</label>
+                        {{ trabajo_form.titulo }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ trabajo_form.descripcion.id_for_label }}">{{ trabajo_form.descripcion.label }}</label>
+                    {{ trabajo_form.descripcion }}
+                </div>
+
+                <button type="submit" class="btn btn-gold btn-block" id="submitBtn">
+                    Publicar en mi portafolio
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+    <img id="lightboxImg" src="" alt="">
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // ── Image preview on select ──────────────────────────────
+    document.getElementById('id_imagen').addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const preview = document.getElementById('upload-preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            document.querySelector('#dropZone p').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ── Drag & drop ──────────────────────────────────────────
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            document.getElementById('id_imagen').files = dt.files;
+            document.getElementById('id_imagen').dispatchEvent(new Event('change'));
+        }
+    });
+
+    // ── Avatar preview ───────────────────────────────────────
+    document.getElementById('id_foto_perfil').addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const el = document.getElementById('avatarPreview');
+            if (el.tagName === 'IMG') {
+                el.src = e.target.result;
+            } else {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'avatar-img';
+                img.id = 'avatarPreview';
+                el.replaceWith(img);
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ── Lightbox ─────────────────────────────────────────────
+    function openLightbox(src) {
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+{% endblock %}

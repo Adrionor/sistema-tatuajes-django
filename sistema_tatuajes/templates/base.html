@@ -1,0 +1,406 @@
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Ink Studio{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilos globales -->
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #0d0d0d;
+            --bg-card:   #181818;
+            --bg-muted:  #222222;
+            --border:    #2e2e2e;
+            --text:      #e8e8e8;
+            --text-muted:#999999;
+            --gold:      #c9a84c;
+            --gold-dim:  #a0823a;
+            --red:       #e63030;
+            --green:     #2ecc71;
+            --radius:    6px;
+            --font-head: 'Bebas Neue', sans-serif;
+            --font-body: 'Raleway', sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            font-weight: 400;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { color: var(--gold); text-decoration: none; }
+        a:hover { color: var(--gold-dim); }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-head);
+            letter-spacing: 0.05em;
+            line-height: 1.1;
+        }
+
+        img { display: block; max-width: 100%; }
+
+        /* ===== NAVBAR ===== */
+        nav.navbar {
+            background-color: #050505;
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+        }
+
+        .navbar-brand span { color: var(--text); }
+
+        .navbar-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .navbar-links a {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            transition: color .2s;
+        }
+
+        .navbar-links a:hover { color: var(--gold); }
+
+        /* ===== PAGE WRAPPER ===== */
+        .page-wrapper {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            color: var(--text);
+        }
+
+        .page-header h1 .accent { color: var(--gold); }
+
+        .page-header p {
+            color: var(--text-muted);
+            margin-top: .75rem;
+            font-size: 1.05rem;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: var(--gold);
+            margin: 1rem auto 0;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            padding: .7rem 1.8rem;
+            border-radius: var(--radius);
+            font-family: var(--font-body);
+            font-size: .85rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            transition: filter .2s, transform .15s;
+        }
+        .btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-gold     { background: var(--gold);  color: #0d0d0d; }
+        .btn-outline  { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
+        .btn-red      { background: var(--red);   color: #fff; }
+        .btn-green    { background: var(--green); color: #0d0d0d; }
+        .btn-muted    { background: var(--bg-muted); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-block    { display: block; text-align: center; width: 100%; }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        /* ===== FORMS ===== */
+        .form-group { margin-bottom: 1.25rem; }
+
+        .form-group label {
+            display: block;
+            font-size: .8rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: .4rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            padding: .7rem 1rem;
+            font-family: var(--font-body);
+            font-size: .95rem;
+            transition: border-color .2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .form-group select option { background: var(--bg-muted); }
+
+        .form-group input[type="file"] {
+            padding: .5rem;
+            cursor: pointer;
+        }
+
+        /* Django auto-rendered form compat */
+        p label { display: block; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .4rem; margin-top: 1.2rem; }
+        p input, p select, p textarea { width: 100%; background: var(--bg-muted); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); padding: .7rem 1rem; font-family: var(--font-body); font-size: .95rem; transition: border-color .2s; }
+        p input:focus, p select:focus, p textarea:focus { outline: none; border-color: var(--gold); }
+        p select option { background: var(--bg-muted); }
+
+        /* ===== BADGE ===== */
+        .badge {
+            display: inline-block;
+            padding: .2rem .7rem;
+            border-radius: 99px;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+        }
+        .badge-gold   { background: rgba(201,168,76,.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+        .badge-green  { background: rgba(46,204,113,.12); color: var(--green); border: 1px solid rgba(46,204,113,.4); }
+        .badge-red    { background: rgba(230,48,48,.12);  color: var(--red);   border: 1px solid rgba(230,48,48,.4); }
+        .badge-muted  { background: var(--bg-muted); color: var(--text-muted); border: 1px solid var(--border); }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            font-size: .9rem;
+        }
+        .alert-info    { background: rgba(201,168,76,.1); border: 1px solid var(--gold-dim); color: var(--gold); }
+        .alert-success { background: rgba(46,204,113,.1); border: 1px solid rgba(46,204,113,.4); color: var(--green); }
+        .alert-danger  { background: rgba(230,48,48,.1);  border: 1px solid rgba(230,48,48,.4); color: var(--red); }
+
+        /* ===== FOOTER ===== */
+        footer {
+            border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 1.5rem 2rem;
+            color: var(--text-muted);
+            font-size: .8rem;
+            letter-spacing: .04em;
+        }
+
+        /* ===== NOTIFICATION BELL ===== */
+        .notif-bell {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color .2s, background .2s;
+            cursor: pointer;
+        }
+        .notif-bell:hover { color: var(--gold); background: var(--bg-muted); }
+        .notif-badge {
+            position: absolute;
+            top: 2px; right: 2px;
+            background: var(--red);
+            color: #fff;
+            font-size: .58rem;
+            font-weight: 700;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid #050505;
+        }
+        .notif-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 300px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 24px rgba(0,0,0,.5);
+            z-index: 200;
+            display: none;
+        }
+        .notif-dropdown.open { display: block; }
+        .notif-dropdown-header {
+            padding: .75rem 1rem;
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .notif-item {
+            padding: .7rem 1rem;
+            font-size: .82rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            line-height: 1.4;
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item a { color: var(--gold); font-size: .78rem; display: block; margin-top: .2rem; }
+        .notif-empty { padding: 1rem; text-align: center; color: var(--text-muted); font-size: .85rem; }
+        .notif-footer { padding: .6rem 1rem; border-top: 1px solid var(--border); text-align: right; }
+        .notif-footer a { font-size: .78rem; color: var(--text-muted); }
+        .notif-footer a:hover { color: var(--gold); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .navbar-links { display: none; }
+            .page-wrapper { padding: 2rem 1rem; }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{% url 'galeria' %}" class="navbar-brand">INK<span>STUDIO</span></a>
+            <ul class="navbar-links">
+                <li><a href="{% url 'galeria' %}">Artistas</a></li>
+                <li><a href="{% url 'nueva_cotizacion' %}">Cotizar</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'recepcion_tatuador' %}">Recepción</a></li>
+                    <li><a href="{% url 'agenda_tatuador' %}">Agenda</a></li>
+                    <li><a href="{% url 'mi_portafolio' %}">Mi Portafolio</a></li>
+                    {% if user.is_superuser or user.perfil.rol == 'propietario' %}
+                        <li><a href="{% url 'panel_dashboard' %}" style="color:var(--gold);">Panel</a></li>
+                    {% endif %}
+                    <li style="position:relative;">
+                        <span class="notif-bell" id="notifToggle">
+                            🔔
+                            {% if notificaciones_no_leidas %}
+                                <span class="notif-badge">{{ notificaciones_no_leidas }}</span>
+                            {% endif %}
+                        </span>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-dropdown-header">Notificaciones</div>
+                            {% if notificaciones_recientes %}
+                                {% for n in notificaciones_recientes %}
+                                    <div class="notif-item">
+                                        {{ n.mensaje }}
+                                        {% if n.url %}<a href="{{ n.url }}">Ver →</a>{% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="notif-empty">Sin notificaciones nuevas</div>
+                            {% endif %}
+                            <div class="notif-footer">
+                                <a href="{% url 'marcar_notificaciones_leidas' %}">Marcar todas como leídas</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:.85rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);transition:color .2s;padding:0;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-muted)'">Salir</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" style="color:var(--gold);">Tatuadores</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <script>
+        // Notification dropdown toggle
+        const notifToggle = document.getElementById('notifToggle');
+        const notifDropdown = document.getElementById('notifDropdown');
+        if (notifToggle) {
+            notifToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifDropdown.classList.toggle('open');
+            });
+            notifDropdown.addEventListener('click', (e) => {
+                // Allow links inside the dropdown to navigate normally
+                if (e.target.tagName !== 'A') e.stopPropagation();
+            });
+            document.addEventListener('click', () => notifDropdown.classList.remove('open'));
+        }
+    </script>
+
+    <div class="page-wrapper">
+        {% block contenido %}{% endblock %}
+    </div>
+
+    <footer>
+        &copy; 2026 Ink Studio &mdash; Todos los derechos reservados
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

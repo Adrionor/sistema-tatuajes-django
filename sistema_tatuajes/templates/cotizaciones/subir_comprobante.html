@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block titulo %}Subir Comprobante — Ink Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .upload-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        align-items: start;
+    }
+    @media(max-width:600px) { .upload-layout { grid-template-columns: 1fr; } }
+
+    .payment-info {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.75rem;
+    }
+    .payment-info h2 { font-size: 1.5rem; margin-bottom: 1.25rem; }
+
+    .amount-display {
+        background: var(--bg-muted);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--gold);
+        padding: 1rem 1.25rem;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        margin: 1rem 0;
+    }
+    .amount-display .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
+    .amount-display .amount { font-size: 2rem; font-family: var(--font-head); color: var(--gold); }
+
+    .bank-row {
+        display: flex;
+        justify-content: space-between;
+        padding: .55rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: .88rem;
+    }
+    .bank-row:last-child { border-bottom: none; }
+    .bank-row .bk-label { color: var(--text-muted); }
+    .bank-row .bk-value { font-weight: 600; color: var(--text); letter-spacing: .06em; }
+
+    .upload-form {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 2rem 1.75rem;
+    }
+    .upload-form h2 { font-size: 1.5rem; margin-bottom: 1.25rem; }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<div style="max-width:800px;margin:0 auto 2.5rem;">
+    <h1 style="font-size:clamp(2rem,5vw,3rem);">PAGAR <span style="color:var(--gold);">ANTICIPO</span></h1>
+    <p style="color:var(--text-muted);margin-top:.5rem;">
+        Para agendar tu tatuaje de <strong>{{ cotizacion.estilo }}</strong>, realiza la transferencia y sube tu comprobante.
+    </p>
+</div>
+
+<div class="upload-layout">
+
+    <!-- DATOS DE PAGO -->
+    <div class="payment-info">
+        <h2>DATOS DE <span style="color:var(--gold);">TRANSFERENCIA</span></h2>
+
+        <div class="amount-display">
+            <div class="label">Anticipo a pagar</div>
+            <div class="amount">${{ cotizacion.monto_anticipo }}</div>
+        </div>
+
+        <div class="bank-row">
+            <span class="bk-label">Banco</span>
+            <span class="bk-value">BBVA Bancomer</span>
+        </div>
+        <div class="bank-row">
+            <span class="bk-label">CLABE</span>
+            <span class="bk-value">012 345 678 901 234 567</span>
+        </div>
+        <div class="bank-row">
+            <span class="bk-label">Concepto</span>
+            <span class="bk-value">Anticipo Tatuaje #{{ cotizacion.id }}</span>
+        </div>
+
+        <p style="margin-top:1rem;font-size:.8rem;color:var(--text-muted);">
+            Precio total del tatuaje: <strong style="color:var(--text);">${{ cotizacion.monto_total }}</strong>
+        </p>
+    </div>
+
+    <!-- FORMULARIO COMPROBANTE -->
+    <div class="upload-form">
+        <h2>SUBIR <span style="color:var(--gold);">COMPROBANTE</span></h2>
+        <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;">
+            Sube la captura de pantalla o foto de tu transferencia.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-gold btn-block" style="margin-top:1rem;">
+                Enviar Comprobante
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

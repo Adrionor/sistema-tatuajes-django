@@ -1,0 +1,110 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Configuración — Panel{% endblock %}
+{% block active_config %}active{% endblock %}
+
+{% block panel_content %}
+<h1 class="panel-title">CONFIGURACIÓN <span class="accent">DEL ESTUDIO</span></h1>
+<p class="panel-subtitle">Información general del estudio que aparece en el sistema.</p>
+
+<form method="post">
+{% csrf_token %}
+
+<!-- Identidad -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Identidad del Estudio</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ form.nombre.id_for_label }}">Nombre del estudio</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}<p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ form.nombre.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.slogan.id_for_label }}">Slogan / tagline</label>
+                {{ form.slogan }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
+            {{ form.descripcion }}
+        </div>
+    </div>
+</div>
+
+<!-- Contacto -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Contacto y Ubicación</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-group">
+            <label for="{{ form.direccion.id_for_label }}">Dirección</label>
+            {{ form.direccion }}
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                {{ form.telefono }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.whatsapp.id_for_label }}">WhatsApp</label>
+                {{ form.whatsapp }}
+                <small style="color:var(--text-muted);font-size:.75rem;">Con código de país, sin + ni espacios. Ej: 5215512345678</small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="{{ form.email_contacto.id_for_label }}">Correo de contacto</label>
+            {{ form.email_contacto }}
+        </div>
+    </div>
+</div>
+
+<!-- Redes sociales -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Redes Sociales</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ form.instagram.id_for_label }}">Instagram (@usuario)</label>
+                {{ form.instagram }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.facebook.id_for_label }}">Facebook (URL o usuario)</label>
+                {{ form.facebook }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Configuración operativa -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Configuración Operativa</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ form.moneda.id_for_label }}">Moneda</label>
+                {{ form.moneda }}
+                <small style="color:var(--text-muted);font-size:.75rem;">Código ISO. Ej: MXN, USD, COP</small>
+            </div>
+            <div class="form-group">
+                <label for="{{ form.porcentaje_anticipo.id_for_label }}">% de anticipo requerido</label>
+                {{ form.porcentaje_anticipo }}
+                <small style="color:var(--text-muted);font-size:.75rem;">Porcentaje del total para confirmar la cita</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;gap:1rem;align-items:center;">
+    <button type="submit" class="btn btn-gold">Guardar Configuración</button>
+    <span style="color:var(--text-muted);font-size:.82rem;">Los cambios se aplican de inmediato.</span>
+</div>
+
+</form>
+{% endblock %}

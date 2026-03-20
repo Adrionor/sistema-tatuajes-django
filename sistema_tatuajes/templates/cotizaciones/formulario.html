@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cotiza tu Tatuaje — Ink Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    /* Flatpickr dark override */
+    .flatpickr-calendar {
+        background: #181818 !important;
+        border: 1px solid #2e2e2e !important;
+        box-shadow: 0 8px 30px rgba(0,0,0,.6) !important;
+    }
+    .flatpickr-day { color: #e8e8e8 !important; }
+    .flatpickr-day:hover,
+    .flatpickr-day.selected { background: #c9a84c !important; border-color: #c9a84c !important; color: #0d0d0d !important; }
+    .flatpickr-day.disabled,
+    .flatpickr-day.flatpickr-disabled { color: #444 !important; text-decoration: line-through; }
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-weekdays,
+    span.flatpickr-weekday { background: #181818 !important; color: #c9a84c !important; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months { background: #181818; color: #e8e8e8; }
+    .numInputWrapper input { color: #e8e8e8 !important; background: transparent !important; }
+
+    .form-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+    .form-layout .full-width { grid-column: 1 / -1; }
+    @media(max-width:600px) { .form-layout { grid-template-columns: 1fr; } }
+
+    .form-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 2.5rem 2rem;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<div class="page-header">
+    <h1>COTIZA TU PRÓXIMO <span class="accent">TATUAJE</span></h1>
+    <p>Elige a tu artista y cuéntanos tu idea. Nos pondremos en contacto pronto.</p>
+    <div class="divider"></div>
+</div>
+
+<div class="form-card">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.tatuador.is_hidden %}
+            {{ form.tatuador }}
+        {% else %}
+        <div class="form-group" style="margin-bottom:1.5rem;">
+            <label for="{{ form.tatuador.id_for_label }}">{{ form.tatuador.label }}</label>
+            {{ form.tatuador }}
+            {% for e in form.tatuador.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Fila 1 — Datos personales -->
+        <div class="form-layout">
+            <div class="form-group">
+                <label for="{{ form.nombre_cliente.id_for_label }}">{{ form.nombre_cliente.label }}</label>
+                {{ form.nombre_cliente }}
+                {% for e in form.nombre_cliente.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email_cliente.id_for_label }}">{{ form.email_cliente.label }}</label>
+                {{ form.email_cliente }}
+                {% for e in form.email_cliente.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.telefono_cliente.id_for_label }}">{{ form.telefono_cliente.label }}</label>
+                {{ form.telefono_cliente }}
+                {% for e in form.telefono_cliente.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.fecha_solicitada.id_for_label }}">{{ form.fecha_solicitada.label }}</label>
+                {{ form.fecha_solicitada }}
+                {% for e in form.fecha_solicitada.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+            </div>
+        </div>
+
+        <!-- Fila 2 — Detalles del tatuaje -->
+        <div style="border-top:1px solid var(--border);padding-top:1.5rem;margin-bottom:1.25rem;">
+            <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 1rem;">Detalles del tatuaje</p>
+            <div class="form-layout">
+                <div class="form-group">
+                    <label for="{{ form.estilo.id_for_label }}">{{ form.estilo.label }}</label>
+                    {{ form.estilo }}
+                    {% for e in form.estilo.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.zona_cuerpo.id_for_label }}">{{ form.zona_cuerpo.label }}</label>
+                    {{ form.zona_cuerpo }}
+                    {% for e in form.zona_cuerpo.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.tamano.id_for_label }}">{{ form.tamano.label }}</label>
+                    {{ form.tamano }}
+                    {% for e in form.tamano.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.imagen_referencia.id_for_label }}">{{ form.imagen_referencia.label }}</label>
+                    {{ form.imagen_referencia }}
+                    {% for e in form.imagen_referencia.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuadro libre para el cliente -->
+        <div style="border-top:1px solid var(--border);padding-top:1.5rem;">
+            <label for="{{ form.notas_cliente.id_for_label }}"
+                   style="display:block;font-size:.8rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;">
+                ✏️  Cuéntanos tu idea con todo el detalle que quieras
+            </label>
+            <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:.75rem;">
+                Colores, referencias, significado personal, zona exacta, tamaño estimado… cualquier cosa que quieras que tu artista sepa antes de formarte el precio.
+            </p>
+            {{ form.notas_cliente }}
+            {% for e in form.notas_cliente.errors %}<p style="color:#f57373;font-size:.8rem;margin:.4rem 0 0;">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div style="margin-top:1.5rem;">
+            <button type="submit" class="btn btn-gold btn-block">Enviar Solicitud</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleccionamos los campos de nuestro formulario
+            const selectTatuador = document.querySelector('select[name="tatuador"]');
+            const inputFecha = document.querySelector('input[name="fecha_solicitada"]');
+            
+            // Inicializamos el calendario vacío
+            let calendario = flatpickr(inputFecha, {
+                enableTime: false,
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                locale: "es",
+                disable: []
+            });
+
+            // Escuchamos cuando el cliente elige a un tatuador diferente
+            selectTatuador.addEventListener('change', function() {
+                const tatuadorId = this.value;
+                
+                if (tatuadorId) {
+                    // Llamamos a nuestra API en Django
+                    fetch(`/citas/api/fechas-ocupadas/${tatuadorId}/`)
+                        .then(response => response.json())
+                        .then(fechasOcupadas => {
+                            // Actualizamos el calendario para bloquear esas fechas
+                            calendario.set('disable', fechasOcupadas);
+                            inputFecha.placeholder = "Selecciona una fecha disponible";
+                        })
+                        .catch(error => console.error('Error fetching dates:', error));
+                } else {
+                    // Si no ha elegido tatuador, limpiamos los bloqueos
+                    calendario.set('disable', []);
+                }
+            });
+        });
+    </script>
+{% endblock %}
