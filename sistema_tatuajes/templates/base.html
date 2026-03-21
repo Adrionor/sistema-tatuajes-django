@@ -15,12 +15,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     {% endif %}
 
-    <!-- Variables CSS del skin activo -->
+    <!-- Variables CSS del skin activo + estilos globales -->
     <style>
         {{ skin_css|safe }}
         /* Propiedades que NO deben cambiar por skin */
         :root { --radius: 6px; }
-    </style>
 
         html { scroll-behavior: smooth; }
 
