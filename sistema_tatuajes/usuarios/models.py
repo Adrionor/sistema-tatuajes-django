@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from .skins import skin_choices
+from .layouts import LAYOUT_CHOICES
 
 
 class Perfil(models.Model):
@@ -60,6 +61,13 @@ class ConfiguracionEstudio(models.Model):
         choices=skin_choices,
         verbose_name='Tema visual',
         help_text='Paleta de colores y tipografía del sitio',
+    )
+
+    plantilla_layout = models.CharField(
+        max_length=20, default='clasico',
+        choices=LAYOUT_CHOICES,
+        verbose_name='Plantilla de diseño',
+        help_text='Disposición de las páginas públicas (landing, artístas, perfiles)',
     )
 
     # ── Idioma por defecto del estudio ──────────────────────────

@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block titulo %}{{ config.nombre }} — {% trans "Tattoo Studio" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .page-wrapper { max-width:100%; padding:0; }
+
+    /* ── REVISTA HERO ── */
+    .rv-hero {
+        display: grid;
+        grid-template-columns: 1fr 2px 1fr;
+        min-height: 85vh;
+        background: #050505;
+        border-bottom: 1px solid var(--border);
+    }
+    .rv-hero-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4rem 4rem 4rem 5vw;
+        gap: 1.5rem;
+    }
+    .rv-label {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: var(--gold);
+    }
+    .rv-studio-name {
+        font-family: var(--font-head);
+        font-size: clamp(3rem, 8vw, 6.5rem);
+        line-height: 1;
+        color: var(--text);
+        letter-spacing: .08em;
+    }
+    .rv-studio-name span { color: var(--gold); }
+    .rv-slogan {
+        font-size: .95rem;
+        color: var(--text-muted);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        max-width: 380px;
+        border-left: 2px solid var(--gold);
+        padding-left: .85rem;
+        line-height: 1.6;
+    }
+    .rv-divider { background: var(--border); }
+    .rv-hero-right {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        overflow: hidden;
+    }
+    .rv-hero-tile {
+        position: relative;
+        overflow: hidden;
+        background: var(--bg-muted);
+    }
+    .rv-hero-tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: .7;
+        transition: opacity .3s, transform .4s;
+    }
+    .rv-hero-tile:hover img { opacity: 1; transform: scale(1.05); }
+    .rv-tile-label {
+        position: absolute;
+        bottom: .75rem; left: .85rem;
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,.7);
+    }
+    .rv-hero-empty {
+        grid-column: 1 / -1;
+        grid-row: 1 / -1;
+        background: radial-gradient(ellipse at 30% 50%, #1a1408 0%, #050505 60%);
+    }
+
+    /* ── ANUNCIOS EDITORIAL ── */
+    .rv-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+    }
+    .rv-section-header {
+        display: flex;
+        align-items: flex-end;
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border);
+    }
+    .rv-section-header h2 {
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        color: var(--text);
+        margin: 0;
+    }
+    .rv-section-header h2 span { color: var(--gold); }
+    .rv-section-header p {
+        color: var(--text-muted);
+        font-size: .85rem;
+        margin-bottom: .15rem;
+    }
+    .rv-anuncios-list { display: flex; flex-direction: column; gap: 1.5rem; }
+    .rv-anuncio-row {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 2rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        transition: border-color .2s;
+    }
+    .rv-anuncio-row:hover { border-color: var(--gold-dim); }
+    .rv-anuncio-img { height: 160px; object-fit: cover; width: 100%; display: block; }
+    .rv-anuncio-img-ph {
+        height: 160px;
+        background: var(--bg-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+    }
+    .rv-anuncio-body {
+        padding: 1.25rem 1.5rem 1.25rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        justify-content: center;
+    }
+    .rv-anuncio-meta { display: flex; align-items: center; gap: .75rem; }
+    .rv-anuncio-title {
+        font-family: var(--font-head);
+        font-size: 1.35rem;
+        color: var(--text);
+        letter-spacing: .03em;
+        margin: 0;
+    }
+    .rv-anuncio-desc { font-size: .88rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── COLAB ── (reuse from clasico) */
+    .colab-header { display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem;padding-top:.75rem;border-top:1px solid var(--border); }
+    .colab-avatar { width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--gold); }
+    .colab-avatar-ph { width:32px;height:32px;border-radius:50%;background:var(--bg-muted);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:.85rem;color:var(--gold); }
+    .colab-works { display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:.5rem; }
+    .colab-work-img { aspect-ratio:1;object-fit:cover;border-radius:3px;width:100%;cursor:pointer;transition:opacity .15s; }
+    .colab-work-img:hover { opacity:.8; }
+    .colab-link { display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--gold);font-weight:600; }
+
+    /* ── TIPO BADGES ── */
+    .tipo-badge { display:inline-block;padding:.22rem .7rem;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase; }
+    .tipo-colaboracion { background:rgba(130,90,200,.18);color:#b07ef5;border:1px solid rgba(130,90,200,.4); }
+    .tipo-concurso     { background:rgba(201,168,76,.15);color:var(--gold);border:1px solid var(--gold-dim); }
+    .tipo-voluntarios  { background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.4); }
+    .tipo-evento       { background:rgba(100,160,255,.12);color:#80b4ff;border:1px solid rgba(100,160,255,.35); }
+    .tipo-otro         { background:var(--bg-muted);color:var(--text-muted);border:1px solid var(--border); }
+
+    /* ── CONTACT + CTA ── */
+    .contact-strip { background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.2rem 2rem; }
+    .contact-inner { display:flex;flex-wrap:wrap;justify-content:center;gap:2.5rem;max-width:900px;margin:0 auto; }
+    .contact-item { display:flex;align-items:center;gap:.65rem;color:var(--text-muted);font-size:.95rem; }
+    .contact-item svg { color:var(--gold);flex-shrink:0; }
+    .contact-link { color:var(--text-muted);text-decoration:none;transition:color .2s; }
+    .contact-link:hover { color:var(--gold); }
+    .cta-strip { background:linear-gradient(135deg,#0a0a0a 0%,#1a1008 50%,#0a0a0a 100%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:5rem 2rem;text-align:center; }
+    .cta-strip h2 { font-size:clamp(2rem,5vw,3rem);color:var(--text);margin-bottom:.6rem; }
+    .cta-strip h2 .accent { color:var(--gold); }
+    .cta-strip p { color:var(--text-muted);margin-bottom:2rem;font-size:1rem; }
+    .cta-btns { display:flex;gap:1rem;justify-content:center;flex-wrap:wrap; }
+
+    @media(max-width:700px) {
+        .rv-hero { grid-template-columns:1fr;grid-template-rows:auto 1fr; }
+        .rv-divider { display:none; }
+        .rv-hero-left { padding:3rem 1.5rem 2rem; }
+        .rv-hero-right { max-height:220px; }
+        .rv-anuncio-row { grid-template-columns:1fr; }
+        .rv-anuncio-img, .rv-anuncio-img-ph { height:140px; }
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- HERO REVISTA -->
+<section class="rv-hero">
+    <div class="rv-hero-left">
+        <p class="rv-label">{% trans "Tattoo Studio" %}</p>
+        {% with nombre=config.nombre %}
+        <h1 class="rv-studio-name">
+            {% for word in nombre.split %}
+                {% if forloop.first %}<span>{{ word }}</span>{% else %}<br>{{ word }}{% endif %}
+            {% endfor %}
+        </h1>
+        {% endwith %}
+        {% if config.slogan %}
+            <p class="rv-slogan">{{ config.slogan }}</p>
+        {% else %}
+            <p class="rv-slogan">{% trans "Art on your skin — Made to last" %}</p>
+        {% endif %}
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.5rem;">
+            <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="font-size:.95rem;padding:.75rem 2rem;">{% trans "Request a Quote" %}</a>
+            <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:.95rem;padding:.75rem 2rem;">{% trans "See Artists" %}</a>
+        </div>
+    </div>
+    <div class="rv-divider"></div>
+    <div class="rv-hero-right">
+        {% if anuncios_data %}
+            {% for item in anuncios_data|slice:":4" %}
+                {% if item.anuncio.imagen %}
+                    <div class="rv-hero-tile">
+                        <img src="{{ item.anuncio.imagen.url }}" alt="{{ item.anuncio.titulo }}">
+                        <span class="rv-tile-label">{{ item.anuncio.titulo|truncatechars:28 }}</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="rv-hero-empty"></div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ANUNCIOS EDITORIAL -->
+{% if anuncios_data %}
+<div class="rv-section">
+    <div class="rv-section-header">
+        <div>
+            <p style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 .3rem;">{% trans "FROM THE STUDIO" %}</p>
+            <h2>{% trans "NEWS &amp;" %} <span>{% trans "EVENTS" %}</span></h2>
+        </div>
+    </div>
+    <div class="rv-anuncios-list">
+        {% for item in anuncios_data %}
+        {% with a=item.anuncio trabajos=item.trabajos %}
+        <div class="rv-anuncio-row">
+            {% if a.imagen %}
+                <img src="{{ a.imagen.url }}" alt="{{ a.titulo }}" class="rv-anuncio-img">
+            {% else %}
+                <div class="rv-anuncio-img-ph">
+                    {% if a.tipo == 'colaboracion' %}🎨{% elif a.tipo == 'concurso' %}🏆{% elif a.tipo == 'voluntarios' %}🙋{% elif a.tipo == 'evento' %}📅{% else %}📢{% endif %}
+                </div>
+            {% endif %}
+            <div class="rv-anuncio-body">
+                <div class="rv-anuncio-meta">
+                    <span class="tipo-badge tipo-{{ a.tipo }}">{{ a.get_tipo_display }}</span>
+                    {% if a.fecha_evento %}<span style="font-size:.78rem;color:var(--text-muted);">{{ a.fecha_evento|date:"d M Y" }}</span>{% endif %}
+                </div>
+                <h3 class="rv-anuncio-title">{{ a.titulo }}</h3>
+                {% if a.descripcion %}<p class="rv-anuncio-desc">{{ a.descripcion|truncatechars:160 }}</p>{% endif %}
+                {% if a.tatuador_asociado and trabajos %}
+                <div class="colab-header">
+                    {% with p=a.tatuador_asociado.perfil %}
+                    {% if p.foto_perfil %}<img src="{{ p.foto_perfil.url }}" alt="" class="colab-avatar">
+                    {% else %}<div class="colab-avatar-ph">{{ a.tatuador_asociado.first_name|first|upper|default:a.tatuador_asociado.username|first|upper }}</div>{% endif %}
+                    <div><div style="font-size:.82rem;font-weight:600;color:var(--text);">{{ a.tatuador_asociado.get_full_name|default:a.tatuador_asociado.username }}</div>
+                    {% if p.especialidad %}<div style="font-size:.72rem;color:var(--text-muted);">{{ p.especialidad }}</div>{% endif %}</div>
+                    {% endwith %}
+                </div>
+                <div class="colab-works">{% for t in trabajos %}<img src="{{ t.imagen.url }}" alt="{{ t.titulo|default:t.estilo }}" class="colab-work-img" onclick="openLanding('{{ t.imagen.url }}')">{% endfor %}</div>
+                <a href="{% url 'perfil_tatuador' a.tatuador_asociado.pk %}" class="colab-link">{% trans "View full portfolio" %} →</a>
+                {% elif a.tatuador_asociado %}
+                <a href="{% url 'perfil_tatuador' a.tatuador_asociado.pk %}" class="colab-link" style="margin-top:.5rem;">{% trans "View artist profile" %} →</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- CONTACTO -->
+{% if config.direccion or config.telefono or config.instagram %}
+<section class="contact-strip">
+    <div class="contact-inner">
+        {% if config.direccion %}<div class="contact-item"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>{{ config.direccion }}</span></div>{% endif %}
+        {% if config.telefono %}<div class="contact-item"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .95.68l1.45 4.36a1 1 0 0 1-.23 1.02L8.5 11.05a11.04 11.04 0 0 0 4.95 4.95l1.99-1.95a1 1 0 0 1 1.02-.23l4.36 1.45a1 1 0 0 1 .68.95V19a2 2 0 0 1-2 2A18 18 0 0 1 3 5z"/></svg><a href="tel:{{ config.telefono }}" class="contact-link">{{ config.telefono }}</a></div>{% endif %}
+        {% if config.instagram %}<div class="contact-item"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg><a href="https://instagram.com/{{ config.instagram|cut:'@' }}" target="_blank" class="contact-link">@{{ config.instagram|cut:'@' }}</a></div>{% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA FINAL -->
+<div class="cta-strip">
+    <h2>{% trans "READY FOR YOUR" %} <span class="accent">{% trans "NEXT TATTOO?" %}</span></h2>
+    <p>{% trans "Tell us your idea and one of our artists will give you a personalized quote." %}</p>
+    <div class="cta-btns">
+        <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="font-size:1rem;padding:.85rem 2.2rem;">{% trans "Request a Quote" %}</a>
+        <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:1rem;padding:.85rem 2.2rem;">{% trans "Meet Our Artists" %}</a>
+    </div>
+</div>
+
+<div id="landing-lightbox" onclick="closeLanding()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;">
+    <img id="landing-lb-img" src="" alt="" style="max-width:90vw;max-height:88vh;border-radius:6px;object-fit:contain;">
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function openLanding(src) {
+    document.getElementById('landing-lb-img').src = src;
+    const lb = document.getElementById('landing-lightbox');
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeLanding() {
+    document.getElementById('landing-lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLanding(); });
+</script>
+{% endblock %}

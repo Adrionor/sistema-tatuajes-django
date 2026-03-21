@@ -306,7 +306,8 @@ def landing(request):
             'trabajos': trabajos,
         })
 
-    return render(request, 'landing.html', {
+    layout = config.plantilla_layout or 'clasico'
+    return render(request, f'landing_{layout}.html', {
         'config':        config,
         'anuncios_data': anuncios_data,
     })

@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block titulo %}{{ tatuador.get_full_name|default:tatuador.username }} — {{ estudio_config.nombre }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .back-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--text-muted);font-size:.85rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:0;transition:color .2s;text-decoration:none;position:relative;z-index:2;padding:1.5rem 0;}
+    .back-link:hover{color:var(--gold);}
+
+    /* ── HERO (first work as full-width bg) ── */
+    .imp-hero {
+        min-height: 60vh;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        overflow: hidden;
+        margin: 0 calc(-1 * var(--container-px, 1.5rem));
+    }
+    .imp-hero-bg {
+        position: absolute; inset: 0;
+        background-size: cover;
+        background-position: center top;
+        filter: brightness(.45);
+        transition: transform 12s ease;
+    }
+    .imp-hero:hover .imp-hero-bg { transform: scale(1.03); }
+    .imp-hero-empty { position: absolute; inset: 0; background: linear-gradient(135deg, #0a0a0a 50%, #1a1a1a); }
+    .imp-hero-content {
+        position: relative; z-index: 1;
+        padding: 3rem 2rem 3rem;
+    }
+    .imp-hero-name {
+        font-size: clamp(2.8rem, 9vw, 7rem);
+        color: #fff; line-height: .9; margin-bottom: .6rem;
+        text-shadow: 0 4px 30px rgba(0,0,0,.8);
+    }
+    .imp-hero-badges { display:flex;flex-wrap:wrap;gap:.35rem; }
+
+    /* ── ARTIST STRIP ── */
+    .imp-artist-strip {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.75rem 0;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+    }
+    .imp-avatar {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        border: 2px solid var(--gold);
+        object-fit: cover;
+        flex-shrink: 0;
+        background: var(--bg-muted);
+        font-family: var(--font-head);
+        font-size: 1.6rem; color: var(--gold);
+        text-align: center; line-height: 60px;
+    }
+    .imp-strip-info { flex: 1; min-width: 180px; }
+    .imp-strip-name { font-size: 1.15rem; color: var(--text); margin-bottom: .2rem; }
+    .imp-strip-bio { font-size: .82rem; color: var(--text-muted); line-height: 1.5; }
+    .imp-strip-actions { display:flex;gap:.5rem;flex-wrap:wrap; }
+
+    /* ── FILTER ── */
+    .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+    .filter-btn{padding:.4rem 1rem;border-radius:99px;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);transition:all .2s;font-family:var(--font-body);}
+    .filter-btn:hover,.filter-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08);}
+
+    /* ── LARGE WORKS GRID ── */
+    .works-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;}
+    .work-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .25s,transform .25s;cursor:pointer;}
+    .work-card:hover{border-color:var(--gold-dim);transform:translateY(-3px);}
+    .work-img-wrap{position:relative;overflow:hidden;aspect-ratio:1/1;background:var(--bg-muted);}
+    .work-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .35s;}
+    .work-card:hover .work-img-wrap img{transform:scale(1.07);}
+    .work-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 60%);opacity:0;transition:opacity .3s;display:flex;align-items:flex-end;padding:1rem;}
+    .work-card:hover .work-overlay{opacity:1;}
+    .work-overlay-text{color:#fff;font-size:.85rem;line-height:1.4;}
+    .work-body{padding:.75rem 1rem 1rem;display:flex;align-items:center;gap:.5rem;}
+    .empty-works{grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-muted);}
+
+    /* ── AVAILABILITY ── */
+    .avail-section{margin-top:3rem;}
+    .avail-section h2{font-size:1.6rem;margin-bottom:.4rem;}
+
+    /* ── LIGHTBOX ── */
+    #work-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:1rem;}
+    #work-lightbox.open{display:flex;}
+    .wlb-inner{display:flex;gap:1.5rem;max-width:860px;width:100%;align-items:flex-start;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;max-height:90vh;}
+    .wlb-img{width:55%;flex-shrink:0;max-height:90vh;object-fit:cover;display:block;}
+    .wlb-info{flex:1;padding:2rem 1.5rem 2rem .5rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;}
+    .wlb-close{position:absolute;top:1rem;right:1.25rem;font-size:1.8rem;color:#fff;cursor:pointer;line-height:1;opacity:.7;transition:opacity .2s;}
+    .wlb-close:hover{opacity:1;}
+    @media(max-width:600px){.wlb-inner{flex-direction:column;}.wlb-img{width:100%;max-height:50vw;}.wlb-info{padding:1rem;}}
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<a href="{% url 'galeria' %}" class="back-link">&larr; {% trans "All artists" %}</a>
+
+<!-- HERO -->
+{% with primer_trabajo=trabajos.first %}
+<div class="imp-hero">
+    {% if primer_trabajo %}
+        <div class="imp-hero-bg" style="background-image:url('{{ primer_trabajo.imagen.url }}');"></div>
+    {% else %}
+        <div class="imp-hero-empty"></div>
+    {% endif %}
+    <div class="imp-hero-content">
+        <h1 class="imp-hero-name">{{ tatuador.get_full_name|default:tatuador.username|upper }}</h1>
+        <div class="imp-hero-badges">
+            {% if tatuador.perfil.especialidad %}
+                <span class="badge badge-gold">{{ tatuador.perfil.especialidad }}</span>
+            {% else %}
+                {% for estilo in estilos %}<span class="badge badge-gold">{{ estilo }}</span>{% endfor %}
+            {% endif %}
+            <span style="font-size:.78rem;color:rgba(255,255,255,.5);align-self:center;margin-left:.25rem;">
+                {{ trabajos.count }} {% trans "works" %}
+            </span>
+        </div>
+    </div>
+</div>
+{% endwith %}
+
+<!-- ARTIST STRIP -->
+<div class="imp-artist-strip">
+    {% if tatuador.perfil.foto_perfil %}
+        <img src="{{ tatuador.perfil.foto_perfil.url }}" alt="{{ tatuador.get_full_name }}" class="imp-avatar" style="line-height:0;">
+    {% else %}
+        <div class="imp-avatar">{{ tatuador.get_full_name|default:tatuador.username|slice:":1"|upper }}</div>
+    {% endif %}
+    <div class="imp-strip-info">
+        <h2 class="imp-strip-name">{{ tatuador.get_full_name|default:tatuador.username }}</h2>
+        {% if tatuador.perfil.bio %}
+            <p class="imp-strip-bio">{{ tatuador.perfil.bio|truncatechars:160 }}</p>
+        {% endif %}
+        {% if tatuador.perfil.instagram %}
+            <a href="https://instagram.com/{{ tatuador.perfil.instagram|cut:'@' }}" target="_blank"
+               style="font-size:.78rem;color:var(--text-muted);transition:color .2s;text-decoration:none;"
+               onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
+                📸 {{ tatuador.perfil.instagram }}
+            </a>
+        {% endif %}
+    </div>
+    <div class="imp-strip-actions">
+        <a href="{% url 'nueva_cotizacion_artista' tatuador.pk %}" class="btn btn-gold">{% trans "Quote with this artist" %}</a>
+        {% if tatuador.perfil.telefono %}
+        <a href="https://wa.me/{{ tatuador.perfil.telefono|cut:' '|cut:'+'|cut:'-'|cut:'('|cut:')' }}" target="_blank"
+           style="padding:.6rem 1.1rem;border:1.5px solid #25d366;border-radius:var(--radius);color:#25d366;font-size:.82rem;font-weight:700;text-decoration:none;transition:background .2s;"
+           onmouseover="this.style.background='rgba(37,211,102,.1)'" onmouseout="this.style.background='transparent'">WhatsApp</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- FILTER -->
+{% if estilos %}
+<div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-estilo="todos">{% trans "All" %}</button>
+    {% for estilo in estilos %}<button class="filter-btn" data-estilo="{{ estilo }}">{{ estilo }}</button>{% endfor %}
+</div>
+{% endif %}
+
+<!-- WORKS GRID -->
+<div class="works-grid" id="works-grid">
+    {% for trabajo in trabajos %}
+    <article class="work-card" data-estilo="{{ trabajo.estilo }}"
+        onclick="openWork('{{ trabajo.imagen.url }}','{{ trabajo.titulo|default:''|escapejs }}','{{ trabajo.estilo|escapejs }}','{{ trabajo.descripcion|default:''|escapejs }}')">
+        <div class="work-img-wrap">
+            <img src="{{ trabajo.imagen.url }}" alt="{{ trabajo.titulo|default:trabajo.estilo }}">
+            <div class="work-overlay">
+                <div class="work-overlay-text">
+                    {% if trabajo.titulo %}<strong>{{ trabajo.titulo }}</strong>{% endif %}
+                    {% if trabajo.descripcion %}<p style="margin:.3rem 0 0;">{{ trabajo.descripcion|truncatechars:80 }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="work-body">
+            <span class="badge badge-gold">{{ trabajo.estilo }}</span>
+            {% if trabajo.titulo %}<span style="font-size:.8rem;color:var(--text);font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;">{{ trabajo.titulo }}</span>{% endif %}
+        </div>
+    </article>
+    {% empty %}
+    <div class="empty-works"><p>{% trans "This artist hasn't uploaded any portfolio work yet." %}</p></div>
+    {% endfor %}
+</div>
+
+<!-- AVAILABILITY -->
+{% if bloqueos_publicos %}
+<div class="avail-section">
+    <h2>{% trans "AVAILABILITY" %} <span style="color:var(--gold);">{% trans "& TRAVEL" %}</span></h2>
+    <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.25rem;">{% trans "Periods when this artist is unavailable or tattooing in another city." %}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;">
+        {% for b in bloqueos_publicos %}
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.4rem;display:flex;gap:.9rem;min-width:220px;max-width:340px;flex:1;">
+            <span style="font-size:1.6rem;flex-shrink:0;">{% if b.tipo == 'vacaciones' %}🏖️{% elif b.tipo == 'evento' %}🎪{% elif b.tipo == 'viaje_nacional' %}🚗{% elif b.tipo == 'viaje_internacional' %}✈️{% else %}📅{% endif %}</span>
+            <div>
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:{% if b.tipo == 'viaje_internacional' %}#b07ef5{% elif b.tipo == 'viaje_nacional' %}#80b4ff{% elif b.tipo == 'vacaciones' %}var(--green){% else %}var(--gold){% endif %};margin-bottom:.2rem;">{{ b.get_tipo_display }}</div>
+                <div style="font-size:.9rem;font-weight:600;color:var(--text);">{{ b.fecha_inicio|date:"d M" }} {% if b.fecha_inicio != b.fecha_fin %}→ {{ b.fecha_fin|date:"d M Y" }}{% else %}{{ b.fecha_inicio|date:"Y" }}{% endif %}</div>
+                {% if b.ciudad or b.pais %}<div style="font-size:.82rem;color:var(--gold);">📍 {% if b.ciudad %}{{ b.ciudad }}, {% endif %}{{ b.pais }}</div>{% endif %}
+                {% if b.descripcion %}<div style="font-size:.8rem;color:var(--text-muted);margin-top:.25rem;">{{ b.descripcion }}</div>{% endif %}
+                {% if b.es_viaje %}<div style="margin-top:.5rem;"><a href="{% url 'nueva_cotizacion' %}" class="btn btn-outline" style="font-size:.72rem;padding:.3rem .9rem;">{% trans "Book here" %} →</a></div>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- LIGHTBOX -->
+<div id="work-lightbox" onclick="closeLightboxOutside(event)">
+    <span class="wlb-close" onclick="closeWork()">&times;</span>
+    <div class="wlb-inner">
+        <img id="wlb-img" src="" alt="" class="wlb-img">
+        <div class="wlb-info">
+            <p id="wlb-style" style="font-size:.75rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);margin:0;"></p>
+            <h2 id="wlb-title" style="font-size:1.6rem;margin:0;color:var(--text);"></h2>
+            <p id="wlb-desc" style="font-size:.9rem;color:var(--text-muted);line-height:1.7;margin:0;white-space:pre-line;"></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function openWork(src,titulo,estilo,desc){document.getElementById('wlb-img').src=src;document.getElementById('wlb-style').textContent=estilo;document.getElementById('wlb-title').textContent=titulo||'';document.getElementById('wlb-title').style.display=titulo?'':'none';document.getElementById('wlb-desc').textContent=desc||'';document.getElementById('wlb-desc').style.display=desc?'':'none';document.getElementById('work-lightbox').classList.add('open');}
+    function closeWork(){document.getElementById('work-lightbox').classList.remove('open');}
+    function closeLightboxOutside(e){if(e.target===document.getElementById('work-lightbox'))closeWork();}
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWork();});
+    const filterBar=document.getElementById('filter-bar');const worksGrid=document.getElementById('works-grid');
+    if(filterBar){filterBar.addEventListener('click',function(e){const btn=e.target.closest('.filter-btn');if(!btn)return;filterBar.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const estilo=btn.dataset.estilo;worksGrid.querySelectorAll('.work-card').forEach(card=>{card.style.display=(estilo==='todos'||card.dataset.estilo===estilo)?'':'none';});});}
+</script>
+{% endblock %}

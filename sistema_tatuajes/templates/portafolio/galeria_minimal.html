@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block titulo %}{% trans "Artists" %} — {{ estudio_config.nombre }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── MINIMAL GALLERY ── */
+    .mn-g-hero {
+        padding: 4rem 0 3rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 3rem;
+    }
+    .mn-g-label {
+        font-size: .7rem;
+        letter-spacing: .25em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1.2rem;
+    }
+    .mn-g-heading {
+        font-size: clamp(3rem, 9vw, 7rem);
+        color: var(--text);
+        line-height: .95;
+        margin: 0 0 1.5rem;
+    }
+    .mn-cta-line {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    /* ── ARTIST LIST ── */
+    .mn-artist-table { width: 100%; border-collapse: collapse; }
+    .mn-artist-row {
+        display: grid;
+        grid-template-columns: 3rem 1fr auto;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.25rem 0;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: background .15s;
+        color: inherit;
+        text-decoration: none;
+    }
+    .mn-artist-row:hover { background: var(--bg-muted); }
+    .mn-artist-row:hover .mn-arrow { transform: translateX(6px); color: var(--gold); }
+
+    .mn-num {
+        font-size: .8rem;
+        color: var(--border);
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-align: right;
+    }
+    .mn-info-cell { display: flex; flex-direction: column; gap: .3rem; }
+    .mn-name {
+        font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+        color: var(--text);
+        font-weight: 700;
+        letter-spacing: .03em;
+    }
+    .mn-meta {
+        font-size: .78rem;
+        color: var(--text-muted);
+        display: flex;
+        gap: .75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .mn-meta-sep { color: var(--border); }
+    .mn-arrow {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        transition: transform .2s, color .2s;
+    }
+
+    /* Empty */
+    .mn-empty { padding: 4rem 0; text-align: center; color: var(--text-muted); }
+    .mn-empty h2 { font-size: 2rem; color: var(--text); margin-bottom: .5rem; }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- HERO -->
+<div class="mn-g-hero">
+    <p class="mn-g-label">{{ estudio_config.nombre }} / {% trans "Artists" %}</p>
+    <h1 class="mn-g-heading">{% trans "ARTISTS" %}</h1>
+    <div class="mn-cta-line">
+        <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Get a Quote" %}</a>
+        {% if artistas %}
+            <span style="color:var(--text-muted);font-size:.85rem;">
+                {{ artistas|length }} artist{{ artistas|length|pluralize:"s" }} available
+            </span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ARTIST LIST -->
+{% if artistas %}
+    <div>
+        {% for item in artistas %}
+        <a href="{% url 'perfil_tatuador' item.tatuador.id %}" class="mn-artist-row">
+            <span class="mn-num">{{ forloop.counter|stringformat:"02d" }}</span>
+            <div class="mn-info-cell">
+                <span class="mn-name">{{ item.tatuador.get_full_name|default:item.tatuador.username|upper }}</span>
+                <div class="mn-meta">
+                    {% for estilo in item.estilos %}
+                        <span>{{ estilo }}</span>
+                        {% if not forloop.last %}<span class="mn-meta-sep">·</span>{% endif %}
+                    {% endfor %}
+                    {% if item.estilos %}<span class="mn-meta-sep">—</span>{% endif %}
+                    <span>{{ item.total }} trabajo{{ item.total|pluralize:"s" }}</span>
+                </div>
+            </div>
+            <span class="mn-arrow">→</span>
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="mn-empty">
+        <h2>{% trans "No artists yet" %}</h2>
+        <p>{% trans "Check back soon." %}</p>
+    </div>
+{% endif %}
+
+{% endblock %}

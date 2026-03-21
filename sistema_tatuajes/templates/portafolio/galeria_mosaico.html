@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block titulo %}{% trans "Artists" %} — {{ estudio_config.nombre }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── MOSAICO GALLERY ── */
+    .ms-g-header {
+        padding: 3rem 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 1rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 2.5rem;
+    }
+    .ms-g-heading {
+        font-size: clamp(2rem, 6vw, 4.5rem);
+        color: var(--text); margin: 0; line-height: .95;
+    }
+    .ms-g-sub { color: var(--gold); }
+
+    /* ── MASONRY GRID of all works ── */
+    .ms-grid {
+        columns: 4;
+        column-gap: .35rem;
+        margin-bottom: 3rem;
+    }
+    @media(max-width:1100px) { .ms-grid { columns: 3; } }
+    @media(max-width:700px)  { .ms-grid { columns: 2; } }
+    @media(max-width:420px)  { .ms-grid { columns: 1; } }
+
+    .ms-tile {
+        break-inside: avoid;
+        display: block;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: .35rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
+    .ms-tile img {
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: transform .4s ease, filter .3s;
+        filter: brightness(.9);
+    }
+    .ms-tile:hover img {
+        transform: scale(1.04);
+        filter: brightness(1);
+    }
+
+    /* Hover overlay */
+    .ms-tile-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,.82) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity .3s;
+        display: flex;
+        align-items: flex-end;
+        padding: .8rem;
+    }
+    .ms-tile:hover .ms-tile-overlay { opacity: 1; }
+    .ms-tile-label {
+        display: flex; flex-direction: column; gap: .1rem;
+    }
+    .ms-tile-artist { font-size: .8rem; font-weight: 700; color: #fff; }
+    .ms-tile-style  { font-size: .68rem; color: var(--gold); }
+
+    /* ARTIST LIST below grid */
+    .ms-artists-strip {
+        display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
+        padding: 2rem 0; border-top: 1px solid var(--border);
+    }
+    .ms-artist-chip {
+        padding: .45rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 99px;
+        font-size: .78rem; color: var(--text);
+        text-decoration: none;
+        transition: border-color .2s, color .2s;
+    }
+    .ms-artist-chip:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Bottom CTA */
+    .ms-bottom { text-align: center; padding: 2.5rem 0; }
+
+    /* Empty */
+    .ms-empty { padding: 4rem 0; text-align: center; color: var(--text-muted); }
+    .ms-empty h2 { font-size: 1.8rem; color: var(--text); margin-bottom: .5rem; }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- HEADER -->
+<div class="ms-g-header">
+    <h1 class="ms-g-heading">
+        {% trans "OUR" %}<br>
+        <span class="ms-g-sub">{% trans "ARTISTS" %}</span>
+    </h1>
+    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Get a Quote" %}</a>
+</div>
+
+{% if artistas %}
+    <!-- MASONRY GRID — all preview photos from all artists -->
+    <div class="ms-grid">
+        {% for item in artistas %}
+            {% for trabajo in item.preview %}
+            <a href="{% url 'perfil_tatuador' item.tatuador.id %}" class="ms-tile">
+                <img src="{{ trabajo.imagen.url }}"
+                     alt="{{ item.tatuador.get_full_name|default:item.tatuador.username }}">
+                <div class="ms-tile-overlay">
+                    <div class="ms-tile-label">
+                        <span class="ms-tile-artist">
+                            {{ item.tatuador.get_full_name|default:item.tatuador.username }}
+                        </span>
+                        {% if trabajo.estilo %}
+                            <span class="ms-tile-style">{{ trabajo.estilo }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+                {# artist has no preview photos — skip #}
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <!-- ARTIST QUICK LINKS -->
+    <div class="ms-artists-strip">
+        {% for item in artistas %}
+        <a href="{% url 'perfil_tatuador' item.tatuador.id %}" class="ms-artist-chip">
+            {{ item.tatuador.get_full_name|default:item.tatuador.username }}
+            <span style="color:var(--text-muted);margin-left:.3rem;font-size:.7rem;">
+                {{ item.total }}
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div class="ms-empty">
+        <h2>{% trans "No artists yet" %}</h2>
+        <p>{% trans "Check back soon." %}</p>
+    </div>
+{% endif %}
+
+<!-- BOTTOM CTA -->
+<div class="ms-bottom">
+    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Request a Quote" %}</a>
+</div>
+
+{% endblock %}

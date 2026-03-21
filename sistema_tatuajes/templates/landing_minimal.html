@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block titulo %}{{ config.nombre }} — {% trans "Tattoo Studio" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .page-wrapper { max-width:100%; padding:0; }
+
+    /* ── MINIMAL HERO ── */
+    .mn-hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #050505;
+        text-align: center;
+        padding: 4rem 2rem;
+        gap: 1.25rem;
+    }
+    .mn-eyebrow {
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .25em;
+        text-transform: uppercase;
+        color: var(--gold);
+    }
+    .mn-title {
+        font-family: var(--font-head);
+        font-size: clamp(4rem, 14vw, 11rem);
+        letter-spacing: .06em;
+        line-height: 1;
+        color: var(--text);
+        font-weight: 400;
+    }
+    .mn-title span { color: var(--gold); }
+    .mn-rule {
+        width: 80px;
+        height: 1px;
+        background: var(--gold);
+    }
+    .mn-slogan {
+        font-size: .85rem;
+        letter-spacing: .22em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        max-width: 420px;
+    }
+    .mn-ctas { display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; margin-top:.5rem; }
+    .mn-scroll {
+        margin-top: 2.5rem;
+        font-size: .72rem;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,.3);
+        cursor: pointer;
+        transition: color .2s;
+    }
+    .mn-scroll:hover { color: var(--gold); }
+
+    /* ── ANUNCIOS MINIMAL ── */
+    .mn-section {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 5rem 2rem;
+    }
+    .mn-section-title {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 2.5rem;
+    }
+    .mn-anuncio {
+        padding: 1.75rem 0;
+        border-bottom: 1px solid var(--border);
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: 1.5rem;
+        align-items: start;
+    }
+    .mn-anuncio:first-child { border-top: 1px solid var(--border); }
+    .mn-num {
+        font-family: var(--font-head);
+        font-size: 2.5rem;
+        color: var(--border);
+        line-height: 1;
+        padding-top: .1rem;
+    }
+    .mn-anuncio-date {
+        font-size: .72rem;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: .35rem;
+    }
+    .mn-anuncio-title {
+        font-family: var(--font-head);
+        font-size: 1.5rem;
+        color: var(--text);
+        letter-spacing: .03em;
+        margin-bottom: .4rem;
+    }
+    .mn-anuncio-desc {
+        font-size: .88rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+    }
+    .mn-thumb {
+        width: 100%;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        border-radius: var(--radius);
+        margin-top: .75rem;
+        opacity: .7;
+    }
+    .mn-colab-link {
+        display: inline-block;
+        margin-top: .6rem;
+        font-size: .78rem;
+        color: var(--gold);
+        font-weight: 600;
+        letter-spacing: .05em;
+    }
+
+    /* ── FOOTER STRIP ── */
+    .mn-contact {
+        border-top: 1px solid var(--border);
+        padding: 2rem 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+        font-size: .88rem;
+        color: var(--text-muted);
+    }
+    .mn-contact a { color: var(--text-muted); transition: color .2s; }
+    .mn-contact a:hover { color: var(--gold); }
+    .mn-cta-final {
+        border-top: 1px solid var(--border);
+        text-align: center;
+        padding: 5rem 2rem;
+    }
+    .mn-cta-final h2 {
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        color: var(--text);
+        margin-bottom: .5rem;
+    }
+    .mn-cta-final h2 span { color: var(--gold); }
+    .mn-cta-final p { color: var(--text-muted); margin-bottom: 2rem; }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- HERO MINIMAL -->
+<section class="mn-hero" id="mn-top">
+    <p class="mn-eyebrow">{% trans "Tattoo Studio" %}</p>
+    <h1 class="mn-title">
+        {% with nombre=config.nombre %}
+        {% if "ink" in nombre|lower or "studio" in nombre|lower or "tattoo" in nombre|lower %}
+            {% for word in nombre.split %}{% if forloop.first %}<span>{{ word }}</span>{% else %}<br>{{ word }}{% endif %}{% endfor %}
+        {% else %}<span>{{ nombre }}</span>{% endif %}
+        {% endwith %}
+    </h1>
+    <div class="mn-rule"></div>
+    {% if config.slogan %}
+        <p class="mn-slogan">{{ config.slogan }}</p>
+    {% else %}
+        <p class="mn-slogan">{% trans "Art on your skin — Made to last" %}</p>
+    {% endif %}
+    <div class="mn-ctas">
+        <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:.9rem;">{% trans "See Artists" %}</a>
+        <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="font-size:.9rem;">{% trans "Request a Quote" %}</a>
+    </div>
+    {% if anuncios_data %}
+    <p class="mn-scroll" onclick="document.getElementById('mn-news').scrollIntoView({behavior:'smooth'})">
+        ▼ &nbsp; {% trans "News" %}
+    </p>
+    {% endif %}
+</section>
+
+<!-- ANUNCIOS MINIMAL -->
+{% if anuncios_data %}
+<section class="mn-section" id="mn-news">
+    <p class="mn-section-title">{% trans "FROM THE STUDIO" %}</p>
+    {% for item in anuncios_data %}
+    {% with a=item.anuncio trabajos=item.trabajos %}
+    <div class="mn-anuncio">
+        <div class="mn-num">{{ forloop.counter|stringformat:"02d" }}</div>
+        <div>
+            <div class="mn-anuncio-date">
+                {{ a.get_tipo_display }}{% if a.fecha_evento %} · {{ a.fecha_evento|date:"d M Y" }}{% endif %}
+            </div>
+            <h3 class="mn-anuncio-title">{{ a.titulo }}</h3>
+            {% if a.descripcion %}<p class="mn-anuncio-desc">{{ a.descripcion }}</p>{% endif %}
+            {% if a.imagen %}<img src="{{ a.imagen.url }}" alt="{{ a.titulo }}" class="mn-thumb">{% endif %}
+            {% if a.tatuador_asociado %}
+            <a href="{% url 'perfil_tatuador' a.tatuador_asociado.pk %}" class="mn-colab-link">
+                {{ a.tatuador_asociado.get_full_name|default:a.tatuador_asociado.username }} — {% trans "View portfolio" %} →
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endwith %}
+    {% endfor %}
+</section>
+{% endif %}
+
+<!-- CONTACTO MINIMAL -->
+{% if config.direccion or config.telefono or config.instagram %}
+<div class="mn-contact">
+    {% if config.direccion %}<span>📍 {{ config.direccion }}</span>{% endif %}
+    {% if config.telefono %}<a href="tel:{{ config.telefono }}">📞 {{ config.telefono }}</a>{% endif %}
+    {% if config.instagram %}<a href="https://instagram.com/{{ config.instagram|cut:'@' }}" target="_blank">📸 @{{ config.instagram|cut:'@' }}</a>{% endif %}
+</div>
+{% endif %}
+
+<!-- CTA FINAL -->
+<div class="mn-cta-final">
+    <h2>{% trans "READY FOR YOUR" %} <span>{% trans "NEXT TATTOO?" %}</span></h2>
+    <p style="color:var(--text-muted);max-width:460px;margin:.5rem auto 2rem;">{% trans "Tell us your idea and one of our artists will give you a personalized quote." %}</p>
+    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
+        <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="font-size:1rem;padding:.85rem 2.2rem;">{% trans "Request a Quote" %}</a>
+        <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:1rem;padding:.85rem 2.2rem;">{% trans "Meet Our Artists" %}</a>
+    </div>
+</div>
+
+{% endblock %}

@@ -149,6 +149,37 @@
             {% endfor %}
         </div>
 
+        <!-- Plantilla de diseño -->
+        <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.25rem;">
+            Elige la disposición visual de las páginas públicas (landing, galería de artistas y perfiles).<br>
+            <small>Puedes combinar cualquier plantilla con cualquier tema de color.</small>
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem;">
+            {% for layout_key, layout_info in layouts_disponibles %}
+            <label style="cursor:pointer;">
+                <input type="radio" name="plantilla_layout" value="{{ layout_key }}"
+                       {% if estudio_config.plantilla_layout == layout_key %}checked{% endif %}
+                       style="display:none;" class="layout-radio">
+                <div class="layout-card" data-layout="{{ layout_key }}"
+                     style="border-radius:var(--radius);border:2px solid {% if estudio_config.plantilla_layout == layout_key %}var(--gold){% else %}var(--border){% endif %};
+                            overflow:hidden;transition:border-color .2s;">
+                    <!-- Mini visual preview -->
+                    <div style="height:70px;background:#111;padding:6px;display:flex;flex-wrap:wrap;gap:3px;align-items:flex-start;align-content:flex-start;">
+                        {% for block in layout_info.preview %}
+                            <div style="width:{{ block.w }};height:{{ block.h }};background:{{ block.bg }};border-radius:{{ block.br }};flex-shrink:0;"></div>
+                        {% endfor %}
+                    </div>
+                    <!-- Name + description -->
+                    <div style="padding:.5rem .75rem;background:var(--bg-muted);border-top:1px solid var(--border);">
+                        <div style="font-size:.75rem;font-weight:700;letter-spacing:.05em;color:var(--text);">{{ layout_info.label }}</div>
+                        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.1rem;">{{ layout_info.description|truncatechars:35 }}</div>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
         <!-- Idioma base del estudio -->
         <div class="form-grid-2">
             <div class="form-group">
@@ -177,6 +208,16 @@ document.querySelectorAll('.skin-radio').forEach(radio => {
             card.style.borderColor = 'var(--border)';
         });
         this.closest('label').querySelector('.skin-card').style.borderColor = 'var(--gold)';
+    });
+});
+
+// Highlight layout card when radio changes
+document.querySelectorAll('.layout-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.layout-card').forEach(card => {
+            card.style.borderColor = 'var(--border)';
+        });
+        this.closest('label').querySelector('.layout-card').style.borderColor = 'var(--gold)';
     });
 });
 </script>

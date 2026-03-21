@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block titulo %}{% trans "Artists" %} — {{ estudio_config.nombre }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── IMPACTO GALLERY ── */
+    body { background: #000; }
+
+    .imp-g-intro {
+        padding: 3.5rem 0 2.5rem;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        margin-bottom: 0;
+    }
+    .imp-g-eyebrow {
+        font-size: .68rem; letter-spacing:.3em; text-transform:uppercase;
+        color: var(--gold); margin-bottom: .75rem;
+    }
+    .imp-g-heading {
+        font-size: clamp(2.5rem, 7vw, 5.5rem);
+        color: #fff; line-height: .95; margin: 0 0 1.5rem;
+    }
+
+    /* ── FULL-WIDTH TILES ── */
+    .imp-tiles { display: flex; flex-direction: column; }
+
+    .imp-tile {
+        position: relative;
+        min-height: 340px;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+        transition: min-height .35s;
+    }
+    .imp-tile:hover { min-height: 420px; }
+
+    .imp-tile-bg {
+        position: absolute; inset: 0;
+        background-size: cover;
+        background-position: center;
+        transition: transform .5s ease, filter .3s;
+        filter: brightness(.45);
+    }
+    .imp-tile:hover .imp-tile-bg {
+        transform: scale(1.05);
+        filter: brightness(.6);
+    }
+
+    .imp-tile-no-photo {
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, #0f0f0f 60%, #1a1a1a);
+    }
+
+    .imp-tile-content {
+        position: relative;
+        z-index: 1;
+        padding: 2rem 2.5rem;
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .imp-tile-left { flex: 1; min-width: 200px; }
+    .imp-tile-num {
+        font-size: .72rem; font-weight: 700; color: var(--gold);
+        letter-spacing: .15em; margin-bottom: .5rem;
+    }
+    .imp-tile-name {
+        font-size: clamp(1.8rem, 5vw, 3.5rem);
+        color: #fff; line-height: 1;
+        text-shadow: 0 2px 20px rgba(0,0,0,.8);
+    }
+    .imp-tile-styles {
+        display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .6rem;
+    }
+
+    .imp-tile-right {
+        display: flex; flex-direction: column; align-items: flex-end; gap: .5rem;
+    }
+    .imp-tile-stat { font-size: .78rem; color: rgba(255,255,255,.5); text-align: right; }
+    .imp-tile-cta {
+        display: inline-flex; align-items: center; gap: .4rem;
+        border: 1px solid rgba(255,255,255,.3); color: #fff;
+        padding: .55rem 1.25rem; border-radius: var(--radius);
+        font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+        text-transform: uppercase;
+        transition: background .2s, border-color .2s, gap .2s;
+        text-decoration: none;
+    }
+    .imp-tile:hover .imp-tile-cta {
+        background: var(--gold); border-color: var(--gold); color: #000; gap: .7rem;
+    }
+
+    /* Bottom CTA strip */
+    .imp-bottom-cta {
+        padding: 3rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Empty slate */
+    .imp-empty { padding: 5rem 0; text-align: center; color: rgba(255,255,255,.4); }
+    .imp-empty h2 { font-size: 2rem; color: #fff; margin-bottom: .5rem; }
+
+    @media(max-width:600px) {
+        .imp-tile-content { padding: 1.5rem; }
+        .imp-tile-right { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- INTRO -->
+<div class="imp-g-intro">
+    <p class="imp-g-eyebrow">{{ estudio_config.nombre }} / {% trans "Artists" %}</p>
+    <h1 class="imp-g-heading">{% trans "MEET THE ARTISTS" %}</h1>
+    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Book a Consultation" %}</a>
+</div>
+
+<!-- TILES -->
+{% if artistas %}
+    <div class="imp-tiles">
+        {% for item in artistas %}
+        <a href="{% url 'perfil_tatuador' item.tatuador.id %}" class="imp-tile">
+            <!-- BG -->
+            {% if item.preview %}
+                <div class="imp-tile-bg"
+                     style="background-image:url('{{ item.preview.0.imagen.url }}');"></div>
+            {% else %}
+                <div class="imp-tile-no-photo"></div>
+            {% endif %}
+
+            <!-- CONTENT -->
+            <div class="imp-tile-content">
+                <div class="imp-tile-left">
+                    <p class="imp-tile-num">{{ forloop.counter|stringformat:"02d" }}</p>
+                    <h2 class="imp-tile-name">
+                        {{ item.tatuador.get_full_name|default:item.tatuador.username|upper }}
+                    </h2>
+                    <div class="imp-tile-styles">
+                        {% for estilo in item.estilos %}
+                            <span class="badge badge-gold">{{ estilo }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="imp-tile-right">
+                    <span class="imp-tile-stat">
+                        {{ item.total }} work{{ item.total|pluralize:"s" }}
+                    </span>
+                    <span class="imp-tile-cta">{% trans "Portfolio" %} →</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="imp-empty">
+        <h2>{% trans "No artists yet" %}</h2>
+        <p>{% trans "Check back soon." %}</p>
+    </div>
+{% endif %}
+
+<!-- BOTTOM CTA -->
+<div class="imp-bottom-cta">
+    <p style="color:rgba(255,255,255,.45);font-size:.85rem;margin-bottom:1rem;">
+        {% trans "Ready to get inked?" %}
+    </p>
+    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Request a Quote" %}</a>
+</div>
+
+{% endblock %}

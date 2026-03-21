@@ -34,12 +34,14 @@ def estudio(request):
     """
     from .models import ConfiguracionEstudio
     from .skins import get_skin, render_skin_css, SKINS
+    from .layouts import LAYOUTS
     config   = ConfiguracionEstudio.get_config()
     skin_key = config.skin or 'noir'
     skin_d   = get_skin(skin_key)
     return {
-        'estudio_config':      config,
-        'skin_css':            render_skin_css(skin_key),
-        'skin_data':           skin_d,
-        'skins_disponibles':   list(SKINS.items()),
+        'estudio_config':       config,
+        'skin_css':             render_skin_css(skin_key),
+        'skin_data':            skin_d,
+        'skins_disponibles':    list(SKINS.items()),
+        'layouts_disponibles':  list(LAYOUTS.items()),
     }

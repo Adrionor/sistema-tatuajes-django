@@ -78,7 +78,7 @@ class ConfiguracionEstudioForm(forms.ModelForm):
         fields = ('nombre', 'slogan', 'direccion', 'telefono', 'whatsapp',
                   'instagram', 'facebook', 'email_contacto', 'descripcion',
                   'imagen_hero', 'moneda', 'porcentaje_anticipo',
-                  'skin', 'idioma')
+                  'skin', 'plantilla_layout', 'idioma')
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 4}),
         }

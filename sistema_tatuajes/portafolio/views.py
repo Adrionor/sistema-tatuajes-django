@@ -6,6 +6,12 @@ from django.utils import timezone
 from .models import Trabajo
 from .forms import TrabajoForm, PerfilForm
 from citas.models import BloqueoAgenda
+from usuarios.models import ConfiguracionEstudio
+
+
+def _layout():
+    """Return the active layout slug from studio config."""
+    return ConfiguracionEstudio.get_config().plantilla_layout or 'clasico'
 
 
 def galeria_portafolio(request):
@@ -36,7 +42,7 @@ def galeria_portafolio(request):
                 'estilos':  list({t.estilo for t in trabajos}),
                 'viajes':   viajes,
             })
-    return render(request, 'portafolio/galeria.html', {'artistas': artistas})
+    return render(request, f'portafolio/galeria_{_layout()}.html', {'artistas': artistas})
 
 
 def perfil_tatuador(request, tatuador_id):
@@ -52,10 +58,10 @@ def perfil_tatuador(request, tatuador_id):
         fecha_fin__gte=hoy,
     ).order_by('fecha_inicio')[:6]
 
-    return render(request, 'portafolio/perfil_tatuador.html', {
-        'tatuador':         tatuador,
-        'trabajos':         trabajos,
-        'estilos':          estilos,
+    return render(request, f'portafolio/perfil_{_layout()}.html', {
+        'tatuador':          tatuador,
+        'trabajos':          trabajos,
+        'estilos':           estilos,
         'bloqueos_publicos': bloqueos_publicos,
     })
 

@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block titulo %}{% trans "Artists" %} — {{ estudio_config.nombre }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── HEADER EDITORIAL ── */
+    .rv-g-header {
+        padding: 3rem 0 2rem;
+        border-bottom: 2px solid var(--border);
+        margin-bottom: 2.5rem;
+    }
+    .rv-g-eyebrow {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: .4rem;
+    }
+    .rv-g-title {
+        font-size: clamp(2rem,5vw,3.5rem);
+        color: var(--text);
+        margin: 0;
+    }
+    .rv-g-title span { color: var(--gold); }
+    .rv-g-count { color: var(--text-muted); font-size: .88rem; margin-top: .35rem; }
+
+    /* ── ARTIST ROWS ── */
+    .rv-artist-row {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 2rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        transition: border-color .25s;
+        text-decoration: none;
+        color: inherit;
+    }
+    .rv-artist-row:hover { border-color: var(--gold-dim); }
+
+    .rv-artist-photos {
+        height: 220px;
+        position: relative;
+        overflow: hidden;
+    }
+    .rv-artist-photos img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .35s;
+    }
+    .rv-artist-row:hover .rv-artist-photos img { transform: scale(1.05); }
+    .rv-artist-photos-empty {
+        height: 220px;
+        background: var(--bg-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--border);
+    }
+
+    /* Badge showing photo count */
+    .rv-photo-count {
+        position: absolute;
+        bottom: .6rem; right: .6rem;
+        background: rgba(0,0,0,.75);
+        color: rgba(255,255,255,.7);
+        border-radius: 99px;
+        padding: .2rem .6rem;
+        font-size: .7rem;
+        font-weight: 600;
+    }
+
+    .rv-artist-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 1.75rem 2rem 1.75rem 0;
+        gap: .75rem;
+    }
+    .rv-artist-index {
+        font-family: var(--font-head);
+        font-size: 1rem;
+        color: var(--border);
+        letter-spacing: .1em;
+    }
+    .rv-artist-name {
+        font-size: clamp(1.6rem, 3vw, 2.4rem);
+        color: var(--text);
+        line-height: 1.05;
+    }
+    .rv-artist-styles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .35rem;
+    }
+    .rv-artist-stat { font-size: .82rem; color: var(--text-muted); }
+    .rv-cta {
+        margin-top: .25rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        font-size: .8rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--gold);
+        transition: gap .2s;
+    }
+    .rv-artist-row:hover .rv-cta { gap: .7rem; }
+
+    /* Empty state */
+    .rv-empty { text-align:center; padding: 4rem 2rem; color: var(--text-muted); }
+    .rv-empty h2 { font-size:1.8rem; color:var(--text); margin-bottom:.5rem; }
+
+    @media(max-width:640px) {
+        .rv-artist-row { grid-template-columns: 1fr; }
+        .rv-artist-photos, .rv-artist-photos-empty { height: 180px; }
+        .rv-artist-body { padding: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- HEADER EDITORIAL -->
+<div class="rv-g-header">
+    <p class="rv-g-eyebrow">{% trans "Tattoo Studio" %} — {{ estudio_config.nombre }}</p>
+    <h1 class="rv-g-title">{% trans "OUR" %} <span>{% trans "ARTISTS" %}</span></h1>
+    <p class="rv-g-count">
+        {% trans "Explore each artist's work and choose the one who best captures your vision." %}
+    </p>
+</div>
+
+<!-- CTA quick link -->
+<div style="text-align:right; margin-bottom:2rem;">
+    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Get a Tattoo Quote" %}</a>
+</div>
+
+<!-- ARTIST EDITORIAL ROWS -->
+{% if artistas %}
+    {% for item in artistas %}
+    <a href="{% url 'perfil_tatuador' item.tatuador.id %}" class="rv-artist-row">
+        <!-- PREVIEW IMAGE -->
+        {% if item.preview %}
+            <div class="rv-artist-photos">
+                <img src="{{ item.preview.0.imagen.url }}"
+                     alt="Portfolio {{ item.tatuador.get_full_name|default:item.tatuador.username }}">
+                {% if item.total > 1 %}
+                    <span class="rv-photo-count">+{{ item.total }}</span>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="rv-artist-photos-empty">✦</div>
+        {% endif %}
+
+        <!-- BODY -->
+        <div class="rv-artist-body">
+            <span class="rv-artist-index">{{ forloop.counter|stringformat:"02d" }}</span>
+            <h2 class="rv-artist-name">{{ item.tatuador.get_full_name|default:item.tatuador.username|upper }}</h2>
+            <div class="rv-artist-styles">
+                {% for estilo in item.estilos %}
+                    <span class="badge badge-gold">{{ estilo }}</span>
+                {% endfor %}
+            </div>
+            <p class="rv-artist-stat">{{ item.total }} trabajo{{ item.total|pluralize:"s" }}</p>
+            <span class="rv-cta">{% trans "View portfolio" %} →</span>
+        </div>
+    </a>
+    {% endfor %}
+{% else %}
+    <div class="rv-empty">
+        <h2>{% trans "No artists yet" %}</h2>
+        <p>{% trans "The studio hasn't added any artists yet. Check back soon." %}</p>
+    </div>
+{% endif %}
+
+{% endblock %}
