@@ -6,7 +6,7 @@
 <h1 class="panel-title">CONFIGURACIÓN <span class="accent">DEL ESTUDIO</span></h1>
 <p class="panel-subtitle">Información general del estudio que aparece en el sistema.</p>
 
-<form method="post" enctype="multipart/form-data">
+<form id="form-config" method="post" enctype="multipart/form-data">
 {% csrf_token %}
 
 <!-- Identidad -->
@@ -29,18 +29,6 @@
         <div class="form-group">
             <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
             {{ form.descripcion }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.imagen_hero.id_for_label }}">Imagen de fondo (Landing page)</label>
-            {% if config.imagen_hero %}
-                <div style="margin-bottom:.75rem;position:relative;">
-                    <img src="{{ config.imagen_hero.url }}" alt="Imagen hero actual"
-                         style="max-width:100%;max-height:200px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">
-                    <p style="font-size:.75rem;color:var(--text-muted);margin-top:.3rem;">Imagen actual &mdash; sube una nueva para reemplazarla</p>
-                </div>
-            {% endif %}
-            {{ form.imagen_hero }}
-            <small style="color:var(--text-muted);font-size:.75rem;">Recomendado 1920&times;1080 px. Se usará como fondo del hero en la página de inicio.</small>
         </div>
     </div>
 </div>
@@ -193,11 +181,6 @@
     </div>
 </div>
 
-<div style="display:flex;gap:1rem;align-items:center;">
-    <button type="submit" class="btn btn-gold">Guardar Configuración</button>
-    <span style="color:var(--text-muted);font-size:.82rem;">Los cambios se aplican de inmediato.</span>
-</div>
-
 </form>
 
 <!-- ─── Galería Hero (fuera del formulario principal para evitar forms anidados) ─── -->
@@ -249,6 +232,12 @@
             </small>
         </form>
     </div>
+</div>
+
+<!-- Botón guardar al final de todo -->
+<div style="display:flex;gap:1rem;align-items:center;margin-top:.5rem;">
+    <button type="submit" form="form-config" class="btn btn-gold">Guardar Configuración</button>
+    <span style="color:var(--text-muted);font-size:.82rem;">Los cambios se aplican de inmediato.</span>
 </div>
 
 <script>
