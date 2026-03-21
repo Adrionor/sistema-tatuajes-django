@@ -1,0 +1,115 @@
+# Translations for InkStudio — English
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+# ── Navbar ──────────────────────────────────────────────────────────────
+msgid "Artists"
+msgstr "Artists"
+
+msgid "Quote"
+msgstr "Get a Quote"
+
+msgid "Inbox"
+msgstr "Inbox"
+
+msgid "Schedule"
+msgstr "Schedule"
+
+msgid "Portfolio"
+msgstr "My Portfolio"
+
+msgid "Panel"
+msgstr "Panel"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "View"
+msgstr "View"
+
+msgid "No new notifications"
+msgstr "No new notifications"
+
+msgid "Mark all as read"
+msgstr "Mark all as read"
+
+msgid "Log out"
+msgstr "Log out"
+
+msgid "Artists login"
+msgstr "Artists Login"
+
+msgid "All rights reserved"
+msgstr "All rights reserved"
+
+# ── Landing ──────────────────────────────────────────────────────────────
+msgid "Request a Quote"
+msgstr "Request a Quote"
+
+msgid "Explore Artists"
+msgstr "Explore Artists"
+
+msgid "Announcements"
+msgstr "Announcements"
+
+msgid "See full portfolio"
+msgstr "See full portfolio"
+
+# ── Quote form ───────────────────────────────────────────────────────────
+msgid "New Quote Request"
+msgstr "New Quote Request"
+
+msgid "Send Request"
+msgstr "Send Request"
+
+msgid "Select a date"
+msgstr "Select an available date"
+
+# ── Artist profile ────────────────────────────────────────────────────────
+msgid "All artists"
+msgstr "All artists"
+
+msgid "works"
+msgstr "works"
+
+msgid "styles"
+msgstr "styles"
+
+msgid "availability and travels"
+msgstr "Availability & Travel Dates"
+
+msgid "I want an appointment here"
+msgstr "I want an appointment here"
+
+# ── Agenda ────────────────────────────────────────────────────────────────
+msgid "My Schedule"
+msgstr "My Schedule"
+
+msgid "Manage Blocks"
+msgstr "Manage Blocks"
+
+msgid "Upcoming appointments"
+msgstr "Upcoming appointments"
+
+# ── Panel ──────────────────────────────────────────────────────────────────
+msgid "Studio Configuration"
+msgstr "Studio Configuration"
+
+msgid "Save Configuration"
+msgstr "Save Configuration"
+
+msgid "Visual Theme"
+msgstr "Visual Theme (Skin)"
+
+msgid "Studio base language"
+msgstr "Studio base language"
+
+# ── Common ────────────────────────────────────────────────────────────────
+msgid "Spanish"
+msgstr "Spanish"
+
+msgid "English"
+msgstr "English"

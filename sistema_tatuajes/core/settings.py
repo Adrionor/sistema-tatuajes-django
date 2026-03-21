@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # i18n: detecta idioma del visitante
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -66,9 +67,11 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'usuarios.context_processors.notificaciones',
+                'usuarios.context_processors.estudio',
             ],
         },
     },
@@ -110,12 +113,23 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+from django.utils.translation import gettext_lazy as _
 
-TIME_ZONE = 'UTC'
+LANGUAGES = [
+    ('es', _('Spanish')),
+    ('en', _('English')),
+]
+
+LANGUAGE_CODE = 'es'          # Idioma por defecto del proyecto
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',       # sistema_tatuajes/locale/
+]
+
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
 
 
@@ -148,5 +162,4 @@ LOGIN_URL          = '/cuentas/login/'
 LOGIN_REDIRECT_URL = '/cotizar/recepcion/'
 LOGOUT_REDIRECT_URL = '/portafolio/'
 
-# Zona horaria México
-TIME_ZONE = 'America/Mexico_City'
+# Zona horaria ya configurada arriba en la sección i18n

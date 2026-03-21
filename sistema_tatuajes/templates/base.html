@@ -1,35 +1,26 @@
-    <!DOCTYPE html>
-<html lang="es">
+    {% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'es' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block titulo %}Ink Studio{% endblock %}</title>
+    <title>{% block titulo %}{{ estudio_config.nombre }}{% endblock %}</title>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts (dinámico según el skin activo) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {% if skin_data %}
+    <link href="{{ skin_data.fonts_url }}" rel="stylesheet">
+    {% else %}
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% endif %}
 
-    <!-- Estilos globales -->
+    <!-- Variables CSS del skin activo -->
     <style>
-        /* ===== RESET & BASE ===== */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --bg:        #0d0d0d;
-            --bg-card:   #181818;
-            --bg-muted:  #222222;
-            --border:    #2e2e2e;
-            --text:      #e8e8e8;
-            --text-muted:#999999;
-            --gold:      #c9a84c;
-            --gold-dim:  #a0823a;
-            --red:       #e63030;
-            --green:     #2ecc71;
-            --radius:    6px;
-            --font-head: 'Bebas Neue', sans-serif;
-            --font-body: 'Raleway', sans-serif;
-        }
+        {{ skin_css|safe }}
+        /* Propiedades que NO deben cambiar por skin */
+        :root { --radius: 6px; }
+    </style>
 
         html { scroll-behavior: smooth; }
 
@@ -328,16 +319,20 @@
 
     <nav class="navbar">
         <div class="navbar-inner">
-            <a href="{% url 'landing' %}" class="navbar-brand">INK<span>STUDIO</span></a>
+            <a href="{% url 'landing' %}" class="navbar-brand">
+                {% with nombre=estudio_config.nombre|default:'InkStudio' %}
+                    {{ nombre }}
+                {% endwith %}
+            </a>
             <ul class="navbar-links">
-                <li><a href="{% url 'galeria' %}">Artistas</a></li>
-                <li><a href="{% url 'nueva_cotizacion' %}">Cotizar</a></li>
+                <li><a href="{% url 'galeria' %}">{% trans "Artists" %}</a></li>
+                <li><a href="{% url 'nueva_cotizacion' %}">{% trans "Quote" %}</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'recepcion_tatuador' %}">Recepción</a></li>
-                    <li><a href="{% url 'agenda_tatuador' %}">Agenda</a></li>
-                    <li><a href="{% url 'mi_portafolio' %}">Mi Portafolio</a></li>
+                    <li><a href="{% url 'recepcion_tatuador' %}">{% trans "Inbox" %}</a></li>
+                    <li><a href="{% url 'agenda_tatuador' %}">{% trans "Schedule" %}</a></li>
+                    <li><a href="{% url 'mi_portafolio' %}">{% trans "Portfolio" %}</a></li>
                     {% if user.is_superuser or user.perfil.rol == 'propietario' %}
-                        <li><a href="{% url 'panel_dashboard' %}" style="color:var(--gold);">Panel</a></li>
+                        <li><a href="{% url 'panel_dashboard' %}" style="color:var(--gold);">{% trans "Panel" %}</a></li>
                     {% endif %}
                     <li style="position:relative;">
                         <span class="notif-bell" id="notifToggle">
@@ -347,31 +342,51 @@
                             {% endif %}
                         </span>
                         <div class="notif-dropdown" id="notifDropdown">
-                            <div class="notif-dropdown-header">Notificaciones</div>
+                            <div class="notif-dropdown-header">{% trans "Notifications" %}</div>
                             {% if notificaciones_recientes %}
                                 {% for n in notificaciones_recientes %}
                                     <div class="notif-item">
                                         {{ n.mensaje }}
-                                        {% if n.url %}<a href="{{ n.url }}">Ver →</a>{% endif %}
+                                        {% if n.url %}<a href="{{ n.url }}">{% trans "View" %} →</a>{% endif %}
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <div class="notif-empty">Sin notificaciones nuevas</div>
+                                <div class="notif-empty">{% trans "No new notifications" %}</div>
                             {% endif %}
                             <div class="notif-footer">
-                                <a href="{% url 'marcar_notificaciones_leidas' %}">Marcar todas como leídas</a>
+                                <a href="{% url 'marcar_notificaciones_leidas' %}">{% trans "Mark all as read" %}</a>
                             </div>
                         </div>
                     </li>
                     <li>
                         <form method="post" action="{% url 'logout' %}" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" style="background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:.85rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);transition:color .2s;padding:0;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-muted)'">Salir</button>
+                            <button type="submit" style="background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:.85rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);transition:color .2s;padding:0;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-muted)'">{% trans "Log out" %}</button>
                         </form>
                     </li>
                 {% else %}
-                    <li><a href="{% url 'login' %}" style="color:var(--gold);">Tatuadores</a></li>
+                    <li><a href="{% url 'login' %}" style="color:var(--gold);">{% trans "Artists login" %}</a></li>
                 {% endif %}
+
+                <!-- 🌐 Selector de idioma -->
+                <li style="margin-left:.5rem;">
+                    <form action="{% url 'set_language' %}" method="post" id="lang-form"
+                          style="display:flex;align-items:center;gap:.2rem;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="es"
+                                style="background:none;border:none;cursor:pointer;font-size:.8rem;font-weight:700;letter-spacing:.06em;padding:.2rem .4rem;border-radius:3px;
+                                       color:{% if LANGUAGE_CODE == 'es' %}var(--gold){% else %}var(--text-muted){% endif %};
+                                       text-decoration:{% if LANGUAGE_CODE == 'es' %}underline{% else %}none{% endif %};"
+                                title="Español">ES</button>
+                        <span style="color:var(--border);">|</span>
+                        <button type="submit" name="language" value="en"
+                                style="background:none;border:none;cursor:pointer;font-size:.8rem;font-weight:700;letter-spacing:.06em;padding:.2rem .4rem;border-radius:3px;
+                                       color:{% if LANGUAGE_CODE == 'en' %}var(--gold){% else %}var(--text-muted){% endif %};
+                                       text-decoration:{% if LANGUAGE_CODE == 'en' %}underline{% else %}none{% endif %};"
+                                title="English">EN</button>
+                    </form>
+                </li>
             </ul>
         </div>
     </nav>
@@ -398,7 +413,7 @@
     </div>
 
     <footer>
-        &copy; 2026 Ink Studio &mdash; Todos los derechos reservados
+        &copy; 2026 {{ estudio_config.nombre }} &mdash; {% trans "All rights reserved" %}
     </footer>
 
     {% block extra_scripts %}{% endblock %}

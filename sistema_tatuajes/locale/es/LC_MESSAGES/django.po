@@ -1,0 +1,116 @@
+# Translations for InkStudio — Spanish (Español)
+# This file is auto-compiled with: python manage.py compilemessages
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+
+# ── Navbar ──────────────────────────────────────────────────────────────
+msgid "Artists"
+msgstr "Artistas"
+
+msgid "Quote"
+msgstr "Cotizar"
+
+msgid "Inbox"
+msgstr "Recepción"
+
+msgid "Schedule"
+msgstr "Agenda"
+
+msgid "Portfolio"
+msgstr "Mi Portafolio"
+
+msgid "Panel"
+msgstr "Panel"
+
+msgid "Notifications"
+msgstr "Notificaciones"
+
+msgid "View"
+msgstr "Ver"
+
+msgid "No new notifications"
+msgstr "Sin notificaciones nuevas"
+
+msgid "Mark all as read"
+msgstr "Marcar todas como leídas"
+
+msgid "Log out"
+msgstr "Salir"
+
+msgid "Artists login"
+msgstr "Acceso Tatuadores"
+
+msgid "All rights reserved"
+msgstr "Todos los derechos reservados"
+
+# ── Landing ──────────────────────────────────────────────────────────────
+msgid "Request a Quote"
+msgstr "Solicitar Cotización"
+
+msgid "Explore Artists"
+msgstr "Ver Artistas"
+
+msgid "Announcements"
+msgstr "Anuncios"
+
+msgid "See full portfolio"
+msgstr "Ver portafolio completo"
+
+# ── Quote form ───────────────────────────────────────────────────────────
+msgid "New Quote Request"
+msgstr "Nueva Solicitud de Cotización"
+
+msgid "Send Request"
+msgstr "Enviar Solicitud"
+
+msgid "Select a date"
+msgstr "Selecciona una fecha disponible"
+
+# ── Artist profile ────────────────────────────────────────────────────────
+msgid "All artists"
+msgstr "Todos los artistas"
+
+msgid "works"
+msgstr "trabajos"
+
+msgid "styles"
+msgstr "estilos"
+
+msgid "availability and travels"
+msgstr "Disponibilidad y Viajes"
+
+msgid "I want an appointment here"
+msgstr "Quiero cita aquí"
+
+# ── Agenda ────────────────────────────────────────────────────────────────
+msgid "My Schedule"
+msgstr "Mi Agenda"
+
+msgid "Manage Blocks"
+msgstr "Gestionar Bloqueos"
+
+msgid "Upcoming appointments"
+msgstr "Próximas citas"
+
+# ── Panel ──────────────────────────────────────────────────────────────────
+msgid "Studio Configuration"
+msgstr "Configuración del Estudio"
+
+msgid "Save Configuration"
+msgstr "Guardar Configuración"
+
+msgid "Visual Theme"
+msgstr "Tema Visual"
+
+msgid "Studio base language"
+msgstr "Idioma base del estudio"
+
+# ── Common ────────────────────────────────────────────────────────────────
+msgid "Spanish"
+msgstr "Español"
+
+msgid "English"
+msgstr "Inglés"

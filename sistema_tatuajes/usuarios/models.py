@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
+from .skins import skin_choices
 
 
 class Perfil(models.Model):
@@ -51,6 +53,25 @@ class ConfiguracionEstudio(models.Model):
     moneda          = models.CharField(max_length=10, default='MXN')
     porcentaje_anticipo = models.PositiveSmallIntegerField(default=30,
         help_text='% de anticipo requerido para confirmar cita')
+
+    # ── Apariencia ──────────────────────────────────────────────
+    skin          = models.CharField(
+        max_length=20, default='noir',
+        choices=skin_choices,
+        verbose_name='Tema visual',
+        help_text='Paleta de colores y tipografía del sitio',
+    )
+
+    # ── Idioma por defecto del estudio ──────────────────────────
+    IDIOMAS = (
+        ('es', 'Español'),
+        ('en', 'English'),
+    )
+    idioma = models.CharField(
+        max_length=8, default='es', choices=IDIOMAS,
+        verbose_name='Idioma base',
+        help_text='Los visitantes podrán cambiarlo desde la página.',
+    )
 
     class Meta:
         verbose_name = 'Configuración del Estudio'

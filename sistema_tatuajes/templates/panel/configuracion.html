@@ -113,10 +113,71 @@
     </div>
 </div>
 
+<!-- Apariencia / Skin -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">🎨 Tema Visual (Skin)</span>
+    </div>
+    <div class="section-card-body">
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.25rem;">
+            Cambia la paleta de colores y tipografía de todo el sitio. El cambio se aplica instantáneamente al guardar.
+        </p>
+        <!-- Tarjetas visuales de cada skin -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem;">
+            {% for skin_key, skin_info in skins_disponibles %}
+            <label style="cursor:pointer;">
+                <input type="radio" name="skin" value="{{ skin_key }}"
+                       {% if estudio_config.skin == skin_key %}checked{% endif %}
+                       style="display:none;" class="skin-radio">
+                <div class="skin-card" data-skin="{{ skin_key }}"
+                     style="border-radius:var(--radius);border:2px solid {% if estudio_config.skin == skin_key %}var(--gold){% else %}var(--border){% endif %};
+                            overflow:hidden;transition:border-color .2s;">
+                    <!-- Miniatura de color -->
+                    <div style="height:60px;background:{{ skin_info.preview_bg }};
+                                display:flex;align-items:center;justify-content:center;
+                                font-size:1.2rem;gap:.4rem;">
+                        <span style="width:18px;height:18px;border-radius:50%;background:{{ skin_info.preview_accent }};"></span>
+                        <span style="width:12px;height:12px;border-radius:50%;background:{{ skin_info.preview_bg }};border:2px solid {{ skin_info.preview_accent }};"></span>
+                    </div>
+                    <!-- Nombre -->
+                    <div style="padding:.5rem .75rem;background:var(--bg-muted);border-top:1px solid var(--border);">
+                        <div style="font-size:.75rem;font-weight:700;letter-spacing:.05em;color:var(--text);">{{ skin_info.label|truncatechars:18 }}</div>
+                        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.1rem;">{{ skin_info.description|truncatechars:30 }}</div>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <!-- Idioma base del estudio -->
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ form.idioma.id_for_label }}">🌐 Idioma base del estudio</label>
+                {{ form.idioma }}
+                <small style="color:var(--text-muted);font-size:.75rem;">
+                    Idioma predeterminado. Los visitantes podrán cambiarlo con el selector ES/EN del menú.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div style="display:flex;gap:1rem;align-items:center;">
     <button type="submit" class="btn btn-gold">Guardar Configuración</button>
     <span style="color:var(--text-muted);font-size:.82rem;">Los cambios se aplican de inmediato.</span>
 </div>
 
 </form>
+
+<script>
+// Highlight skin card when radio changes
+document.querySelectorAll('.skin-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.skin-card').forEach(card => {
+            card.style.borderColor = 'var(--border)';
+        });
+        this.closest('label').querySelector('.skin-card').style.borderColor = 'var(--gold)';
+    });
+});
+</script>
 {% endblock %}

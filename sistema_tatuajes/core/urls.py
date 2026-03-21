@@ -11,6 +11,7 @@ urlpatterns = [
     path('cotizar/',    include('cotizaciones.urls')),
     path('citas/',      include('citas.urls')),
     path('panel/',      include('usuarios.urls')),
+    path('i18n/',       include('django.conf.urls.i18n')),  # cambio de idioma
 
     # Sistema de login/logout de Django para tatuadores
     path('cuentas/', include('django.contrib.auth.urls')),
