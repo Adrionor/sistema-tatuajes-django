@@ -38,7 +38,7 @@ class CotizacionForm(forms.ModelForm):
         fields = [
             'nombre_cliente', 'email_cliente', 'telefono_cliente',
             'tatuador', 'fecha_solicitada',
-            'estilo', 'zona_cuerpo', 'tamano', 'imagen_referencia',
+            'estilo', 'zona_cuerpo', 'tamano',
             'notas_cliente',
         ]
 
@@ -56,7 +56,6 @@ class CotizacionForm(forms.ModelForm):
         self.fields['estilo'].label           = 'Estilo de tatuaje'
         self.fields['zona_cuerpo'].label      = 'Zona del cuerpo'
         self.fields['tamano'].label           = 'Tamaño aproximado'
-        self.fields['imagen_referencia'].label = 'Imagen de referencia'
         self.fields['notas_cliente'].label      = 'Cuéntanos tu idea'
 
     def clean_fecha_solicitada(self):

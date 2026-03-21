@@ -34,7 +34,7 @@ class Cotizacion(models.Model):
     estilo          = models.CharField(max_length=50)
     zona_cuerpo     = models.CharField(max_length=100)
     tamano          = models.CharField(max_length=50)
-    imagen_referencia = models.ImageField(upload_to='referencias/')
+    imagen_referencia = models.ImageField(upload_to='referencias/', null=True, blank=True)
 
     # El cliente elige solo la fecha; el tatuador define la hora al confirmar
     fecha_solicitada = models.DateField(null=True, blank=True)
@@ -74,3 +74,18 @@ class Mensaje(models.Model):
 
     def __str__(self):
         return f"[{self.autor}] {self.cotizacion.nombre_cliente} — {self.fecha_creacion:%d/%m/%Y %H:%M}"
+
+
+class ReferenciaImagen(models.Model):
+    """Una imagen de referencia para una cotización (puede haber varias por cotización)."""
+    cotizacion = models.ForeignKey(
+        Cotizacion, on_delete=models.CASCADE, related_name='referencias'
+    )
+    imagen = models.ImageField(upload_to='referencias/')
+    orden  = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['orden']
+
+    def __str__(self):
+        return f"Referencia #{self.orden} — {self.cotizacion.nombre_cliente}"

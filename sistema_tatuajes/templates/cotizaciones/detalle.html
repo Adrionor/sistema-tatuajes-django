@@ -204,8 +204,19 @@
             {% endif %}
         </div>
 
-        <!-- Reference image -->
-        {% if cotizacion.imagen_referencia %}
+        <!-- Reference images -->
+        {% with refs=cotizacion.referencias.all %}
+        {% if refs %}
+        <div class="d-card">
+            <div class="d-card-title">Imágenes de Referencia</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.5rem;">
+                {% for ref in refs %}
+                <img src="{{ ref.imagen.url }}" alt="Referencia {{ forloop.counter }}"
+                     class="thumb" onclick="openLightbox(this.src)" />
+                {% endfor %}
+            </div>
+        </div>
+        {% elif cotizacion.imagen_referencia %}
         <div class="d-card">
             <div class="d-card-title">Imagen de Referencia</div>
             <img src="{{ cotizacion.imagen_referencia.url }}"
@@ -213,6 +224,7 @@
                  onclick="openLightbox(this.src)" />
         </div>
         {% endif %}
+        {% endwith %}
 
         <!-- Payment proof -->
         {% if cotizacion.comprobante_anticipo %}

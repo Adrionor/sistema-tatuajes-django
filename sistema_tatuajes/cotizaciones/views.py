@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
-from .models import Cotizacion
+from .models import Cotizacion, ReferenciaImagen
 from .forms import CotizacionForm, ComprobanteForm, CancelacionForm
 from . import emails
 
@@ -26,6 +26,10 @@ def solicitar_cotizacion(request, tatuador_id=None):
                                tatuador_inicial=tatuador_inicial)
         if form.is_valid():
             cotizacion = form.save()
+            # Save uploaded reference images (up to 6)
+            archivos = request.FILES.getlist('referencias')
+            for i, archivo in enumerate(archivos[:6]):
+                ReferenciaImagen.objects.create(cotizacion=cotizacion, imagen=archivo, orden=i)
             emails.correo_cotizacion_pedida(cotizacion)
             return redirect('galeria')
     else:

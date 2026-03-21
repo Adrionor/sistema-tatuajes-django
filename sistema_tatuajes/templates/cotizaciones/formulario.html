@@ -106,10 +106,16 @@
                     {{ form.tamano }}
                     {% for e in form.tamano.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
                 </div>
-                <div class="form-group">
-                    <label for="{{ form.imagen_referencia.id_for_label }}">{{ form.imagen_referencia.label }}</label>
-                    {{ form.imagen_referencia }}
-                    {% for e in form.imagen_referencia.errors %}<p style="color:#f57373;font-size:.8rem;margin:.3rem 0 0;">{{ e }}</p>{% endfor %}
+                <!-- Multi-file reference images -->
+                <div class="form-group full-width">
+                    <label style="display:block;margin-bottom:.5rem;">{% trans "Reference images" %} <span style="color:var(--text-muted);font-weight:400;">({% trans "up to 6" %})</span></label>
+                    <div id="drop-zone" style="border:2px dashed var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--bg-muted);">
+                        <input type="file" id="id_referencias" name="referencias" multiple accept="image/*" style="display:none;">
+                        <p id="drop-label" style="color:var(--text-muted);font-size:.85rem;margin:0;">
+                            {% trans "Click or drag images here" %}
+                        </p>
+                    </div>
+                    <div id="preview-grid" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;"></div>
                 </div>
             </div>
         </div>
@@ -170,6 +176,77 @@
                     calendario.set('disable', []);
                 }
             });
+
+            // ── Multi-image drop zone ─────────────────────────────
+            const dropZone   = document.getElementById('drop-zone');
+            const fileInput  = document.getElementById('id_referencias');
+            const previewGrid = document.getElementById('preview-grid');
+            const dropLabel  = document.getElementById('drop-label');
+            const MAX_FILES  = 6;
+
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            dropZone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--gold)';
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.borderColor = 'var(--border)';
+            });
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--border)';
+                addFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', () => addFiles(fileInput.files));
+
+            // Keep a live FileList-like array across selections
+            let selectedFiles = [];
+
+            function addFiles(newFiles) {
+                for (const f of newFiles) {
+                    if (!f.type.startsWith('image/')) continue;
+                    if (selectedFiles.length >= MAX_FILES) break;
+                    selectedFiles.push(f);
+                }
+                renderPreviews();
+            }
+
+            function renderPreviews() {
+                previewGrid.innerHTML = '';
+                selectedFiles.forEach((file, idx) => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const wrap = document.createElement('div');
+                        wrap.style.cssText = 'position:relative;width:80px;height:80px;flex-shrink:0;';
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);';
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.textContent = '✕';
+                        btn.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;line-height:1;padding:0;';
+                        btn.addEventListener('click', () => {
+                            selectedFiles.splice(idx, 1);
+                            renderPreviews();
+                        });
+                        wrap.appendChild(img);
+                        wrap.appendChild(btn);
+                        previewGrid.appendChild(wrap);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                // Sync a real hidden DataTransfer into the file input
+                // so the form POSTs the selected files
+                const dt = new DataTransfer();
+                selectedFiles.forEach(f => dt.items.add(f));
+                fileInput.files = dt.files;
+                const count = selectedFiles.length;
+                dropLabel.textContent = count === 0
+                    ? 'Click o arrastra imágenes aquí'
+                    : `${count} imagen${count > 1 ? 'es' : ''} seleccionada${count > 1 ? 's' : ''} (máx. ${MAX_FILES})`;
+            }
         });
     </script>
 {% endblock %}

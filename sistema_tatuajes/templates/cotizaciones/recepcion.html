@@ -52,9 +52,13 @@
 <div class="requests-grid" style="margin-bottom:3rem;">
     {% for c in pendientes %}
     <article class="request-card">
-        {% if c.imagen_referencia %}
+        {% with primera=c.referencias.first %}
+        {% if primera %}
+        <div class="request-card-img"><img src="{{ primera.imagen.url }}" alt="Referencia"></div>
+        {% elif c.imagen_referencia %}
         <div class="request-card-img"><img src="{{ c.imagen_referencia.url }}" alt="Referencia"></div>
         {% endif %}
+        {% endwith %}
         <div class="request-card-body">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;">
                 <strong style="font-size:1rem;">{{ c.nombre_cliente }}</strong>
@@ -84,9 +88,13 @@
 <div class="requests-grid" style="margin-bottom:3rem;">
     {% for c in anticipo_subido %}
     <article class="request-card estado-anticipo">
-        {% if c.imagen_referencia %}
+        {% with primera=c.referencias.first %}
+        {% if primera %}
+        <div class="request-card-img"><img src="{{ primera.imagen.url }}" alt="Referencia"></div>
+        {% elif c.imagen_referencia %}
         <div class="request-card-img"><img src="{{ c.imagen_referencia.url }}" alt="Referencia"></div>
         {% endif %}
+        {% endwith %}
         <div class="request-card-body">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;">
                 <strong style="font-size:1rem;">{{ c.nombre_cliente }}</strong>

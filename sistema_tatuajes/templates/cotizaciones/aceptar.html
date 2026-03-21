@@ -58,10 +58,20 @@
     <div class="info-card">
         <h2 style="font-size:1.6rem; margin-bottom:1.25rem; color:var(--gold);">SOLICITUD #{{ cotizacion.id }}</h2>
 
-        {% if cotizacion.imagen_referencia %}
+        {% with refs=cotizacion.referencias.all %}
+        {% if refs %}
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem;margin-bottom:1.25rem;">
+                {% for ref in refs %}
+                    <img src="{{ ref.imagen.url }}" alt="Referencia {{ forloop.counter }}"
+                         style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;"
+                         onclick="window.open(this.src,'_blank')">
+                {% endfor %}
+            </div>
+        {% elif cotizacion.imagen_referencia %}
             <img src="{{ cotizacion.imagen_referencia.url }}" alt="Referencia"
                  style="width:100%;border-radius:var(--radius);margin-bottom:1.25rem;object-fit:cover;max-height:220px;">
         {% endif %}
+        {% endwith %}
 
         <div class="info-row">
             <span class="label">Cliente</span>
