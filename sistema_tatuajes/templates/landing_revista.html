@@ -20,7 +20,18 @@
         justify-content: center;
         padding: 4rem 4rem 4rem 5vw;
         gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
     }
+    .rv-hero-left-bg {
+        position: absolute; inset: 0;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(.2) saturate(.5);
+        transition: transform 14s ease;
+    }
+    .rv-hero-left:hover .rv-hero-left-bg { transform: scale(1.06); }
+    .rv-hero-left > *:not(.rv-hero-left-bg) { position: relative; z-index: 1; }
     .rv-label {
         font-size: .72rem;
         font-weight: 700;
@@ -190,6 +201,9 @@
 <!-- HERO REVISTA -->
 <section class="rv-hero">
     <div class="rv-hero-left">
+        {% if config.imagen_hero %}
+        <div class="rv-hero-left-bg" style="background-image:url('{{ config.imagen_hero.url }}');"></div>
+        {% endif %}
         <p class="rv-label">{% trans "Tattoo Studio" %}</p>
         {% with nombre=config.nombre %}
         <h1 class="rv-studio-name">

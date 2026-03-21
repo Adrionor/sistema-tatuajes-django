@@ -17,7 +17,18 @@
         text-align: center;
         padding: 4rem 2rem;
         gap: 1.25rem;
+        position: relative;
+        overflow: hidden;
     }
+    .mn-hero-bg {
+        position: absolute; inset: 0;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(.25) saturate(.6);
+        transition: transform 12s ease;
+    }
+    .mn-hero:hover .mn-hero-bg { transform: scale(1.04); }
+    .mn-hero > * { position: relative; z-index: 1; }
     .mn-eyebrow {
         font-size: .7rem;
         font-weight: 700;
@@ -158,6 +169,9 @@
 
 <!-- HERO MINIMAL -->
 <section class="mn-hero" id="mn-top">
+    {% if config.imagen_hero %}
+    <div class="mn-hero-bg" style="background-image:url('{{ config.imagen_hero.url }}');"></div>
+    {% endif %}
     <p class="mn-eyebrow">{% trans "Tattoo Studio" %}</p>
     <h1 class="mn-title">
         {% with nombre=config.nombre %}

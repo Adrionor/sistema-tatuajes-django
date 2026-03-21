@@ -169,12 +169,21 @@
                     </div>
                 {% endif %}
             {% endfor %}
-            {% comment %}Fill remaining cells with pattern{% endcomment %}
+            {% comment %}Fill remaining cells with hero image or pattern{% endcomment %}
+            {% if config.imagen_hero %}
+            <div class="mo-grid-cell" style="background-image:url('{{ config.imagen_hero.url }}');background-size:cover;background-position:center;"></div>
+            <div class="mo-grid-cell" style="background-image:url('{{ config.imagen_hero.url }}');background-size:cover;background-position:center 30%;"></div>
+            {% else %}
             <div class="mo-grid-cell" style="background:radial-gradient(ellipse at 30% 60%, #1a0f00, #050505);"></div>
             <div class="mo-grid-cell" style="background:radial-gradient(ellipse at 70% 40%, #110a00, #050505);"></div>
+            {% endif %}
         {% else %}
-            <!-- No announcements — pure dark gradient mosaic -->
+            <!-- No announcements: use hero image or dark gradient -->
+            {% if config.imagen_hero %}
+            <div class="mo-grid-cell wide tall" style="background-image:url('{{ config.imagen_hero.url }}');background-size:cover;background-position:center;"></div>
+            {% else %}
             <div class="mo-grid-cell wide tall" style="background:linear-gradient(135deg,#1a0f00,#050505);"></div>
+            {% endif %}
             <div class="mo-grid-cell" style="background:#0a0a0a;"></div>
             <div class="mo-grid-cell" style="background:#111111;"></div>
             <div class="mo-grid-cell" style="background:linear-gradient(225deg,#1a1408,#050505);"></div>
