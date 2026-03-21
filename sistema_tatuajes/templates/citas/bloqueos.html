@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block titulo %}Mis Bloqueos de Agenda — Ink Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .bloqueos-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 2rem;
+        align-items: start;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    @media(max-width:780px) { .bloqueos-layout { grid-template-columns: 1fr; } }
+
+    /* ── Card ── */
+    .card-box {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.75rem;
+    }
+    .card-box h2 { font-size: 1.4rem; margin-bottom: 1.25rem; }
+
+    /* ── Tipo badges ── */
+    .tipo-badge {
+        display: inline-block;
+        padding: .2rem .65rem;
+        border-radius: 99px;
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+    }
+    .tipo-vacaciones          { background: rgba(46,204,113,.12);  color: var(--green); border: 1px solid rgba(46,204,113,.4); }
+    .tipo-evento              { background: rgba(201,168,76,.15);  color: var(--gold);  border: 1px solid var(--gold-dim); }
+    .tipo-viaje_nacional      { background: rgba(100,160,255,.12); color: #80b4ff;      border: 1px solid rgba(100,160,255,.35); }
+    .tipo-viaje_internacional { background: rgba(130,90,200,.18);  color: #b07ef5;      border: 1px solid rgba(130,90,200,.4); }
+    .tipo-otro                { background: var(--bg-muted);       color: var(--text-muted); border: 1px solid var(--border); }
+
+    /* ── Bloqueo row ── */
+    .bloqueo-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .bloqueo-row:last-child { border-bottom: none; }
+
+    .bloqueo-icon {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        background: var(--bg-muted);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        border: 1px solid var(--border);
+    }
+
+    .bloqueo-body { flex: 1; }
+    .bloqueo-dates {
+        font-size: .8rem;
+        color: var(--text-muted);
+        margin: .15rem 0 .3rem;
+    }
+    .bloqueo-desc {
+        font-size: .82rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+    .bloqueo-location {
+        font-size: .78rem;
+        color: var(--gold);
+        font-weight: 600;
+        margin-top: .2rem;
+    }
+    .bloqueo-public {
+        font-size: .7rem;
+        color: var(--text-muted);
+        margin-top: .3rem;
+    }
+
+    /* ── Form ── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media(max-width:480px) { .form-row { grid-template-columns: 1fr; } }
+    .section-label {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin: 1.25rem 0 .6rem;
+    }
+
+    /* Viaje fields — hide/show */
+    #viaje-fields { display: none; }
+    #viaje-fields.visible { display: block; }
+
+    /* Checkbox styled */
+    .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        margin-top: .5rem;
+    }
+    .checkbox-row input[type=checkbox] { accent-color: var(--gold); width: 16px; height: 16px; }
+    .checkbox-row label { font-size: .88rem; color: var(--text-muted); cursor: pointer; }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 0;
+        color: var(--text-muted);
+    }
+    .empty-state .big { font-size: 2.5rem; margin-bottom: .5rem; }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<a href="{% url 'agenda_tatuador' %}"
+   style="display:inline-flex;align-items:center;gap:.4rem;color:var(--text-muted);font-size:.85rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2rem;transition:color .2s;"
+   onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
+    &larr; Volver a la Agenda
+</a>
+
+<div style="margin-bottom:2rem;">
+    <h1 style="font-size:clamp(2rem,5vw,3rem);">BLOQUEOS <span style="color:var(--gold);">DE AGENDA</span></h1>
+    <p style="color:var(--text-muted);font-size:.9rem;margin-top:.4rem;">
+        Bloquea periodos completos en los que no estarás disponible: vacaciones, viajes, eventos, etc.
+        <br>Los clientes <strong style="color:var(--text);">no podrán solicitar citas</strong> en las fechas bloqueadas.
+    </p>
+</div>
+
+{% if messages %}
+<div style="margin-bottom:1.5rem;">
+    {% for m in messages %}
+    <div style="background:{% if 'error' in m.tags %}rgba(220,50,50,.12){% else %}rgba(46,204,113,.1){% endif %};border:1px solid {% if 'error' in m.tags %}rgba(220,50,50,.4){% else %}rgba(46,204,113,.4){% endif %};border-radius:var(--radius);padding:.85rem 1.1rem;font-size:.88rem;color:{% if 'error' in m.tags %}var(--red){% else %}var(--green){% endif %};">
+        {{ m }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="bloqueos-layout">
+
+    <!-- ══ Lista de bloqueos actuales ══ -->
+    <div class="card-box">
+        <h2>PERIODOS <span style="color:var(--gold);">BLOQUEADOS</span></h2>
+
+        {% if bloqueos %}
+            {% for b in bloqueos %}
+            <div class="bloqueo-row">
+                <div class="bloqueo-icon">
+                    {% if b.tipo == 'vacaciones' %}🏖️
+                    {% elif b.tipo == 'evento' %}🎪
+                    {% elif b.tipo == 'viaje_nacional' %}🚗
+                    {% elif b.tipo == 'viaje_internacional' %}✈️
+                    {% else %}🔒{% endif %}
+                </div>
+                <div class="bloqueo-body">
+                    <span class="tipo-badge tipo-{{ b.tipo }}">{{ b.get_tipo_display }}</span>
+                    <div class="bloqueo-dates">
+                        📅 {{ b.fecha_inicio|date:"d M Y" }}
+                        {% if b.fecha_inicio != b.fecha_fin %}
+                            → {{ b.fecha_fin|date:"d M Y" }}
+                        {% endif %}
+                    </div>
+                    {% if b.ciudad or b.pais %}
+                    <div class="bloqueo-location">
+                        📍 {% if b.ciudad %}{{ b.ciudad }}, {% endif %}{{ b.pais }}
+                    </div>
+                    {% endif %}
+                    {% if b.descripcion %}
+                    <div class="bloqueo-desc">{{ b.descripcion }}</div>
+                    {% endif %}
+                    <div class="bloqueo-public">
+                        {% if b.publico %}👁️ Visible en tu perfil público{% else %}🔐 Oculto al público{% endif %}
+                    </div>
+                </div>
+                <form method="post" action="{% url 'eliminar_bloqueo' b.pk %}"
+                      onsubmit="return confirm('¿Eliminar este bloqueo?')">
+                    {% csrf_token %}
+                    <button type="submit"
+                            style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;padding:.25rem;"
+                            title="Eliminar">🗑️</button>
+                </form>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="big">📭</div>
+                <p>No tienes periodos bloqueados.<br>Usa el formulario para agregar uno.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- ══ Formulario para crear bloqueo ══ -->
+    <div class="card-box">
+        <h2>NUEVO <span style="color:var(--gold);">BLOQUEO</span></h2>
+
+        <form method="post" action="{% url 'crear_bloqueo' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Tipo de bloqueo</label>
+                <select name="tipo" id="tipo-select" onchange="toggleViajeFields(this.value)">
+                    <option value="vacaciones">🏖️ Vacaciones</option>
+                    <option value="evento">🎪 Evento / Convención</option>
+                    <option value="viaje_nacional">🚗 Viaje a otro estado</option>
+                    <option value="viaje_internacional">✈️ Viaje internacional</option>
+                    <option value="otro">🔒 Otro</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha inicio</label>
+                    <input type="date" name="fecha_inicio" required>
+                </div>
+                <div class="form-group">
+                    <label>Fecha fin</label>
+                    <input type="date" name="fecha_fin" required>
+                </div>
+            </div>
+
+            <!-- Campos extra para viajes -->
+            <div id="viaje-fields">
+                <p class="section-label">Detalles del viaje</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ciudad / Estado</label>
+                        <input type="text" name="ciudad" placeholder="Ej: Guadalajara">
+                    </div>
+                    <div class="form-group">
+                        <label>País</label>
+                        <input type="text" name="pais" placeholder="México" value="México">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción (opcional)</label>
+                <textarea name="descripcion" rows="2"
+                          placeholder="Breve nota para tus clientes…"
+                          style="resize:vertical;"></textarea>
+            </div>
+
+            <div class="checkbox-row">
+                <input type="checkbox" name="publico" id="publico-check" checked>
+                <label for="publico-check">
+                    Visible en mi perfil público<br>
+                    <span style="font-size:.75rem;color:var(--text-muted);">
+                        Si es un viaje, tus seguidores podrán ver dónde tatúas.
+                    </span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-block" style="margin-top:1.25rem;">
+                Crear Bloqueo
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function toggleViajeFields(tipo) {
+        const fields = document.getElementById('viaje-fields');
+        if (tipo === 'viaje_nacional' || tipo === 'viaje_internacional') {
+            fields.classList.add('visible');
+        } else {
+            fields.classList.remove('visible');
+        }
+    }
+    // Set today as min for date inputs
+    const hoy = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type=date]').forEach(i => i.min = hoy);
+</script>
+{% endblock %}

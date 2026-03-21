@@ -199,6 +199,19 @@
                         {% endfor %}
                     </div>
 
+                    <!-- VIAJES PRÓXIMOS (si los hay) -->
+                    {% if item.viajes %}
+                    <div style="margin-top:.6rem;display:flex;flex-wrap:wrap;gap:.35rem;">
+                        {% for v in item.viajes %}
+                        <span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.68rem;font-weight:700;padding:.18rem .6rem;border-radius:99px;background:rgba(100,160,255,.1);color:#80b4ff;border:1px solid rgba(100,160,255,.3);">
+                            {% if v.tipo == 'viaje_internacional' %}✈️{% else %}🚗{% endif %}
+                            {% if v.ciudad %}{{ v.ciudad }}{% else %}{{ v.pais }}{% endif %}
+                            · {{ v.fecha_inicio|date:"d M" }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
                     <div class="card-footer">
                         <span class="btn btn-outline" style="font-size:.8rem; padding:.5rem 1.2rem;">
                             Ver Portafolio &rarr;

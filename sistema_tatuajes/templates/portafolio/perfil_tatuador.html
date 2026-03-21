@@ -348,6 +348,59 @@
 </div>
 {% endif %}
 
+<!-- ── DISPONIBILIDAD / VIAJES ────────────────────────────────────────── -->
+{% if bloqueos_publicos %}
+<div style="margin-top:3rem;">
+    <h2 style="font-size:1.75rem;margin-bottom:.4rem;">DISPONIBILIDAD <span style="color:var(--gold);">Y VIAJES</span></h2>
+    <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;">
+        Periodos en los que este artista no estará disponible en su sede habitual,
+        o en los que tatúa en otra ciudad — ¡puede que esté cerca de ti!
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;">
+        {% for b in bloqueos_publicos %}
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.4rem;display:flex;gap:.9rem;align-items:flex-start;min-width:220px;max-width:340px;flex:1;">
+            <span style="font-size:1.6rem;flex-shrink:0;">
+                {% if b.tipo == 'vacaciones' %}🏖️
+                {% elif b.tipo == 'evento' %}🎪
+                {% elif b.tipo == 'viaje_nacional' %}🚗
+                {% elif b.tipo == 'viaje_internacional' %}✈️
+                {% else %}📅{% endif %}
+            </span>
+            <div style="flex:1;">
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+                            color:{% if b.tipo == 'viaje_internacional' %}#b07ef5{% elif b.tipo == 'viaje_nacional' %}#80b4ff{% elif b.tipo == 'vacaciones' %}var(--green){% else %}var(--gold){% endif %};
+                            margin-bottom:.25rem;">
+                    {{ b.get_tipo_display }}
+                </div>
+                <div style="font-size:.9rem;font-weight:600;color:var(--text);">
+                    {{ b.fecha_inicio|date:"d M" }}
+                    {% if b.fecha_inicio != b.fecha_fin %}→ {{ b.fecha_fin|date:"d M Y" }}{% else %}{{ b.fecha_inicio|date:"Y" }}{% endif %}
+                </div>
+                {% if b.ciudad or b.pais %}
+                <div style="font-size:.82rem;color:var(--gold);margin-top:.2rem;">
+                    📍 {% if b.ciudad %}{{ b.ciudad }}, {% endif %}{{ b.pais }}
+                </div>
+                {% endif %}
+                {% if b.descripcion %}
+                <div style="font-size:.8rem;color:var(--text-muted);margin-top:.3rem;line-height:1.5;">
+                    {{ b.descripcion }}
+                </div>
+                {% endif %}
+                {% if b.es_viaje %}
+                <div style="margin-top:.6rem;">
+                    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-outline"
+                       style="font-size:.72rem;padding:.3rem .9rem;">
+                        Quiero cita aquí →
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 <!-- WORK LIGHTBOX -->
 <div id="work-lightbox" onclick="closeLightboxOutside(event)">
     <span class="wlb-close" onclick="closeWork()">&times;</span>

@@ -31,3 +31,47 @@ class Cita(models.Model):
             f"{self.cotizacion.nombre_cliente} — "
             f"{self.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M')}"
         )
+
+
+class BloqueoAgenda(models.Model):
+    """
+    Periodo bloqueado manualmente por el tatuador.
+    Puede ser vacaciones, un viaje a trabajar a otro estado/país, un evento, etc.
+    Las fechas dentro de este rango NO aparecerán disponibles en el formulario de cotización.
+    """
+    TIPOS = (
+        ('vacaciones',          'Vacaciones'),
+        ('evento',              'Evento / Convención'),
+        ('viaje_nacional',      'Viaje a otro estado'),
+        ('viaje_internacional', 'Viaje internacional'),
+        ('otro',                'Otro'),
+    )
+
+    tatuador     = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='bloqueos_agenda'
+    )
+    tipo         = models.CharField(max_length=25, choices=TIPOS, default='otro')
+    fecha_inicio = models.DateField()
+    fecha_fin    = models.DateField()
+    descripcion  = models.TextField(blank=True, help_text='Descripción opcional para el cliente')
+    ciudad       = models.CharField(max_length=100, blank=True,
+                                    help_text='Ciudad donde trabajará (solo para viajes)')
+    pais         = models.CharField(max_length=80, blank=True, default='México',
+                                    help_text='País (solo para viajes)')
+    publico      = models.BooleanField(
+        default=True,
+        help_text='Si está activo, los clientes pueden ver este periodo en tu perfil público'
+    )
+
+    class Meta:
+        ordering = ['fecha_inicio']
+
+    def __str__(self):
+        return (
+            f"{self.tatuador.username}: {self.get_tipo_display()} "
+            f"{self.fecha_inicio} – {self.fecha_fin}"
+        )
+
+    @property
+    def es_viaje(self):
+        return self.tipo in ('viaje_nacional', 'viaje_internacional')

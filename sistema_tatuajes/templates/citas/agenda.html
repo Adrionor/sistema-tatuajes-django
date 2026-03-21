@@ -110,6 +110,32 @@
         color: var(--red);
     }
 
+    .cal-cell.bloqueado {
+        background: rgba(220,50,50,.06);
+        position: relative;
+    }
+    .cal-cell.bloqueado::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 5px,
+            rgba(220,50,50,.08) 5px,
+            rgba(220,50,50,.08) 10px
+        );
+    }
+    .bloq-label {
+        font-size: .58rem;
+        color: var(--red);
+        font-weight: 700;
+        letter-spacing: .04em;
+        opacity: .8;
+        display: block;
+        margin-top: .1rem;
+    }
+
     /* ── Lista próximas ── */
     .proximas-card {
         background: var(--bg-card);
@@ -181,8 +207,15 @@
 {% block contenido %}
 
 <div class="page-header" style="margin-bottom:2rem;">
-    <h1>MI <span class="accent">AGENDA</span></h1>
-    <p>Citas confirmadas y próximas sesiones.</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div>
+            <h1>MI <span class="accent">AGENDA</span></h1>
+            <p>Citas confirmadas y próximas sesiones.</p>
+        </div>
+        <a href="{% url 'gestionar_bloqueos' %}" class="btn btn-outline" style="font-size:.82rem;padding:.55rem 1.2rem;">
+            🔒 Gestionar Bloqueos
+        </a>
+    </div>
     <div class="divider"></div>
 </div>
 
@@ -211,8 +244,9 @@
                     {% if dia == 0 %}
                     <div class="cal-cell empty"></div>
                     {% else %}
-                    <div class="cal-cell {% if dia == hoy.day and mes == hoy.month and anio == hoy.year %}today{% endif %}">
+                    <div class="cal-cell {% if dia == hoy.day and mes == hoy.month and anio == hoy.year %}today{% endif %} {% if dia in dias_bloqueados %}bloqueado{% endif %}">
                         <div class="day-num">{{ dia }}</div>
+                        {% if dia in dias_bloqueados %}<span class="bloq-label">bloqueado</span>{% endif %}
                         {% for cita_dia, citas_lista in citas_por_dia.items %}
                             {% if cita_dia == dia %}
                                 {% for cita in citas_lista %}
@@ -260,4 +294,44 @@
     </div>
 
 </div>
+
+<!-- ■ Próximos bloqueos / viajes -->
+{% if proximos_bloqueos %}
+<div style="margin-top:2.5rem;">
+    <h2 style="font-size:1.5rem;margin-bottom:1.2rem;">PERIODOS <span style="color:var(--gold);">BLOQUEADOS</span></h2>
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;">
+        {% for b in proximos_bloqueos %}
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;gap:.8rem;align-items:flex-start;min-width:240px;max-width:320px;">
+            <span style="font-size:1.5rem;flex-shrink:0;">
+                {% if b.tipo == 'vacaciones' %}🏖️
+                {% elif b.tipo == 'evento' %}🎠
+                {% elif b.tipo == 'viaje_nacional' %}🚗
+                {% elif b.tipo == 'viaje_internacional' %}✈️
+                {% else %}🔒{% endif %}
+            </span>
+            <div>
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gold);margin-bottom:.25rem;">{{ b.get_tipo_display }}</div>
+                <div style="font-size:.85rem;font-weight:600;color:var(--text);">{{ b.fecha_inicio|date:"d M" }} → {{ b.fecha_fin|date:"d M Y" }}</div>
+                {% if b.ciudad or b.pais %}
+                <div style="font-size:.78rem;color:var(--text-muted);margin-top:.2rem;">📍 {% if b.ciudad %}{{ b.ciudad }}, {% endif %}{{ b.pais }}</div>
+                {% endif %}
+                {% if b.descripcion %}
+                <div style="font-size:.78rem;color:var(--text-muted);margin-top:.2rem;">{{ b.descripcion }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        <a href="{% url 'gestionar_bloqueos' %}" style="display:flex;align-items:center;justify-content:center;min-width:120px;background:var(--bg-muted);border:1px dashed var(--border);border-radius:var(--radius);padding:1rem;color:var(--gold);font-size:.8rem;font-weight:700;text-decoration:none;gap:.4rem;">
+            + Agregar
+        </a>
+    </div>
+</div>
+{% else %}
+<div style="margin-top:2.5rem;text-align:center;">
+    <a href="{% url 'gestionar_bloqueos' %}" class="btn btn-outline" style="font-size:.82rem;">
+        🔒 No tienes bloqueos activos — Agregar uno
+    </a>
+</div>
+{% endif %}
+
 {% endblock %}

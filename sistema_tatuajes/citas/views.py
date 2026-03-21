@@ -6,7 +6,7 @@ import calendar
 from datetime import date, timedelta
 from cotizaciones.models import Cotizacion
 from cotizaciones import emails
-from .models import Cita
+from .models import Cita, BloqueoAgenda
 from . import services
 
 
@@ -44,11 +44,27 @@ def agenda_tatuador(request):
         fecha_hora_inicio__date__lte=ultimo_dia,
     ).select_related('cotizacion').order_by('fecha_hora_inicio')
 
-    # Indexar por día para el grid
+    # Indexar citas por día para el grid
     citas_por_dia = {}
     for cita in citas_mes:
         d = cita.fecha_hora_inicio.date().day
         citas_por_dia.setdefault(d, []).append(cita)
+
+    # Bloqueos que se solapan con el mes visible
+    bloqueos_mes = BloqueoAgenda.objects.filter(
+        tatuador=request.user,
+        fecha_inicio__lte=ultimo_dia,
+        fecha_fin__gte=primer_dia,
+    )
+    # Conjunto de días bloqueados en el mes para el grid
+    dias_bloqueados = set()
+    for b in bloqueos_mes:
+        d_ini = max(b.fecha_inicio, primer_dia)
+        d_fin = min(b.fecha_fin,   ultimo_dia)
+        cur   = d_ini
+        while cur <= d_fin:
+            dias_bloqueados.add(cur.day)
+            cur += timedelta(days=1)
 
     # Construir el grid del calendario
     cal = calendar.monthcalendar(anio, mes)  # lista de semanas (0 = fuera del mes)
@@ -61,19 +77,27 @@ def agenda_tatuador(request):
         fecha_hora_inicio__date__lte=hoy + timedelta(days=60),
     ).select_related('cotizacion').order_by('fecha_hora_inicio')
 
+    # Próximos bloqueos / viajes (siguiente 90 días)
+    proximos_bloqueos = BloqueoAgenda.objects.filter(
+        tatuador=request.user,
+        fecha_fin__gte=hoy,
+    ).order_by('fecha_inicio')[:10]
+
     return render(request, 'citas/agenda.html', {
-        'hoy':         hoy,
-        'anio':        anio,
-        'mes':         mes,
-        'mes_nombre':  ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][mes],
-        'cal':         cal,
-        'citas_por_dia': citas_por_dia,
-        'prev_mes':    prev_mes,
-        'prev_anio':   prev_anio,
-        'next_mes':    next_mes,
-        'next_anio':   next_anio,
-        'proximas':    proximas,
+        'hoy':             hoy,
+        'anio':            anio,
+        'mes':             mes,
+        'mes_nombre':      ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][mes],
+        'cal':             cal,
+        'citas_por_dia':   citas_por_dia,
+        'dias_bloqueados': dias_bloqueados,
+        'proximas':        proximas,
+        'proximos_bloqueos': proximos_bloqueos,
+        'prev_mes':        prev_mes,
+        'prev_anio':       prev_anio,
+        'next_mes':        next_mes,
+        'next_anio':       next_anio,
     })
 
 
@@ -162,8 +186,78 @@ def cancelar_cita(request, cita_id):
     return render(request, 'citas/cancelar_cita.html', {'cita': cita})
 
 
-def obtener_fechas_ocupadas(request, tatuador_id):
-    """API: devuelve fechas bloqueadas de un tatuador para el datepicker."""
-    citas = Cita.objects.filter(tatuador_id=tatuador_id, estado='programada')
-    fechas = list({c.fecha_hora_inicio.strftime('%Y-%m-%d') for c in citas})
-    return JsonResponse(fechas, safe=False)
+def api_periodos_bloqueados(request, tatuador_id):
+    """
+    API: devuelve los rangos de fechas bloqueadas de un tatuador.
+    Formato: [{"from": "2026-04-01", "to": "2026-04-07"}, ...]
+    Flatpickr acepta este formato en su opción `disable`.
+    Los días con citas ya agendadas NO se bloquean — el tatuador puede
+    atender a varias personas en el mismo día en diferentes horarios.
+    """
+    bloqueos = BloqueoAgenda.objects.filter(tatuador_id=tatuador_id)
+    rangos = [
+        {'from': b.fecha_inicio.strftime('%Y-%m-%d'),
+         'to':   b.fecha_fin.strftime('%Y-%m-%d')}
+        for b in bloqueos
+    ]
+    return JsonResponse(rangos, safe=False)
+
+
+# ─── Gestión de bloqueos ──────────────────────────────────────────────────────
+
+@login_required
+def gestionar_bloqueos(request):
+    """Lista de periodos bloqueados del tatuador, con botón para crear/eliminar."""
+    bloqueos = BloqueoAgenda.objects.filter(
+        tatuador=request.user
+    ).order_by('fecha_inicio')
+    return render(request, 'citas/bloqueos.html', {'bloqueos': bloqueos})
+
+
+@login_required
+def crear_bloqueo(request):
+    """Crear un nuevo periodo de bloqueo."""
+    if request.method == 'POST':
+        from django.utils.dateparse import parse_date
+        tipo         = request.POST.get('tipo', 'otro')
+        fecha_inicio = parse_date(request.POST.get('fecha_inicio', ''))
+        fecha_fin    = parse_date(request.POST.get('fecha_fin', ''))
+        descripcion  = request.POST.get('descripcion', '').strip()
+        ciudad       = request.POST.get('ciudad', '').strip()
+        pais         = request.POST.get('pais', 'México').strip() or 'México'
+        publico      = request.POST.get('publico') == 'on'
+
+        if not fecha_inicio or not fecha_fin:
+            from django.contrib import messages
+            messages.error(request, 'Las fechas son obligatorias.')
+            return redirect('gestionar_bloqueos')
+
+        if fecha_fin < fecha_inicio:
+            from django.contrib import messages
+            messages.error(request, 'La fecha de fin no puede ser anterior a la de inicio.')
+            return redirect('gestionar_bloqueos')
+
+        BloqueoAgenda.objects.create(
+            tatuador=request.user,
+            tipo=tipo,
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin,
+            descripcion=descripcion,
+            ciudad=ciudad,
+            pais=pais,
+            publico=publico,
+        )
+        from django.contrib import messages
+        messages.success(request, 'Periodo bloqueado correctamente.')
+    return redirect('gestionar_bloqueos')
+
+
+@login_required
+def eliminar_bloqueo(request, bloqueo_id):
+    """Elimina un bloqueo propio."""
+    bloqueo = get_object_or_404(BloqueoAgenda, pk=bloqueo_id, tatuador=request.user)
+    if request.method == 'POST':
+        bloqueo.delete()
+        from django.contrib import messages
+        messages.success(request, 'Bloqueo eliminado.')
+    return redirect('gestionar_bloqueos')

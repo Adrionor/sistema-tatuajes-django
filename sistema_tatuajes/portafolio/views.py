@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
+from django.utils import timezone
 from .models import Trabajo
 from .forms import TrabajoForm, PerfilForm
+from citas.models import BloqueoAgenda
 
 
 def galeria_portafolio(request):
@@ -13,15 +15,26 @@ def galeria_portafolio(request):
         .prefetch_related('trabajos_portafolio')
         .distinct()
     )
+    hoy = timezone.localdate()
     artistas = []
     for tatuador in tatuadores:
         trabajos = list(tatuador.trabajos_portafolio.all())
         if trabajos:
+            # Próximos viajes públicos del artista (para badge "tatúa cerca")
+            viajes = list(
+                BloqueoAgenda.objects.filter(
+                    tatuador=tatuador,
+                    publico=True,
+                    tipo__in=('viaje_nacional', 'viaje_internacional'),
+                    fecha_fin__gte=hoy,
+                ).order_by('fecha_inicio')[:2]
+            )
             artistas.append({
                 'tatuador': tatuador,
                 'preview':  trabajos[:3],
                 'total':    len(trabajos),
                 'estilos':  list({t.estilo for t in trabajos}),
+                'viajes':   viajes,
             })
     return render(request, 'portafolio/galeria.html', {'artistas': artistas})
 
@@ -30,10 +43,20 @@ def perfil_tatuador(request, tatuador_id):
     tatuador = get_object_or_404(User, pk=tatuador_id, perfil__rol='tatuador')
     trabajos = tatuador.trabajos_portafolio.all()
     estilos  = list({t.estilo for t in trabajos})
+    hoy      = timezone.localdate()
+
+    # Periodos públicos activos o próximos (90 días)
+    bloqueos_publicos = BloqueoAgenda.objects.filter(
+        tatuador=tatuador,
+        publico=True,
+        fecha_fin__gte=hoy,
+    ).order_by('fecha_inicio')[:6]
+
     return render(request, 'portafolio/perfil_tatuador.html', {
-        'tatuador': tatuador,
-        'trabajos': trabajos,
-        'estilos':  estilos,
+        'tatuador':         tatuador,
+        'trabajos':         trabajos,
+        'estilos':          estilos,
+        'bloqueos_publicos': bloqueos_publicos,
     })
 
 
