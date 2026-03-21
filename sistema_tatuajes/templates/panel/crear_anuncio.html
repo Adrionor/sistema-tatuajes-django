@@ -1,0 +1,124 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}{% if editando %}Editar Anuncio{% else %}Nuevo Anuncio{% endif %} — Panel{% endblock %}
+{% block active_anuncios %}active{% endblock %}
+
+{% block panel_content %}
+<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;">
+    <a href="{% url 'panel_anuncios' %}" style="color:var(--text-muted);font-size:.85rem;">← Anuncios</a>
+    <span style="color:var(--border);">/</span>
+    <span style="color:var(--text-muted);font-size:.85rem;">{% if editando %}Editar{% else %}Nuevo{% endif %}</span>
+</div>
+
+<h1 class="panel-title">
+    {% if editando %}EDITAR <span class="accent">ANUNCIO</span>{% else %}NUEVO <span class="accent">ANUNCIO</span>{% endif %}
+</h1>
+<p class="panel-subtitle">
+    {% if editando %}Modifica los datos del anuncio.{% else %}Crea un anuncio que aparecerá en la landing page pública.{% endif %}
+</p>
+
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">Información del Anuncio</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ form.titulo.id_for_label }}">Título *</label>
+                {{ form.titulo }}
+                {% if form.titulo.errors %}<p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ form.titulo.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.tipo.id_for_label }}">Tipo</label>
+                {{ form.tipo }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
+            {{ form.descripcion }}
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="{{ form.fecha_evento.id_for_label }}">Fecha del evento / colaboración</label>
+                {{ form.fecha_evento }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.orden.id_for_label }}">Orden de aparición</label>
+                {{ form.orden }}
+                <small style="color:var(--text-muted);font-size:.75rem;">Menor número = aparece primero</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.imagen.id_for_label }}">Imagen del anuncio</label>
+            {% if editando and anuncio.imagen %}
+                <div style="margin-bottom:.75rem;">
+                    <img src="{{ anuncio.imagen.url }}" alt="Imagen actual"
+                         style="max-width:300px;max-height:180px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">
+                    <p style="font-size:.75rem;color:var(--text-muted);margin-top:.3rem;">Imagen actual — sube una nueva para reemplazarla</p>
+                </div>
+            {% endif %}
+            {{ form.imagen }}
+            <div id="img-preview" style="display:none;margin-top:.75rem;">
+                <img id="img-preview-src" src="" alt="Vista previa"
+                     style="max-width:300px;max-height:180px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">
+            </div>
+        </div>
+
+        <div class="check-row">
+            {{ form.activo }}
+            <label for="{{ form.activo.id_for_label }}">Anuncio activo (visible en la landing page)</label>
+        </div>
+    </div>
+</div>
+
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title" style="color:#b07ef5;">Artista Asociado</span>
+        <span style="font-size:.78rem;color:var(--text-muted);">Opcional — para mostrar su portafolio en el anuncio</span>
+    </div>
+    <div class="section-card-body">
+        <div class="form-group">
+            <label for="{{ form.tatuador_asociado.id_for_label }}">Tatuador colaborador</label>
+            {{ form.tatuador_asociado }}
+            <small style="color:var(--text-muted);font-size:.75rem;">
+                Si seleccionas un artista, se mostrarán sus últimos 6 trabajos del portafolio dentro del anuncio.
+            </small>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;gap:1rem;">
+    <button type="submit" class="btn btn-gold">
+        {% if editando %}Guardar Cambios{% else %}Publicar Anuncio{% endif %}
+    </button>
+    <a href="{% url 'panel_anuncios' %}" class="btn btn-muted">Cancelar</a>
+</div>
+
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Vista previa de imagen al seleccionar
+const imgInput   = document.getElementById('{{ form.imagen.id_for_label }}');
+const imgPreview = document.getElementById('img-preview');
+const imgSrc     = document.getElementById('img-preview-src');
+if (imgInput) {
+    imgInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                imgSrc.src = e.target.result;
+                imgPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+}
+</script>
+{% endblock %}

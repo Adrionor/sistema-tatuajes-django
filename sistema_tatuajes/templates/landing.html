@@ -1,0 +1,477 @@
+{% extends "base.html" %}
+{% block titulo %}{{ config.nombre }} — Estudio de Tatuajes{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Override page-wrapper for full-width landing */
+    .page-wrapper { max-width: 100%; padding: 0; }
+
+    /* ── Hero ────────────────────────────────────────────────── */
+    .hero {
+        position: relative;
+        height: 100vh;
+        min-height: 560px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .hero-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        background-attachment: scroll;
+        transition: transform .1s linear;
+    }
+
+    /* Dark gradient overlay — deep at top+bottom, medium in center */
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,.70) 0%,
+            rgba(0,0,0,.45) 45%,
+            rgba(0,0,0,.55) 75%,
+            rgba(0,0,0,.85) 100%
+        );
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 2rem;
+        max-width: 800px;
+    }
+
+    .hero-logo {
+        font-family: var(--font-head);
+        font-size: clamp(4rem, 14vw, 10rem);
+        letter-spacing: .12em;
+        line-height: 1;
+        color: #fff;
+        text-shadow: 0 0 60px rgba(201,168,76,.4), 0 4px 24px rgba(0,0,0,.8);
+    }
+
+    .hero-logo span { color: var(--gold); }
+
+    .hero-divider {
+        width: 80px;
+        height: 2px;
+        background: var(--gold);
+        margin: 1.2rem auto;
+    }
+
+    .hero-slogan {
+        font-size: clamp(.95rem, 2.5vw, 1.25rem);
+        color: rgba(255,255,255,.75);
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        font-weight: 300;
+        margin-bottom: 2.5rem;
+    }
+
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* Scroll-down arrow */
+    .scroll-arrow {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        color: rgba(255,255,255,.5);
+        font-size: 1.5rem;
+        animation: bounce 2s infinite;
+        cursor: pointer;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ── Sección anuncios ─────────────────────────────────────── */
+    .section-anuncios {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 5rem 2rem;
+    }
+
+    .section-heading {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .section-heading h2 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        color: var(--text);
+    }
+    .section-heading h2 .accent { color: var(--gold); }
+    .section-heading p {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-top: .5rem;
+    }
+
+    /* grid de anuncios */
+    .anuncios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 1.75rem;
+    }
+
+    .anuncio-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform .2s, box-shadow .2s;
+    }
+    .anuncio-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0,0,0,.5);
+    }
+
+    .anuncio-img {
+        height: 220px;
+        width: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .anuncio-img-placeholder {
+        height: 220px;
+        background: var(--bg-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--border);
+    }
+
+    .anuncio-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; gap: .75rem; }
+
+    .anuncio-meta { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+
+    .tipo-badge {
+        display: inline-block;
+        padding: .22rem .7rem;
+        border-radius: 99px;
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+    }
+    .tipo-colaboracion { background: rgba(130,90,200,.18); color: #b07ef5; border: 1px solid rgba(130,90,200,.4); }
+    .tipo-concurso     { background: rgba(201,168,76,.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+    .tipo-voluntarios  { background: rgba(46,204,113,.12); color: var(--green); border: 1px solid rgba(46,204,113,.4); }
+    .tipo-evento       { background: rgba(100,160,255,.12); color: #80b4ff; border: 1px solid rgba(100,160,255,.35); }
+    .tipo-otro         { background: var(--bg-muted); color: var(--text-muted); border: 1px solid var(--border); }
+
+    .anuncio-fecha { font-size: .78rem; color: var(--text-muted); }
+
+    .anuncio-titulo {
+        font-family: var(--font-head);
+        font-size: 1.5rem;
+        color: var(--text);
+        letter-spacing: .04em;
+    }
+    .anuncio-desc {
+        font-size: .9rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        flex: 1;
+    }
+
+    /* Mini portafolio del artista colaborador */
+    .colab-section { margin-top: .5rem; }
+    .colab-header {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        margin-bottom: .75rem;
+        padding-top: .75rem;
+        border-top: 1px solid var(--border);
+    }
+    .colab-avatar {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--gold);
+    }
+    .colab-avatar-ph {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: var(--bg-muted);
+        border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-head);
+        font-size: .9rem;
+        color: var(--gold);
+    }
+    .colab-name { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .colab-esp  { font-size: .74rem; color: var(--text-muted); }
+
+    .colab-works {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+    }
+    .colab-work-img {
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 4px;
+        width: 100%;
+        cursor: pointer;
+        transition: opacity .15s;
+    }
+    .colab-work-img:hover { opacity: .8; }
+
+    .colab-link {
+        display: inline-block;
+        margin-top: .65rem;
+        font-size: .78rem;
+        color: var(--gold);
+        font-weight: 600;
+        letter-spacing: .05em;
+    }
+    .colab-link:hover { color: var(--gold-dim); }
+
+    /* ── CTA final ────────────────────────────────────────────── */
+    .cta-strip {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1008 50%, #0a0a0a 100%);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 5rem 2rem;
+        text-align: center;
+    }
+    .cta-strip h2 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        color: var(--text);
+        margin-bottom: .6rem;
+    }
+    .cta-strip h2 .accent { color: var(--gold); }
+    .cta-strip p { color: var(--text-muted); margin-bottom: 2rem; font-size: 1rem; }
+    .cta-btns   { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+        .anuncios-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<!-- ═══════════════════════════════════════════════════════════ HERO -->
+<section class="hero" id="hero-top">
+
+    <!-- Background image (set from panel) -->
+    <div class="hero-bg" id="hero-bg"
+         style="{% if config.imagen_hero %}background-image:url('{{ config.imagen_hero.url }}');{% else %}background: radial-gradient(ellipse at center, #1a0f00 0%, #050505 70%);{% endif %}">
+    </div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        {% with nombre=config.nombre %}
+        {% if "ink" in nombre|lower or "studio" in nombre|lower or "tattoo" in nombre|lower %}
+            <h1 class="hero-logo">
+                {% for word in nombre.split %}
+                    {% if forloop.first %}<span>{{ word }}</span>{% else %}{{ word }}{% endif %}
+                {% endfor %}
+            </h1>
+        {% else %}
+            <h1 class="hero-logo"><span>{{ nombre }}</span></h1>
+        {% endif %}
+        {% endwith %}
+
+        <div class="hero-divider"></div>
+
+        {% if config.slogan %}
+            <p class="hero-slogan">{{ config.slogan }}</p>
+        {% else %}
+            <p class="hero-slogan">Arte en tu piel &mdash; Hecho para durar</p>
+        {% endif %}
+
+        <div class="hero-ctas">
+            <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="font-size:1rem;padding:.85rem 2rem;">
+                Cotizar Tatuaje
+            </a>
+            <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:1rem;padding:.85rem 2rem;">
+                Ver Artistas
+            </a>
+        </div>
+    </div>
+
+    <div class="scroll-arrow" onclick="document.getElementById('anuncios-section').scrollIntoView({behavior:'smooth'})">
+        ▼
+    </div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════ ANUNCIOS -->
+{% if anuncios_data %}
+<section class="section-anuncios" id="anuncios-section">
+    <div class="section-heading">
+        <h2>LO QUE SE <span class="accent">VIENE</span></h2>
+        <p>Eventos, colaboraciones y convocatorias del estudio</p>
+        <div class="divider" style="margin:1rem auto 0;"></div>
+    </div>
+
+    <div class="anuncios-grid">
+        {% for item in anuncios_data %}
+        {% with a=item.anuncio trabajos=item.trabajos %}
+        <div class="anuncio-card">
+
+            <!-- Imagen principal del anuncio -->
+            {% if a.imagen %}
+                <img src="{{ a.imagen.url }}" alt="{{ a.titulo }}" class="anuncio-img">
+            {% else %}
+                <div class="anuncio-img-placeholder">
+                    {% if a.tipo == 'colaboracion' %}🎨
+                    {% elif a.tipo == 'concurso' %}🏆
+                    {% elif a.tipo == 'voluntarios' %}🙋
+                    {% elif a.tipo == 'evento' %}📅
+                    {% else %}📢{% endif %}
+                </div>
+            {% endif %}
+
+            <div class="anuncio-body">
+                <div class="anuncio-meta">
+                    <span class="tipo-badge tipo-{{ a.tipo }}">
+                        {% if a.tipo == 'colaboracion' %}🎨 Colaboración
+                        {% elif a.tipo == 'concurso' %}🏆 Concurso
+                        {% elif a.tipo == 'voluntarios' %}🙋 Voluntarios
+                        {% elif a.tipo == 'evento' %}📅 Evento
+                        {% else %}📢 Anuncio{% endif %}
+                    </span>
+                    {% if a.fecha_evento %}
+                        <span class="anuncio-fecha">{{ a.fecha_evento|date:"d M Y" }}</span>
+                    {% endif %}
+                </div>
+
+                <h3 class="anuncio-titulo">{{ a.titulo }}</h3>
+
+                {% if a.descripcion %}
+                    <p class="anuncio-desc">{{ a.descripcion }}</p>
+                {% endif %}
+
+                <!-- Portafolio del colaborador -->
+                {% if a.tatuador_asociado and trabajos %}
+                <div class="colab-section">
+                    <div class="colab-header">
+                        {% with p=a.tatuador_asociado.perfil %}
+                        {% if p.foto_perfil %}
+                            <img src="{{ p.foto_perfil.url }}" alt="" class="colab-avatar">
+                        {% else %}
+                            <div class="colab-avatar-ph">
+                                {{ a.tatuador_asociado.first_name|first|upper|default:a.tatuador_asociado.username|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <div class="colab-name">
+                                {{ a.tatuador_asociado.get_full_name|default:a.tatuador_asociado.username }}
+                            </div>
+                            {% if p.especialidad %}
+                                <div class="colab-esp">{{ p.especialidad }}</div>
+                            {% endif %}
+                        </div>
+                        {% endwith %}
+                    </div>
+
+                    <div class="colab-works">
+                        {% for t in trabajos %}
+                            <img src="{{ t.imagen.url }}"
+                                 alt="{{ t.titulo|default:t.estilo }}"
+                                 class="colab-work-img"
+                                 onclick="openLanding('{{ t.imagen.url }}')">
+                        {% endfor %}
+                    </div>
+
+                    <a href="{% url 'perfil_tatuador' a.tatuador_asociado.pk %}" class="colab-link">
+                        Ver portafolio completo →
+                    </a>
+                </div>
+                {% elif a.tatuador_asociado and not trabajos %}
+                <div class="colab-section">
+                    <div class="colab-header">
+                        {% with p=a.tatuador_asociado.perfil %}
+                        {% if p.foto_perfil %}
+                            <img src="{{ p.foto_perfil.url }}" alt="" class="colab-avatar">
+                        {% else %}
+                            <div class="colab-avatar-ph">
+                                {{ a.tatuador_asociado.first_name|first|upper|default:a.tatuador_asociado.username|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <div class="colab-name">
+                                {{ a.tatuador_asociado.get_full_name|default:a.tatuador_asociado.username }}
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </div>
+                    <a href="{% url 'perfil_tatuador' a.tatuador_asociado.pk %}" class="colab-link">
+                        Ver perfil del artista →
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════════════════════════ CTA FINAL -->
+<div class="cta-strip">
+    <h2>¿LISTO PARA TU <span class="accent">PRÓXIMO TATUAJE?</span></h2>
+    <p>Cuéntanos tu idea y uno de nuestros artistas te dará una cotización personalizada.</p>
+    <div class="cta-btns">
+        <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="font-size:1rem;padding:.85rem 2.2rem;">
+            Solicitar Cotización
+        </a>
+        <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:1rem;padding:.85rem 2.2rem;">
+            Conocer Artistas
+        </a>
+    </div>
+</div>
+
+<!-- Lightbox simple para trabajos del colaborador -->
+<div id="landing-lightbox"
+     onclick="closeLanding()"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;">
+    <img id="landing-lb-img" src="" alt=""
+         style="max-width:90vw;max-height:88vh;border-radius:6px;object-fit:contain;box-shadow:0 0 60px rgba(0,0,0,.8);">
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function openLanding(src) {
+        document.getElementById('landing-lb-img').src = src;
+        const lb = document.getElementById('landing-lightbox');
+        lb.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLanding() {
+        document.getElementById('landing-lightbox').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLanding(); });
+
+    // Subtle parallax on hero
+    const heroBg = document.getElementById('hero-bg');
+    if (heroBg) {
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            heroBg.style.transform = `translateY(${y * 0.35}px)`;
+        }, { passive: true });
+    }
+</script>
+{% endblock %}

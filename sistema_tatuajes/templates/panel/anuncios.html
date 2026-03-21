@@ -1,0 +1,90 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Anuncios — Panel{% endblock %}
+{% block active_anuncios %}active{% endblock %}
+
+{% block panel_content %}
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <div>
+        <h1 class="panel-title">ANUNCIOS <span class="accent">DEL ESTUDIO</span></h1>
+        <p class="panel-subtitle">Aparecen en la landing page pública. Arrastra el orden con el campo "Orden".</p>
+    </div>
+    <a href="{% url 'panel_crear_anuncio' %}" class="btn btn-gold" style="white-space:nowrap;">+ Nuevo Anuncio</a>
+</div>
+
+{% if anuncios %}
+<div style="display:grid;gap:1rem;">
+    {% for a in anuncios %}
+    <div class="section-card">
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:1.25rem;align-items:center;padding:1.1rem 1.25rem;">
+
+            <!-- Imagen miniatura -->
+            {% if a.imagen %}
+                <img src="{{ a.imagen.url }}" alt=""
+                     style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">
+            {% else %}
+                <div style="width:72px;height:72px;border-radius:6px;background:var(--bg-muted);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">
+                    {% if a.tipo == 'colaboracion' %}🎨{% elif a.tipo == 'concurso' %}🏆{% elif a.tipo == 'voluntarios' %}🙋{% elif a.tipo == 'evento' %}📅{% else %}📢{% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Info -->
+            <div style="min-width:0;">
+                <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.3rem;">
+                    <span style="font-family:var(--font-head);font-size:1.2rem;color:var(--text);">{{ a.titulo }}</span>
+                    <span class="badge
+                        {% if a.tipo == 'colaboracion' %}badge-colab
+                        {% elif a.tipo == 'concurso' %}badge-gold
+                        {% elif a.tipo == 'voluntarios' %}badge-green
+                        {% elif a.tipo == 'evento' %}badge-muted
+                        {% else %}badge-muted{% endif %}"
+                        style="{% if a.tipo == 'colaboracion' %}background:rgba(130,90,200,.18);color:#b07ef5;border-color:rgba(130,90,200,.4);{% endif %}">
+                        {{ a.get_tipo_display }}
+                    </span>
+                    {% if not a.activo %}
+                        <span class="badge badge-red">Oculto</span>
+                    {% endif %}
+                </div>
+                <div style="font-size:.82rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    {% if a.tatuador_asociado %}
+                        <span style="color:var(--gold);">🎨 {{ a.tatuador_asociado.get_full_name|default:a.tatuador_asociado.username }}</span> &mdash;
+                    {% endif %}
+                    {% if a.fecha_evento %}📅 {{ a.fecha_evento|date:"d/m/Y" }} &mdash; {% endif %}
+                    Orden: {{ a.orden }}
+                </div>
+                {% if a.descripcion %}
+                    <p style="font-size:.82rem;color:var(--text-muted);margin-top:.3rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">
+                        {{ a.descripcion }}
+                    </p>
+                {% endif %}
+            </div>
+
+            <!-- Acciones -->
+            <div class="td-actions" style="flex-direction:column;align-items:flex-end;">
+                <a href="{% url 'panel_editar_anuncio' a.pk %}" class="btn btn-muted" style="padding:.35rem .8rem;font-size:.75rem;width:80px;text-align:center;">Editar</a>
+                <form method="post" action="{% url 'panel_eliminar_anuncio' a.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-red"
+                            style="padding:.35rem .8rem;font-size:.75rem;width:80px;"
+                            onclick="return confirm('¿Eliminar el anuncio «{{ a.titulo }}»?')">
+                        Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="section-card">
+    <div class="section-card-body" style="text-align:center;padding:3rem;color:var(--text-muted);">
+        <div style="font-size:3rem;margin-bottom:1rem;">📢</div>
+        <p>No hay anuncios todavía.</p>
+        <a href="{% url 'panel_crear_anuncio' %}" class="btn btn-gold" style="margin-top:1rem;">Crear primer anuncio</a>
+    </div>
+</div>
+{% endif %}
+
+<p style="margin-top:1rem;font-size:.8rem;color:var(--text-muted);">
+    Los anuncios activos aparecen en <a href="{% url 'landing' %}" target="_blank" style="color:var(--gold);">la landing page →</a>
+</p>
+{% endblock %}

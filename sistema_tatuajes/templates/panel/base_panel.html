@@ -296,6 +296,13 @@
             </a>
         </div>
         <div class="sidebar-section">
+            <p class="sidebar-label">Contenido</p>
+            <a class="sidebar-link {% block active_anuncios %}{% endblock %}"
+               href="{% url 'panel_anuncios' %}">
+                <span class="sidebar-icon">📢</span> Anuncios
+            </a>
+        </div>
+        <div class="sidebar-section">
             <p class="sidebar-label">Estudio</p>
             <a class="sidebar-link {% block active_config %}{% endblock %}"
                href="{% url 'panel_configuracion' %}">

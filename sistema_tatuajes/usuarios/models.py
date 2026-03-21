@@ -46,6 +46,8 @@ class ConfiguracionEstudio(models.Model):
     facebook        = models.CharField(max_length=120, blank=True, help_text='URL completa o solo el usuario')
     email_contacto  = models.EmailField(blank=True)
     descripcion     = models.TextField(blank=True, help_text='Descripción breve para la página de inicio')
+    imagen_hero     = models.ImageField(upload_to='hero/', null=True, blank=True,
+        help_text='Foto de fondo de la landing page (recomendado 1920x1080 px)')
     moneda          = models.CharField(max_length=10, default='MXN')
     porcentaje_anticipo = models.PositiveSmallIntegerField(default=30,
         help_text='% de anticipo requerido para confirmar cita')
@@ -61,6 +63,41 @@ class ConfiguracionEstudio(models.Model):
         """Devuelve siempre el único registro de configuración (lo crea si no existe)."""
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj
+
+
+# ─── Anuncios del estudio ────────────────────────────────────────────────────
+
+class Anuncio(models.Model):
+    TIPOS = (
+        ('colaboracion', 'Colaboración de artista'),
+        ('concurso',     'Concurso de tatuajes'),
+        ('voluntarios',  'Buscando voluntarios'),
+        ('evento',       'Evento'),
+        ('otro',         'Otro'),
+    )
+    titulo            = models.CharField(max_length=200)
+    descripcion       = models.TextField(blank=True)
+    imagen            = models.ImageField(upload_to='anuncios/', null=True, blank=True)
+    tipo              = models.CharField(max_length=20, choices=TIPOS, default='otro')
+    tatuador_asociado = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='anuncios_asociados',
+        help_text='Artista colaborador — se mostrará su portafolio en el anuncio',
+    )
+    fecha_evento  = models.DateField(null=True, blank=True,
+        help_text='Fecha del evento o inicio de la colaboración (se muestra en la tarjeta)')
+    activo        = models.BooleanField(default=True)
+    orden         = models.PositiveSmallIntegerField(default=0,
+        help_text='Menor número aparece primero')
+    created_at    = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['orden', '-created_at']
+        verbose_name = 'Anuncio'
+        verbose_name_plural = 'Anuncios'
+
+    def __str__(self):
+        return self.titulo
 
 
 class Notificacion(models.Model):

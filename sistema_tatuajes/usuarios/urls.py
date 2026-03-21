@@ -14,6 +14,11 @@ urlpatterns = [
     path('clientes/',                         views.panel_clientes,         name='panel_clientes'),
     # Cotizaciones
     path('cotizaciones/',                     views.panel_cotizaciones,     name='panel_cotizaciones'),
+    # Anuncios
+    path('anuncios/',                              views.panel_anuncios,          name='panel_anuncios'),
+    path('anuncios/nuevo/',                        views.panel_crear_anuncio,     name='panel_crear_anuncio'),
+    path('anuncios/<int:anuncio_id>/editar/',       views.panel_editar_anuncio,    name='panel_editar_anuncio'),
+    path('anuncios/<int:anuncio_id>/eliminar/',     views.panel_eliminar_anuncio,  name='panel_eliminar_anuncio'),
     # Configuración
     path('configuracion/',                    views.panel_configuracion,    name='panel_configuracion'),
 ]

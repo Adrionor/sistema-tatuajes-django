@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count, Q
 
-from .models import Perfil, ConfiguracionEstudio
-from .forms import CrearTatuadorForm, PerfilTatuadorForm, EditarUsuarioForm, ConfiguracionEstudioForm
+from .models import Perfil, ConfiguracionEstudio, Anuncio
+from .forms import CrearTatuadorForm, PerfilTatuadorForm, EditarUsuarioForm, ConfiguracionEstudioForm, AnuncioForm
 from cotizaciones.models import Cotizacion
 from citas.models import Cita
 
@@ -273,7 +273,7 @@ def panel_configuracion(request):
     config = ConfiguracionEstudio.get_config()
 
     if request.method == 'POST':
-        form = ConfiguracionEstudioForm(request.POST, instance=config)
+        form = ConfiguracionEstudioForm(request.POST, request.FILES, instance=config)
         if form.is_valid():
             form.save()
             messages.success(request, 'Configuración guardada correctamente.')
@@ -285,3 +285,72 @@ def panel_configuracion(request):
         'form':   form,
         'config': config,
     })
+
+
+# ─── Landing page ──────────────────────────────────────────────────────────────────
+
+def landing(request):
+    config   = ConfiguracionEstudio.get_config()
+    anuncios = Anuncio.objects.filter(activo=True).select_related('tatuador_asociado')
+
+    # Por cada anuncio con tatuador asociado, pre-cargar sus trabajos
+    anuncios_data = []
+    for anuncio in anuncios:
+        trabajos = []
+        if anuncio.tatuador_asociado:
+            trabajos = list(
+                anuncio.tatuador_asociado.trabajos_portafolio.all()[:6]
+            )
+        anuncios_data.append({
+            'anuncio':  anuncio,
+            'trabajos': trabajos,
+        })
+
+    return render(request, 'landing.html', {
+        'config':        config,
+        'anuncios_data': anuncios_data,
+    })
+
+
+# ─── Panel de anuncios ─────────────────────────────────────────────────────────────────
+
+@propietario_required
+def panel_anuncios(request):
+    anuncios = Anuncio.objects.select_related('tatuador_asociado').order_by('orden', '-created_at')
+    return render(request, 'panel/anuncios.html', {'anuncios': anuncios})
+
+
+@propietario_required
+def panel_crear_anuncio(request):
+    if request.method == 'POST':
+        form = AnuncioForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Anuncio creado correctamente.')
+            return redirect('panel_anuncios')
+    else:
+        form = AnuncioForm()
+    return render(request, 'panel/crear_anuncio.html', {'form': form, 'editando': False})
+
+
+@propietario_required
+def panel_editar_anuncio(request, anuncio_id):
+    anuncio = get_object_or_404(Anuncio, pk=anuncio_id)
+    if request.method == 'POST':
+        form = AnuncioForm(request.POST, request.FILES, instance=anuncio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Anuncio actualizado.')
+            return redirect('panel_anuncios')
+    else:
+        form = AnuncioForm(instance=anuncio)
+    return render(request, 'panel/crear_anuncio.html', {'form': form, 'editando': True, 'anuncio': anuncio})
+
+
+@propietario_required
+def panel_eliminar_anuncio(request, anuncio_id):
+    anuncio = get_object_or_404(Anuncio, pk=anuncio_id)
+    if request.method == 'POST':
+        anuncio.delete()
+        messages.success(request, 'Anuncio eliminado.')
+    return redirect('panel_anuncios')
