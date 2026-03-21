@@ -114,3 +114,485 @@ msgstr "Español"
 
 msgid "English"
 msgstr "Inglés"
+
+# ── New translations (template expansion) ──────────────────────────────
+
+msgid "Tattoo Studio"
+msgstr "Estudio de Tatuajes"
+
+msgid "Art on your skin — Made to last"
+msgstr "Arte en tu piel — Hecho para durar"
+
+msgid "See Artists"
+msgstr "Ver Artistas"
+
+msgid "WHAT'S"
+msgstr "LO QUE"
+
+msgid "COMING"
+msgstr "VIENE"
+
+msgid "Events, collaborations and announcements from the studio"
+msgstr "Eventos, colaboraciones y convocatorias del estudio"
+
+msgid "Collaboration"
+msgstr "Colaboración"
+
+msgid "Contest"
+msgstr "Concurso"
+
+msgid "Volunteers"
+msgstr "Voluntarios"
+
+msgid "Event"
+msgstr "Evento"
+
+msgid "Announcement"
+msgstr "Anuncio"
+
+msgid "View full portfolio"
+msgstr "Ver portafolio completo"
+
+msgid "View artist profile"
+msgstr "Ver perfil del artista"
+
+msgid "READY FOR YOUR"
+msgstr "¿LISTO PARA TU"
+
+msgid "NEXT TATTOO?"
+msgstr "PRÓXIMO TATUAJE?"
+
+msgid "Tell us your idea and one of our artists will give you a personalized quote."
+msgstr "Cuéntanos tu idea y uno de nuestros artistas te dará una cotización personalizada."
+
+msgid "Meet Our Artists"
+msgstr "Conocer Artistas"
+
+msgid "OUR"
+msgstr "NUESTROS"
+
+msgid "ARTISTS"
+msgstr "ARTISTAS"
+
+msgid "Explore each artist's work and choose the one who best captures your vision."
+msgstr "Explora el trabajo de cada tatuador y elige al artista que mejor capture tu visión."
+
+msgid "Get a Tattoo Quote"
+msgstr "Cotizar mi Tatuaje"
+
+msgid "View Portfolio"
+msgstr "Ver Portafolio"
+
+msgid "No artists yet"
+msgstr "Sin artistas aún"
+
+msgid "The portfolio will be available soon. Come back to visit us!"
+msgstr "El portafolio estará disponible pronto. ¡Vuelve a visitarnos!"
+
+msgid "Quote with this artist"
+msgstr "Cotizar con este artista"
+
+msgid "All"
+msgstr "Todos"
+
+msgid "This artist hasn't uploaded any portfolio work yet."
+msgstr "Este artista aún no ha subido trabajos al portafolio."
+
+msgid "LIKE THE WORK?"
+msgstr "¿TE CONVENCE EL TRABAJO?"
+
+msgid "Request a no-commitment quote. Our artist will get in touch with you."
+msgstr "Solicita una cotización sin compromiso. Nuestro artista se pondrá en contacto contigo."
+
+msgid "AVAILABILITY"
+msgstr "DISPONIBILIDAD"
+
+msgid "& TRAVEL"
+msgstr "Y VIAJES"
+
+msgid "Periods when this artist will not be available at their usual studio, or when they are tattooing in another city — they might be near you!"
+msgstr "Periodos en los que este artista no estará disponible en su sede habitual, o en los que taúa en otra ciudad — ¡puede que esté cerca de ti!"
+
+msgid "QUOTE YOUR NEXT"
+msgstr "COTIZA TU PRÓXIMO"
+
+msgid "TATTOO"
+msgstr "TATUAJE"
+
+msgid "Choose your artist and tell us your idea. We'll be in touch soon."
+msgstr "Elige a tu artista y cuéntanos tu idea. Nos pondremos en contacto pronto."
+
+msgid "Tattoo details"
+msgstr "Detalles del tatuaje"
+
+msgid "Tell us your idea in as much detail as you like"
+msgstr "Cuéntanos tu idea con todo el detalle que quieras"
+
+msgid "Colors, references, personal meaning, exact location, estimated size… anything you want your artist to know before giving you a price."
+msgstr "Colores, referencias, significado personal, zona exacta, tamaño estimado… cualquier cosa que quieras que tu artista sepa antes de formarte el precio."
+
+msgid "My Tattoos"
+msgstr "Mis Tatuajes"
+
+msgid "MY"
+msgstr "MIS"
+
+msgid "TATTOOS"
+msgstr "TATUAJES"
+
+msgid "Check the status of your requests and pay the deposit when you're ready."
+msgstr "Revisa el estado de tus solicitudes y realiza el pago del anticipo cuando estés listo."
+
+msgid "Under review"
+msgstr "En revisión"
+
+msgid "Quoted"
+msgstr "Cotizado"
+
+msgid "Deposit Sent"
+msgstr "Anticipo Enviado"
+
+msgid "Artist"
+msgstr "Artista"
+
+msgid "Requested date"
+msgstr "Fecha solicitada"
+
+msgid "Total Price"
+msgstr "Precio Total"
+
+msgid "Deposit due"
+msgstr "Anticipo a pagar"
+
+msgid "Pay"
+msgstr "Pagar"
+
+msgid "Deposit"
+msgstr "Anticipo"
+
+msgid "Receipt sent. Waiting for the artist's confirmation to finalize your appointment."
+msgstr "Comprobante enviado. Esperando confirmación del artista para finalizar tu cita."
+
+msgid "No quotes yet"
+msgstr "Sin cotizaciones"
+
+msgid "You haven't requested any quotes yet."
+msgstr "Aún no has solicitado ninguna cotización."
+
+msgid "Quote my first tattoo"
+msgstr "Cotizar mi primer tatuaje"
+
+msgid "Your Tattoo"
+msgstr "Tu Tatuaje"
+
+msgid "HELLO,"
+msgstr "HOLA,"
+
+msgid "Private panel for your"
+msgstr "Panel privado de tu tatuaje de"
+
+msgid "tattoo with"
+msgstr "con"
+
+msgid "Requested"
+msgstr "Solicitado"
+
+msgid "Open date"
+msgstr "Fecha abierta"
+
+msgid "Scheduled"
+msgstr "Agendado"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "Price sent"
+msgstr "Precio enviado"
+
+msgid "Deposit received"
+msgstr "Anticipo recibido"
+
+msgid "Appointment confirmed!"
+msgstr "¡Cita confirmada!"
+
+msgid "Cancelled"
+msgstr "Cancelada"
+
+msgid "Date to be defined"
+msgstr "Fecha por definir"
+
+msgid "Preferred date"
+msgstr "Fecha preferida"
+
+msgid "Style"
+msgstr "Estilo"
+
+msgid "Zone · Size"
+msgstr "Zona · Tamaño"
+
+msgid "No fixed date"
+msgstr "Sin fecha fija"
+
+msgid "SEND"
+msgstr "ENVIAR"
+
+msgid "Make the transfer and upload your receipt to confirm the appointment."
+msgstr "Realiza la transferencia y sube tu comprobante para confirmar la cita."
+
+msgid "Transfer"
+msgstr "Transferencia"
+
+msgid "Send Receipt"
+msgstr "Enviar Comprobante"
+
+msgid "Don't know your available date yet?"
+msgstr "¿No sabes tu fecha disponible aún?"
+
+msgid "Do you want to leave the date open? The artist will contact you when you both have availability."
+msgstr "¿Deseas dejar la fecha abierta? El artista te contactará cuando ambos tengan disponibilidad."
+
+msgid "Leave date open (coordinate later)"
+msgstr "Dejar fecha abierta (coordinar después)"
+
+msgid "Don't want to continue?"
+msgstr "¿Ya no deseas continuar?"
+
+msgid "Cancel my request"
+msgstr "Cancelar mi solicitud"
+
+msgid "Your request is under review. You'll soon receive an email with the price and steps to confirm your appointment."
+msgstr "Tu solicitud está en revisión. En breve recibirás un correo con el precio y los pasos para confirmar tu cita."
+
+msgid "Receipt received."
+msgstr "Comprobante recibido."
+
+msgid "The artist will verify the payment and send you the exact time of your appointment."
+msgstr "El artista verificará el pago y te enviará la hora exacta de tu cita."
+
+msgid "Date coordinated manually."
+msgstr "Fecha coordinada manualmente."
+
+msgid "The artist will contact you to arrange a time that works for both of you."
+msgstr "El artista te contactará para acordar un horario conveniente para ambos."
+
+msgid "Reception"
+msgstr "Recepción"
+
+msgid "RECEPTION"
+msgstr "RECEPCIÓN"
+
+msgid "PANEL"
+msgstr "PANEL"
+
+msgid "Active requests for"
+msgstr "Solicitudes activas de"
+
+msgid "Quote, verify deposits and schedule."
+msgstr "Cotiza, verifica anticipos y agenda."
+
+msgid "Pending quote"
+msgstr "Pendientes de cotizar"
+
+msgid "Quote Job"
+msgstr "Cotizar Trabajo"
+
+msgid "View detail & messages"
+msgstr "Ver detalle & mensajes"
+
+msgid "Reject"
+msgstr "Rechazar"
+
+msgid "Deposit received — ready to schedule"
+msgstr "Anticipo recibido — listo para agendar"
+
+msgid "Verify and Schedule"
+msgstr "Verificar y Agendar"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "No active requests at the moment."
+msgstr "Sin solicitudes activas en este momento."
+
+msgid "Recent history"
+msgstr "Historial reciente"
+
+msgid "Confirmed"
+msgstr "Confirmada"
+
+msgid "Awaiting deposit"
+msgstr "Esperando anticipo"
+
+msgid "Schedule Appointment"
+msgstr "Agendar Cita"
+
+msgid "Back to Reception"
+msgstr "Volver a Recepción"
+
+msgid "CONFIRM AND"
+msgstr "CONFIRMAR Y"
+
+msgid "SCHEDULE"
+msgstr "AGENDAR"
+
+msgid "PAYMENT"
+msgstr "COMPROBANTE"
+
+msgid "RECEIPT"
+msgstr "ANTICIPO"
+
+msgid "No receipt attached"
+msgstr "Sin comprobante adjunto"
+
+msgid "Client"
+msgstr "Cliente"
+
+msgid "Zone"
+msgstr "Zona"
+
+msgid "SET"
+msgstr "DEFINIR"
+
+msgid "TIMETABLE"
+msgstr "HORARIO"
+
+msgid "Upon confirmation, the appointment will be created and scheduled on Google Calendar automatically."
+msgstr "Al confirmar, se creará la cita y se agendará en Google Calendar automáticamente."
+
+msgid "Start Date and Time"
+msgstr "Fecha y Hora de Inicio"
+
+msgid "End Date and Time (Estimated)"
+msgstr "Fecha y Hora de Finalización (Estimada)"
+
+msgid "Confirm Payment and Create Appointment"
+msgstr "Confirmar Pago y Crear Cita"
+
+msgid "My Schedule Blocks"
+msgstr "Mis Bloqueos de Agenda"
+
+msgid "Back to Schedule"
+msgstr "Volver a la Agenda"
+
+msgid "BLOCKS"
+msgstr "BLOQUEOS"
+
+msgid "THE AGENDA"
+msgstr "DE AGENDA"
+
+msgid "Block full periods when you are not available: holidays, trips, events, etc."
+msgstr "Bloquea periodos completos en los que no estarás disponible: vacaciones, viajes, eventos, etc."
+
+msgid "Clients"
+msgstr "Los clientes"
+
+msgid "will not be able to request appointments"
+msgstr "no podrán solicitar citas"
+
+msgid "on blocked dates."
+msgstr "en las fechas bloqueadas."
+
+msgid "BLOCKED"
+msgstr "PERIODOS"
+
+msgid "PERIODS"
+msgstr "BLOQUEADOS"
+
+msgid "Visible on your public profile"
+msgstr "Visible en tu perfil público"
+
+msgid "Hidden from public"
+msgstr "Oculto al público"
+
+msgid "Delete this block?"
+msgstr "¿Eliminar este bloqueo?"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "You have no blocked periods."
+msgstr "No tienes periodos bloqueados."
+
+msgid "Use the form to add one."
+msgstr "Usa el formulario para agregar uno."
+
+msgid "NEW"
+msgstr "NUEVO"
+
+msgid "BLOCK"
+msgstr "BLOQUEO"
+
+msgid "Block type"
+msgstr "Tipo de bloqueo"
+
+msgid "Holidays"
+msgstr "Vacaciones"
+
+msgid "Event / Convention"
+msgstr "Evento / Convención"
+
+msgid "Trip to another state"
+msgstr "Viaje a otro estado"
+
+msgid "International trip"
+msgstr "Viaje internacional"
+
+msgid "Other"
+msgstr "Otro"
+
+msgid "Start date"
+msgstr "Fecha inicio"
+
+msgid "End date"
+msgstr "Fecha fin"
+
+msgid "Trip details"
+msgstr "Detalles del viaje"
+
+msgid "City / State"
+msgstr "Ciudad / Estado"
+
+msgid "Country"
+msgstr "País"
+
+msgid "e.g. Guadalajara"
+msgstr "Ej: Guadalajara"
+
+msgid "Mexico"
+msgstr "México"
+
+msgid "Description (optional)"
+msgstr "Descripción (opcional)"
+
+msgid "Brief note for your clients…"
+msgstr "Breve nota para tus clientes…"
+
+msgid "Visible on my public profile"
+msgstr "Visible en mi perfil público"
+
+msgid "If it's a trip, your followers can see where you're tattooing."
+msgstr "Si es un viaje, tus seguidores podrán ver dónde taúas."
+
+msgid "Create Block"
+msgstr "Crear Bloqueo"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Team"
+msgstr "Equipo"
+
+msgid "Operations"
+msgstr "Operaciones"
+
+msgid "Quotes"
+msgstr "Cotizaciones"
+
+msgid "Content"
+msgstr "Contenido"
+
+msgid "Studio"
+msgstr "Estudio"
+
+msgid "Settings"
+msgstr "Configuración"

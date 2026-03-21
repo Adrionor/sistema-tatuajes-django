@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block extra_head %}
 <style>
@@ -271,42 +272,42 @@
     <!-- ── Sidebar ────────────────────────────────────────── -->
     <aside class="panel-sidebar">
         <div class="sidebar-section">
-            <p class="sidebar-label">Panel</p>
+            <p class="sidebar-label">{% trans "Panel" %}</p>
             <a class="sidebar-link {% block active_dashboard %}{% endblock %}"
                href="{% url 'panel_dashboard' %}">
-                <span class="sidebar-icon">📊</span> Dashboard
+                <span class="sidebar-icon">📊</span> {% trans "Dashboard" %}
             </a>
         </div>
         <div class="sidebar-section">
-            <p class="sidebar-label">Equipo</p>
+            <p class="sidebar-label">{% trans "Team" %}</p>
             <a class="sidebar-link {% block active_tatuadores %}{% endblock %}"
                href="{% url 'panel_tatuadores' %}">
-                <span class="sidebar-icon">🎨</span> Tatuadores
+                <span class="sidebar-icon">🎨</span> {% trans "Artists" %}
             </a>
             <a class="sidebar-link {% block active_clientes %}{% endblock %}"
                href="{% url 'panel_clientes' %}">
-                <span class="sidebar-icon">👥</span> Clientes
+                <span class="sidebar-icon">👥</span> {% trans "Clients" %}
             </a>
         </div>
         <div class="sidebar-section">
-            <p class="sidebar-label">Operaciones</p>
+            <p class="sidebar-label">{% trans "Operations" %}</p>
             <a class="sidebar-link {% block active_cotizaciones %}{% endblock %}"
                href="{% url 'panel_cotizaciones' %}">
-                <span class="sidebar-icon">📋</span> Cotizaciones
+                <span class="sidebar-icon">📋</span> {% trans "Quotes" %}
             </a>
         </div>
         <div class="sidebar-section">
-            <p class="sidebar-label">Contenido</p>
+            <p class="sidebar-label">{% trans "Content" %}</p>
             <a class="sidebar-link {% block active_anuncios %}{% endblock %}"
                href="{% url 'panel_anuncios' %}">
-                <span class="sidebar-icon">📢</span> Anuncios
+                <span class="sidebar-icon">📢</span> {% trans "Announcements" %}
             </a>
         </div>
         <div class="sidebar-section">
-            <p class="sidebar-label">Estudio</p>
+            <p class="sidebar-label">{% trans "Studio" %}</p>
             <a class="sidebar-link {% block active_config %}{% endblock %}"
                href="{% url 'panel_configuracion' %}">
-                <span class="sidebar-icon">⚙️</span> Configuración
+                <span class="sidebar-icon">⚙️</span> {% trans "Settings" %}
             </a>
         </div>
     </aside>

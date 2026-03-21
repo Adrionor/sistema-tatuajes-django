@@ -113,3 +113,485 @@ msgstr "Spanish"
 
 msgid "English"
 msgstr "English"
+
+# ── New translations (template expansion) ──────────────────────────────
+
+msgid "Tattoo Studio"
+msgstr "Tattoo Studio"
+
+msgid "Art on your skin — Made to last"
+msgstr "Art on your skin — Made to last"
+
+msgid "See Artists"
+msgstr "See Artists"
+
+msgid "WHAT'S"
+msgstr "WHAT'S"
+
+msgid "COMING"
+msgstr "COMING"
+
+msgid "Events, collaborations and announcements from the studio"
+msgstr "Events, collaborations and announcements from the studio"
+
+msgid "Collaboration"
+msgstr "Collaboration"
+
+msgid "Contest"
+msgstr "Contest"
+
+msgid "Volunteers"
+msgstr "Volunteers"
+
+msgid "Event"
+msgstr "Event"
+
+msgid "Announcement"
+msgstr "Announcement"
+
+msgid "View full portfolio"
+msgstr "View full portfolio"
+
+msgid "View artist profile"
+msgstr "View artist profile"
+
+msgid "READY FOR YOUR"
+msgstr "READY FOR YOUR"
+
+msgid "NEXT TATTOO?"
+msgstr "NEXT TATTOO?"
+
+msgid "Tell us your idea and one of our artists will give you a personalized quote."
+msgstr "Tell us your idea and one of our artists will give you a personalized quote."
+
+msgid "Meet Our Artists"
+msgstr "Meet Our Artists"
+
+msgid "OUR"
+msgstr "OUR"
+
+msgid "ARTISTS"
+msgstr "ARTISTS"
+
+msgid "Explore each artist's work and choose the one who best captures your vision."
+msgstr "Explore each artist's work and choose the one who best captures your vision."
+
+msgid "Get a Tattoo Quote"
+msgstr "Get a Tattoo Quote"
+
+msgid "View Portfolio"
+msgstr "View Portfolio"
+
+msgid "No artists yet"
+msgstr "No artists yet"
+
+msgid "The portfolio will be available soon. Come back to visit us!"
+msgstr "The portfolio will be available soon. Come back to visit us!"
+
+msgid "Quote with this artist"
+msgstr "Quote with this artist"
+
+msgid "All"
+msgstr "All"
+
+msgid "This artist hasn't uploaded any portfolio work yet."
+msgstr "This artist hasn't uploaded any portfolio work yet."
+
+msgid "LIKE THE WORK?"
+msgstr "LIKE THE WORK?"
+
+msgid "Request a no-commitment quote. Our artist will get in touch with you."
+msgstr "Request a no-commitment quote. Our artist will get in touch with you."
+
+msgid "AVAILABILITY"
+msgstr "AVAILABILITY"
+
+msgid "& TRAVEL"
+msgstr "& TRAVEL"
+
+msgid "Periods when this artist will not be available at their usual studio, or when they are tattooing in another city — they might be near you!"
+msgstr "Periods when this artist will not be available at their usual studio, or when they are tattooing in another city — they might be near you!"
+
+msgid "QUOTE YOUR NEXT"
+msgstr "QUOTE YOUR NEXT"
+
+msgid "TATTOO"
+msgstr "TATTOO"
+
+msgid "Choose your artist and tell us your idea. We'll be in touch soon."
+msgstr "Choose your artist and tell us your idea. We'll be in touch soon."
+
+msgid "Tattoo details"
+msgstr "Tattoo details"
+
+msgid "Tell us your idea in as much detail as you like"
+msgstr "Tell us your idea in as much detail as you like"
+
+msgid "Colors, references, personal meaning, exact location, estimated size… anything you want your artist to know before giving you a price."
+msgstr "Colors, references, personal meaning, exact location, estimated size… anything you want your artist to know before giving you a price."
+
+msgid "My Tattoos"
+msgstr "My Tattoos"
+
+msgid "MY"
+msgstr "MY"
+
+msgid "TATTOOS"
+msgstr "TATTOOS"
+
+msgid "Check the status of your requests and pay the deposit when you're ready."
+msgstr "Check the status of your requests and pay the deposit when you're ready."
+
+msgid "Under review"
+msgstr "Under review"
+
+msgid "Quoted"
+msgstr "Quoted"
+
+msgid "Deposit Sent"
+msgstr "Deposit Sent"
+
+msgid "Artist"
+msgstr "Artist"
+
+msgid "Requested date"
+msgstr "Requested date"
+
+msgid "Total Price"
+msgstr "Total Price"
+
+msgid "Deposit due"
+msgstr "Deposit due"
+
+msgid "Pay"
+msgstr "Pay"
+
+msgid "Deposit"
+msgstr "Deposit"
+
+msgid "Receipt sent. Waiting for the artist's confirmation to finalize your appointment."
+msgstr "Receipt sent. Waiting for the artist's confirmation to finalize your appointment."
+
+msgid "No quotes yet"
+msgstr "No quotes yet"
+
+msgid "You haven't requested any quotes yet."
+msgstr "You haven't requested any quotes yet."
+
+msgid "Quote my first tattoo"
+msgstr "Quote my first tattoo"
+
+msgid "Your Tattoo"
+msgstr "Your Tattoo"
+
+msgid "HELLO,"
+msgstr "HELLO,"
+
+msgid "Private panel for your"
+msgstr "Private panel for your"
+
+msgid "tattoo with"
+msgstr "tattoo with"
+
+msgid "Requested"
+msgstr "Requested"
+
+msgid "Open date"
+msgstr "Open date"
+
+msgid "Scheduled"
+msgstr "Scheduled"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Price sent"
+msgstr "Price sent"
+
+msgid "Deposit received"
+msgstr "Deposit received"
+
+msgid "Appointment confirmed!"
+msgstr "Appointment confirmed!"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Date to be defined"
+msgstr "Date to be defined"
+
+msgid "Preferred date"
+msgstr "Preferred date"
+
+msgid "Style"
+msgstr "Style"
+
+msgid "Zone · Size"
+msgstr "Zone · Size"
+
+msgid "No fixed date"
+msgstr "No fixed date"
+
+msgid "SEND"
+msgstr "SEND"
+
+msgid "Make the transfer and upload your receipt to confirm the appointment."
+msgstr "Make the transfer and upload your receipt to confirm the appointment."
+
+msgid "Transfer"
+msgstr "Transfer"
+
+msgid "Send Receipt"
+msgstr "Send Receipt"
+
+msgid "Don't know your available date yet?"
+msgstr "Don't know your available date yet?"
+
+msgid "Do you want to leave the date open? The artist will contact you when you both have availability."
+msgstr "Do you want to leave the date open? The artist will contact you when you both have availability."
+
+msgid "Leave date open (coordinate later)"
+msgstr "Leave date open (coordinate later)"
+
+msgid "Don't want to continue?"
+msgstr "Don't want to continue?"
+
+msgid "Cancel my request"
+msgstr "Cancel my request"
+
+msgid "Your request is under review. You'll soon receive an email with the price and steps to confirm your appointment."
+msgstr "Your request is under review. You'll soon receive an email with the price and steps to confirm your appointment."
+
+msgid "Receipt received."
+msgstr "Receipt received."
+
+msgid "The artist will verify the payment and send you the exact time of your appointment."
+msgstr "The artist will verify the payment and send you the exact time of your appointment."
+
+msgid "Date coordinated manually."
+msgstr "Date coordinated manually."
+
+msgid "The artist will contact you to arrange a time that works for both of you."
+msgstr "The artist will contact you to arrange a time that works for both of you."
+
+msgid "Reception"
+msgstr "Reception"
+
+msgid "RECEPTION"
+msgstr "RECEPTION"
+
+msgid "PANEL"
+msgstr "PANEL"
+
+msgid "Active requests for"
+msgstr "Active requests for"
+
+msgid "Quote, verify deposits and schedule."
+msgstr "Quote, verify deposits and schedule."
+
+msgid "Pending quote"
+msgstr "Pending quote"
+
+msgid "Quote Job"
+msgstr "Quote Job"
+
+msgid "View detail & messages"
+msgstr "View detail & messages"
+
+msgid "Reject"
+msgstr "Reject"
+
+msgid "Deposit received — ready to schedule"
+msgstr "Deposit received — ready to schedule"
+
+msgid "Verify and Schedule"
+msgstr "Verify and Schedule"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "No active requests at the moment."
+msgstr "No active requests at the moment."
+
+msgid "Recent history"
+msgstr "Recent history"
+
+msgid "Confirmed"
+msgstr "Confirmed"
+
+msgid "Awaiting deposit"
+msgstr "Awaiting deposit"
+
+msgid "Schedule Appointment"
+msgstr "Schedule Appointment"
+
+msgid "Back to Reception"
+msgstr "Back to Reception"
+
+msgid "CONFIRM AND"
+msgstr "CONFIRM AND"
+
+msgid "SCHEDULE"
+msgstr "SCHEDULE"
+
+msgid "PAYMENT"
+msgstr "PAYMENT"
+
+msgid "RECEIPT"
+msgstr "RECEIPT"
+
+msgid "No receipt attached"
+msgstr "No receipt attached"
+
+msgid "Client"
+msgstr "Client"
+
+msgid "Zone"
+msgstr "Zone"
+
+msgid "SET"
+msgstr "SET"
+
+msgid "TIMETABLE"
+msgstr "TIMETABLE"
+
+msgid "Upon confirmation, the appointment will be created and scheduled on Google Calendar automatically."
+msgstr "Upon confirmation, the appointment will be created and scheduled on Google Calendar automatically."
+
+msgid "Start Date and Time"
+msgstr "Start Date and Time"
+
+msgid "End Date and Time (Estimated)"
+msgstr "End Date and Time (Estimated)"
+
+msgid "Confirm Payment and Create Appointment"
+msgstr "Confirm Payment and Create Appointment"
+
+msgid "My Schedule Blocks"
+msgstr "My Schedule Blocks"
+
+msgid "Back to Schedule"
+msgstr "Back to Schedule"
+
+msgid "BLOCKS"
+msgstr "BLOCKS"
+
+msgid "THE AGENDA"
+msgstr "THE AGENDA"
+
+msgid "Block full periods when you are not available: holidays, trips, events, etc."
+msgstr "Block full periods when you are not available: holidays, trips, events, etc."
+
+msgid "Clients"
+msgstr "Clients"
+
+msgid "will not be able to request appointments"
+msgstr "will not be able to request appointments"
+
+msgid "on blocked dates."
+msgstr "on blocked dates."
+
+msgid "BLOCKED"
+msgstr "BLOCKED"
+
+msgid "PERIODS"
+msgstr "PERIODS"
+
+msgid "Visible on your public profile"
+msgstr "Visible on your public profile"
+
+msgid "Hidden from public"
+msgstr "Hidden from public"
+
+msgid "Delete this block?"
+msgstr "Delete this block?"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "You have no blocked periods."
+msgstr "You have no blocked periods."
+
+msgid "Use the form to add one."
+msgstr "Use the form to add one."
+
+msgid "NEW"
+msgstr "NEW"
+
+msgid "BLOCK"
+msgstr "BLOCK"
+
+msgid "Block type"
+msgstr "Block type"
+
+msgid "Holidays"
+msgstr "Holidays"
+
+msgid "Event / Convention"
+msgstr "Event / Convention"
+
+msgid "Trip to another state"
+msgstr "Trip to another state"
+
+msgid "International trip"
+msgstr "International trip"
+
+msgid "Other"
+msgstr "Other"
+
+msgid "Start date"
+msgstr "Start date"
+
+msgid "End date"
+msgstr "End date"
+
+msgid "Trip details"
+msgstr "Trip details"
+
+msgid "City / State"
+msgstr "City / State"
+
+msgid "Country"
+msgstr "Country"
+
+msgid "e.g. Guadalajara"
+msgstr "e.g. Guadalajara"
+
+msgid "Mexico"
+msgstr "Mexico"
+
+msgid "Description (optional)"
+msgstr "Description (optional)"
+
+msgid "Brief note for your clients…"
+msgstr "Brief note for your clients…"
+
+msgid "Visible on my public profile"
+msgstr "Visible on my public profile"
+
+msgid "If it's a trip, your followers can see where you're tattooing."
+msgstr "If it's a trip, your followers can see where you're tattooing."
+
+msgid "Create Block"
+msgstr "Create Block"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Team"
+msgstr "Team"
+
+msgid "Operations"
+msgstr "Operations"
+
+msgid "Quotes"
+msgstr "Quotes"
+
+msgid "Content"
+msgstr "Content"
+
+msgid "Studio"
+msgstr "Studio"
+
+msgid "Settings"
+msgstr "Settings"

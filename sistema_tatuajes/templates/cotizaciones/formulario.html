@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block titulo %}Cotiza tu Tatuaje — Ink Studio{% endblock %}
+{% load i18n %}
+{% block titulo %}{% trans "Get a Tattoo Quote" %} — {{ estudio_config.nombre }}{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -44,8 +44,8 @@
 
 {% block contenido %}
 <div class="page-header">
-    <h1>COTIZA TU PRÓXIMO <span class="accent">TATUAJE</span></h1>
-    <p>Elige a tu artista y cuéntanos tu idea. Nos pondremos en contacto pronto.</p>
+    <h1>{% trans "QUOTE YOUR NEXT" %} <span class="accent">{% trans "TATTOO" %}</span></h1>
+    <p>{% trans "Choose your artist and tell us your idea. We'll be in touch soon." %}</p>
     <div class="divider"></div>
 </div>
 
@@ -89,7 +89,7 @@
 
         <!-- Fila 2 — Detalles del tatuaje -->
         <div style="border-top:1px solid var(--border);padding-top:1.5rem;margin-bottom:1.25rem;">
-            <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 1rem;">Detalles del tatuaje</p>
+            <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 1rem;">{% trans "Tattoo details" %}</p>
             <div class="form-layout">
                 <div class="form-group">
                     <label for="{{ form.estilo.id_for_label }}">{{ form.estilo.label }}</label>
@@ -118,17 +118,17 @@
         <div style="border-top:1px solid var(--border);padding-top:1.5rem;">
             <label for="{{ form.notas_cliente.id_for_label }}"
                    style="display:block;font-size:.8rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;">
-                ✏️  Cuéntanos tu idea con todo el detalle que quieras
+                ✏️  {% trans "Tell us your idea in as much detail as you like" %}
             </label>
             <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:.75rem;">
-                Colores, referencias, significado personal, zona exacta, tamaño estimado… cualquier cosa que quieras que tu artista sepa antes de formarte el precio.
+                {% trans "Colors, references, personal meaning, exact location, estimated size… anything you want your artist to know before giving you a price." %}
             </p>
             {{ form.notas_cliente }}
             {% for e in form.notas_cliente.errors %}<p style="color:#f57373;font-size:.8rem;margin:.4rem 0 0;">{{ e }}</p>{% endfor %}
         </div>
 
         <div style="margin-top:1.5rem;">
-            <button type="submit" class="btn btn-gold btn-block">Enviar Solicitud</button>
+            <button type="submit" class="btn btn-gold btn-block">{% trans "Send Request" %}</button>
         </div>
     </form>
 </div>

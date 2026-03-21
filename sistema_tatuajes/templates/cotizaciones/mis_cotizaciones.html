@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block titulo %}Mis Tatuajes — Ink Studio{% endblock %}
+{% load i18n %}
+{% block titulo %}{% trans "My Tattoos" %} — {{ estudio_config.nombre }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -92,8 +92,8 @@
 {% block contenido %}
 
 <div class="page-header">
-    <h1>MIS <span class="accent">TATUAJES</span></h1>
-    <p>Revisa el estado de tus solicitudes y realiza el pago del anticipo cuando estés listo.</p>
+    <h1>{% trans "MY" %} <span class="accent">{% trans "TATTOOS" %}</span></h1>
+    <p>{% trans "Check the status of your requests and pay the deposit when you're ready." %}</p>
     <div class="divider"></div>
 </div>
 
@@ -106,34 +106,34 @@
             <div class="quote-title">
                 {{ cotizacion.estilo|upper }}
                 {% if cotizacion.estado == 'pendiente' %}
-                    <span class="badge badge-muted">En revisión</span>
+                    <span class="badge badge-muted">{% trans "Under review" %}</span>
                 {% elif cotizacion.estado == 'aceptada' %}
-                    <span class="badge badge-gold">Cotizado</span>
+                    <span class="badge badge-gold">{% trans "Quoted" %}</span>
                 {% elif cotizacion.estado == 'pagada' %}
-                    <span class="badge badge-green">Anticipo Enviado</span>
+                    <span class="badge badge-green">{% trans "Deposit Sent" %}</span>
                 {% endif %}
             </div>
 
             <div class="quote-meta">
-                <span>Artista: {{ cotizacion.tatuador.get_full_name|default:cotizacion.tatuador.username }}</span>
+                <span>{% trans "Artist" %}: {{ cotizacion.tatuador.get_full_name|default:cotizacion.tatuador.username }}</span>
                 <span>{{ cotizacion.zona_cuerpo }}</span>
-                <span>Fecha solicitada: {{ cotizacion.fecha_solicitada|date:"d M Y" }}</span>
+                <span>{% trans "Requested date" %}: {{ cotizacion.fecha_solicitada|date:"d M Y" }}</span>
             </div>
 
             {% if cotizacion.estado == 'aceptada' %}
             <div class="price-highlight">
                 <div class="p-item">
-                    <span class="p-label">Precio Total</span>
+                    <span class="p-label">{% trans "Total Price" %}</span>
                     <span class="p-value">${{ cotizacion.monto_total }}</span>
                 </div>
                 <div class="p-item">
-                    <span class="p-label">Anticipo a pagar</span>
+                    <span class="p-label">{% trans "Deposit due" %}</span>
                     <span class="p-value accent">${{ cotizacion.monto_anticipo }}</span>
                 </div>
             </div>
             {% elif cotizacion.estado == 'pagada' %}
             <p style="font-size:.85rem; color:var(--green);">
-                ✓ Comprobante enviado. Esperando confirmación del artista para finalizar tu cita.
+                ✓ {% trans "Receipt sent. Waiting for the artist's confirmation to finalize your appointment." %}
             </p>
             {% endif %}
         </div>
@@ -141,17 +141,17 @@
         {% if cotizacion.estado == 'aceptada' %}
         <div class="quote-action">
             <a href="{% url 'estado_magico' cotizacion.token_acceso %}" class="btn btn-gold">
-                Pagar&nbsp;Anticipo
+                {% trans "Pay" %}&nbsp;{% trans "Deposit" %}
             </a>
         </div>
         {% endif %}
     </div>
     {% empty %}
         <div class="empty-state">
-            <h2>Sin cotizaciones</h2>
-            <p>Aún no has solicitado ninguna cotización.</p>
+            <h2>{% trans "No quotes yet" %}</h2>
+            <p>{% trans "You haven't requested any quotes yet." %}</p>
             <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="margin-top:1.25rem;">
-                Cotizar mi primer tatuaje
+                {% trans "Quote my first tattoo" %}
             </a>
         </div>
     {% endfor %}

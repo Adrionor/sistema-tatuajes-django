@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block titulo %}Artistas — Ink Studio{% endblock %}
+{% load i18n %}
+{% block titulo %}{% trans "Artists" %} — {{ estudio_config.nombre }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -147,10 +147,10 @@
 
 <!-- HERO BANNER -->
 <section class="hero">
-    <h1 class="hero-title">NUESTROS <span class="accent">ARTISTAS</span></h1>
-    <p class="hero-subtitle">Explora el trabajo de cada tatuador y elige al artista que mejor capture tu visión.</p>
+    <h1 class="hero-title">{% trans "OUR" %} <span class="accent">{% trans "ARTISTS" %}</span></h1>
+    <p class="hero-subtitle">{% trans "Explore each artist's work and choose the one who best captures your vision." %}</p>
     <div class="hero-cta">
-        <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">Cotizar mi Tatuaje</a>
+        <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Get a Tattoo Quote" %}</a>
     </div>
 </section>
 
@@ -214,7 +214,7 @@
 
                     <div class="card-footer">
                         <span class="btn btn-outline" style="font-size:.8rem; padding:.5rem 1.2rem;">
-                            Ver Portafolio &rarr;
+                            {% trans "View Portfolio" %} &rarr;
                         </span>
                     </div>
                 </div>
@@ -223,8 +223,8 @@
         </a>
         {% empty %}
             <div class="empty-state">
-                <h2>Sin artistas aún</h2>
-                <p>El portafolio estará disponible pronto. ¡Vuelve a visitarnos!</p>
+                <h2>{% trans "No artists yet" %}</h2>
+                <p>{% trans "The portfolio will be available soon. Come back to visit us!" %}</p>
             </div>
         {% endfor %}
     </div>

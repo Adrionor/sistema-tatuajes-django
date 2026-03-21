@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block titulo %}Mis Bloqueos de Agenda — Ink Studio{% endblock %}
+{% load i18n %}
+{% block titulo %}{% trans "My Schedule Blocks" %} — {{ estudio_config.nombre }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -122,14 +122,14 @@
 <a href="{% url 'agenda_tatuador' %}"
    style="display:inline-flex;align-items:center;gap:.4rem;color:var(--text-muted);font-size:.85rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2rem;transition:color .2s;"
    onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
-    &larr; Volver a la Agenda
+    &larr; {% trans "Back to Schedule" %}
 </a>
 
 <div style="margin-bottom:2rem;">
-    <h1 style="font-size:clamp(2rem,5vw,3rem);">BLOQUEOS <span style="color:var(--gold);">DE AGENDA</span></h1>
+    <h1 style="font-size:clamp(2rem,5vw,3rem);">{% trans "BLOCKS" %} <span style="color:var(--gold);">{% trans "THE AGENDA" %}</span></h1>
     <p style="color:var(--text-muted);font-size:.9rem;margin-top:.4rem;">
-        Bloquea periodos completos en los que no estarás disponible: vacaciones, viajes, eventos, etc.
-        <br>Los clientes <strong style="color:var(--text);">no podrán solicitar citas</strong> en las fechas bloqueadas.
+        {% trans "Block full periods when you are not available: holidays, trips, events, etc." %}
+        <br>{% trans "Clients" %} <strong style="color:var(--text);">{% trans "will not be able to request appointments" %}</strong> {% trans "on blocked dates." %}
     </p>
 </div>
 
@@ -147,7 +147,7 @@
 
     <!-- ══ Lista de bloqueos actuales ══ -->
     <div class="card-box">
-        <h2>PERIODOS <span style="color:var(--gold);">BLOQUEADOS</span></h2>
+        <h2>{% trans "BLOCKED" %} <span style="color:var(--gold);">{% trans "PERIODS" %}</span></h2>
 
         {% if bloqueos %}
             {% for b in bloqueos %}
@@ -176,89 +176,89 @@
                     <div class="bloqueo-desc">{{ b.descripcion }}</div>
                     {% endif %}
                     <div class="bloqueo-public">
-                        {% if b.publico %}👁️ Visible en tu perfil público{% else %}🔐 Oculto al público{% endif %}
+                        {% if b.publico %}👁️ {% trans "Visible on your public profile" %}{% else %}🔐 {% trans "Hidden from public" %}{% endif %}
                     </div>
                 </div>
                 <form method="post" action="{% url 'eliminar_bloqueo' b.pk %}"
-                      onsubmit="return confirm('¿Eliminar este bloqueo?')">
+                      onsubmit="return confirm('{% trans \'Delete this block?\' %}')">
                     {% csrf_token %}
                     <button type="submit"
                             style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;padding:.25rem;"
-                            title="Eliminar">🗑️</button>
+                            title="{% trans 'Delete' %}">🗑️</button>
                 </form>
             </div>
             {% endfor %}
         {% else %}
             <div class="empty-state">
                 <div class="big">📭</div>
-                <p>No tienes periodos bloqueados.<br>Usa el formulario para agregar uno.</p>
+                <p>{% trans "You have no blocked periods." %}<br>{% trans "Use the form to add one." %}</p>
             </div>
         {% endif %}
     </div>
 
     <!-- ══ Formulario para crear bloqueo ══ -->
     <div class="card-box">
-        <h2>NUEVO <span style="color:var(--gold);">BLOQUEO</span></h2>
+        <h2>{% trans "NEW" %} <span style="color:var(--gold);">{% trans "BLOCK" %}</span></h2>
 
         <form method="post" action="{% url 'crear_bloqueo' %}">
             {% csrf_token %}
 
             <div class="form-group">
-                <label>Tipo de bloqueo</label>
+                <label>{% trans "Block type" %}</label>
                 <select name="tipo" id="tipo-select" onchange="toggleViajeFields(this.value)">
-                    <option value="vacaciones">🏖️ Vacaciones</option>
-                    <option value="evento">🎪 Evento / Convención</option>
-                    <option value="viaje_nacional">🚗 Viaje a otro estado</option>
-                    <option value="viaje_internacional">✈️ Viaje internacional</option>
-                    <option value="otro">🔒 Otro</option>
+                    <option value="vacaciones">🏖️ {% trans "Holidays" %}</option>
+                    <option value="evento">🎪 {% trans "Event / Convention" %}</option>
+                    <option value="viaje_nacional">🚗 {% trans "Trip to another state" %}</option>
+                    <option value="viaje_internacional">✈️ {% trans "International trip" %}</option>
+                    <option value="otro">🔒 {% trans "Other" %}</option>
                 </select>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Fecha inicio</label>
+                    <label>{% trans "Start date" %}</label>
                     <input type="date" name="fecha_inicio" required>
                 </div>
                 <div class="form-group">
-                    <label>Fecha fin</label>
+                    <label>{% trans "End date" %}</label>
                     <input type="date" name="fecha_fin" required>
                 </div>
             </div>
 
             <!-- Campos extra para viajes -->
             <div id="viaje-fields">
-                <p class="section-label">Detalles del viaje</p>
+                <p class="section-label">{% trans "Trip details" %}</p>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Ciudad / Estado</label>
-                        <input type="text" name="ciudad" placeholder="Ej: Guadalajara">
+                        <label>{% trans "City / State" %}</label>
+                        <input type="text" name="ciudad" placeholder="{% trans 'e.g. Guadalajara' %}">
                     </div>
                     <div class="form-group">
-                        <label>País</label>
-                        <input type="text" name="pais" placeholder="México" value="México">
+                        <label>{% trans "Country" %}</label>
+                        <input type="text" name="pais" placeholder="{% trans 'Mexico' %}" value="México">
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Descripción (opcional)</label>
+                <label>{% trans "Description (optional)" %}</label>
                 <textarea name="descripcion" rows="2"
-                          placeholder="Breve nota para tus clientes…"
+                          placeholder="{% trans 'Brief note for your clients…' %}"
                           style="resize:vertical;"></textarea>
             </div>
 
             <div class="checkbox-row">
                 <input type="checkbox" name="publico" id="publico-check" checked>
                 <label for="publico-check">
-                    Visible en mi perfil público<br>
+                    {% trans "Visible on my public profile" %}<br>
                     <span style="font-size:.75rem;color:var(--text-muted);">
-                        Si es un viaje, tus seguidores podrán ver dónde tatúas.
+                        {% trans "If it's a trip, your followers can see where you're tattooing." %}
                     </span>
                 </label>
             </div>
 
             <button type="submit" class="btn btn-gold btn-block" style="margin-top:1.25rem;">
-                Crear Bloqueo
+                {% trans "Create Block" %}
             </button>
         </form>
     </div>

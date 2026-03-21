@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block titulo %}{{ config.nombre }} — Estudio de Tatuajes{% endblock %}
+{% load i18n %}
+{% block titulo %}{{ config.nombre }} — {% trans "Tattoo Studio" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -324,12 +325,12 @@
         {% if config.slogan %}
             <p class="hero-slogan">{{ config.slogan }}</p>
         {% else %}
-            <p class="hero-slogan">Arte en tu piel &mdash; Hecho para durar</p>
+            <p class="hero-slogan">{% trans "Art on your skin — Made to last" %}</p>
         {% endif %}
 
         <div class="hero-ctas">
             <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:1rem;padding:.85rem 2rem;">
-                Ver Artistas
+                {% trans "See Artists" %}
             </a>
         </div>
     </div>
@@ -343,8 +344,8 @@
 {% if anuncios_data %}
 <section class="section-anuncios" id="anuncios-section">
     <div class="section-heading">
-        <h2>LO QUE SE <span class="accent">VIENE</span></h2>
-        <p>Eventos, colaboraciones y convocatorias del estudio</p>
+        <h2>{% trans "WHAT'S" %} <span class="accent">{% trans "COMING" %}</span></h2>
+        <p>{% trans "Events, collaborations and announcements from the studio" %}</p>
         <div class="divider" style="margin:1rem auto 0;"></div>
     </div>
 
@@ -369,11 +370,11 @@
             <div class="anuncio-body">
                 <div class="anuncio-meta">
                     <span class="tipo-badge tipo-{{ a.tipo }}">
-                        {% if a.tipo == 'colaboracion' %}🎨 Colaboración
-                        {% elif a.tipo == 'concurso' %}🏆 Concurso
-                        {% elif a.tipo == 'voluntarios' %}🙋 Voluntarios
-                        {% elif a.tipo == 'evento' %}📅 Evento
-                        {% else %}📢 Anuncio{% endif %}
+                        {% if a.tipo == 'colaboracion' %}🎨 {% trans "Collaboration" %}
+                        {% elif a.tipo == 'concurso' %}🏆 {% trans "Contest" %}
+                        {% elif a.tipo == 'voluntarios' %}🙋 {% trans "Volunteers" %}
+                        {% elif a.tipo == 'evento' %}📅 {% trans "Event" %}
+                        {% else %}📢 {% trans "Announcement" %}{% endif %}
                     </span>
                     {% if a.fecha_evento %}
                         <span class="anuncio-fecha">{{ a.fecha_evento|date:"d M Y" }}</span>
@@ -419,7 +420,7 @@
                     </div>
 
                     <a href="{% url 'perfil_tatuador' a.tatuador_asociado.pk %}" class="colab-link">
-                        Ver portafolio completo →
+                        {% trans "View full portfolio" %} →
                     </a>
                 </div>
                 {% elif a.tatuador_asociado and not trabajos %}
@@ -441,7 +442,7 @@
                         {% endwith %}
                     </div>
                     <a href="{% url 'perfil_tatuador' a.tatuador_asociado.pk %}" class="colab-link">
-                        Ver perfil del artista →
+                        {% trans "View artist profile" %} →
                     </a>
                 </div>
                 {% endif %}
@@ -484,14 +485,14 @@
 
 <!-- ══════════════════════════════════════════════════════ CTA FINAL -->
 <div class="cta-strip">
-    <h2>¿LISTO PARA TU <span class="accent">PRÓXIMO TATUAJE?</span></h2>
-    <p>Cuéntanos tu idea y uno de nuestros artistas te dará una cotización personalizada.</p>
+    <h2>{% trans "READY FOR YOUR" %} <span class="accent">{% trans "NEXT TATTOO?" %}</span></h2>
+    <p>{% trans "Tell us your idea and one of our artists will give you a personalized quote." %}</p>
     <div class="cta-btns">
         <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold" style="font-size:1rem;padding:.85rem 2.2rem;">
-            Solicitar Cotización
+            {% trans "Request a Quote" %}
         </a>
         <a href="{% url 'galeria' %}" class="btn btn-outline" style="font-size:1rem;padding:.85rem 2.2rem;">
-            Conocer Artistas
+            {% trans "Meet Our Artists" %}
         </a>
     </div>
 </div>

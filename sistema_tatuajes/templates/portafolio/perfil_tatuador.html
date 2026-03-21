@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block titulo %}{{ tatuador.get_full_name|default:tatuador.username }} — Ink Studio{% endblock %}
+{% load i18n %}
+{% block titulo %}{{ tatuador.get_full_name|default:tatuador.username }} — {{ estudio_config.nombre }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -247,7 +247,7 @@
 
 {% block contenido %}
 
-<a href="{% url 'galeria' %}" class="back-link">&larr; Todos los artistas</a>
+<a href="{% url 'galeria' %}" class="back-link">&larr; {% trans "All artists" %}</a>
 
 <!-- ARTIST HERO -->
 <section class="artist-hero">
@@ -282,7 +282,7 @@
         {% endif %}
         <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap;">
             <a href="{% url 'nueva_cotizacion_artista' tatuador.pk %}" class="btn btn-gold">
-                Cotizar con este artista
+                {% trans "Quote with this artist" %}
             </a>
             {% if tatuador.perfil.telefono %}
             <a href="https://wa.me/{{ tatuador.perfil.telefono|cut:' '|cut:'+'|cut:'-'|cut:'('|cut:')' }}"
@@ -299,7 +299,7 @@
 <!-- FILTRO POR ESTILO -->
 {% if estilos %}
 <div class="filter-bar" id="filter-bar">
-    <button class="filter-btn active" data-estilo="todos">Todos</button>
+    <button class="filter-btn active" data-estilo="todos">{% trans "All" %}</button>
     {% for estilo in estilos %}
         <button class="filter-btn" data-estilo="{{ estilo }}">{{ estilo }}</button>
     {% endfor %}
@@ -334,7 +334,7 @@
         </article>
     {% empty %}
         <div class="empty-works">
-            <p style="font-size:1.1rem;">Este artista aún no ha subido trabajos al portafolio.</p>
+            <p style="font-size:1.1rem;">{% trans "This artist hasn't uploaded any portfolio work yet." %}</p>
         </div>
     {% endfor %}
 </div>
@@ -342,19 +342,18 @@
 <!-- CTA BOTTOM -->
 {% if trabajos %}
 <div class="cta-strip">
-    <h2>¿TE CONVENCE EL TRABAJO?</h2>
-    <p>Solicita una cotización sin compromiso. Nuestro artista se pondrá en contacto contigo.</p>
-    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">Solicitar Cotización</a>
+    <h2>{% trans "LIKE THE WORK?" %}</h2>
+    <p>{% trans "Request a no-commitment quote. Our artist will get in touch with you." %}</p>
+    <a href="{% url 'nueva_cotizacion' %}" class="btn btn-gold">{% trans "Request a Quote" %}</a>
 </div>
 {% endif %}
 
 <!-- ── DISPONIBILIDAD / VIAJES ────────────────────────────────────────── -->
 {% if bloqueos_publicos %}
 <div style="margin-top:3rem;">
-    <h2 style="font-size:1.75rem;margin-bottom:.4rem;">DISPONIBILIDAD <span style="color:var(--gold);">Y VIAJES</span></h2>
+    <h2 style="font-size:1.75rem;margin-bottom:.4rem;">{% trans "AVAILABILITY" %} <span style="color:var(--gold);">{% trans "& TRAVEL" %}</span></h2>
     <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;">
-        Periodos en los que este artista no estará disponible en su sede habitual,
-        o en los que tatúa en otra ciudad — ¡puede que esté cerca de ti!
+        {% trans "Periods when this artist will not be available at their usual studio, or when they are tattooing in another city — they might be near you!" %}
     </p>
     <div style="display:flex;flex-wrap:wrap;gap:1rem;">
         {% for b in bloqueos_publicos %}
@@ -390,7 +389,7 @@
                 <div style="margin-top:.6rem;">
                     <a href="{% url 'nueva_cotizacion' %}" class="btn btn-outline"
                        style="font-size:.72rem;padding:.3rem .9rem;">
-                        Quiero cita aquí →
+                        {% trans "I want an appointment here" %} →
                     </a>
                 </div>
                 {% endif %}

@@ -1,6 +1,6 @@
 ﻿{% extends "base.html" %}
-
-{% block titulo %}Recepción — Ink Studio{% endblock %}
+{% load i18n %}
+{% block titulo %}{% trans "Reception" %} — {{ estudio_config.nombre }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -42,13 +42,13 @@
 {% block contenido %}
 
 <div class="page-header">
-    <h1>PANEL DE <span class="accent">RECEPCIÓN</span></h1>
-    <p>Solicitudes activas de {{ user.get_full_name|default:user.username }}. Cotiza, verifica anticipos y agenda.</p>
+    <h1>{% trans "RECEPTION" %} <span class="accent">{% trans "PANEL" %}</span></h1>
+    <p>{% trans "Active requests for" %} {{ user.get_full_name|default:user.username }}. {% trans "Quote, verify deposits and schedule." %}</p>
     <div class="divider"></div>
 </div>
 
 {% if pendientes %}
-<p class="section-title">Pendientes de cotizar ({{ pendientes|length }})</p>
+<p class="section-title">{% trans "Pending quote" %} ({{ pendientes|length }})</p>
 <div class="requests-grid" style="margin-bottom:3rem;">
     {% for c in pendientes %}
     <article class="request-card">
@@ -70,9 +70,9 @@
             </div>
         </div>
         <div class="request-card-footer">
-            <a href="{% url 'aceptar_cotizacion' c.id %}" class="btn btn-gold btn-block">Cotizar Trabajo</a>
-            <a href="{% url 'detalle_cotizacion' c.id %}" class="btn btn-outline btn-block">Ver detalle &amp; mensajes</a>
-            <a href="{% url 'cancelar_por_tatuador' c.id %}" class="btn btn-muted btn-block">Rechazar</a>
+            <a href="{% url 'aceptar_cotizacion' c.id %}" class="btn btn-gold btn-block">{% trans "Quote Job" %}</a>
+            <a href="{% url 'detalle_cotizacion' c.id %}" class="btn btn-outline btn-block">{% trans "View detail & messages" %}</a>
+            <a href="{% url 'cancelar_por_tatuador' c.id %}" class="btn btn-muted btn-block">{% trans "Reject" %}</a>
         </div>
     </article>
     {% endfor %}
@@ -80,7 +80,7 @@
 {% endif %}
 
 {% if anticipo_subido %}
-<p class="section-title">Anticipo recibido — listo para agendar ({{ anticipo_subido|length }})</p>
+<p class="section-title">{% trans "Deposit received — ready to schedule" %} ({{ anticipo_subido|length }})</p>
 <div class="requests-grid" style="margin-bottom:3rem;">
     {% for c in anticipo_subido %}
     <article class="request-card estado-anticipo">
@@ -90,7 +90,7 @@
         <div class="request-card-body">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;">
                 <strong style="font-size:1rem;">{{ c.nombre_cliente }}</strong>
-                <span class="badge badge-green">Anticipo recibido</span>
+                <span class="badge badge-green">{% trans "Deposit received" %}</span>
             </div>
             <div class="meta-grid">
                 <div><div class="field-label">Estilo</div><span class="badge badge-gold">{{ c.estilo }}</span></div>
@@ -100,9 +100,9 @@
             </div>
         </div>
         <div class="request-card-footer">
-            <a href="{% url 'agendar_cita' c.id %}" class="btn btn-green btn-block">Verificar y Agendar</a>
-            <a href="{% url 'detalle_cotizacion' c.id %}" class="btn btn-outline btn-block">Ver detalle &amp; mensajes</a>
-            <a href="{% url 'cancelar_por_tatuador' c.id %}" class="btn btn-muted btn-block">Cancelar</a>
+            <a href="{% url 'agendar_cita' c.id %}" class="btn btn-green btn-block">{% trans "Verify and Schedule" %}</a>
+            <a href="{% url 'detalle_cotizacion' c.id %}" class="btn btn-outline btn-block">{% trans "View detail & messages" %}</a>
+            <a href="{% url 'cancelar_por_tatuador' c.id %}" class="btn btn-muted btn-block">{% trans "Cancel" %}</a>
         </div>
     </article>
     {% endfor %}
@@ -111,22 +111,22 @@
 
 {% if not pendientes and not anticipo_subido %}
 <div style="text-align:center;padding:4rem 2rem;color:var(--text-muted);">
-    <p style="font-size:1.2rem;">Sin solicitudes activas en este momento.</p>
+    <p style="font-size:1.2rem;">{% trans "No active requests at the moment." %}</p>
 </div>
 {% endif %}
 
 {% if historial %}
-<p class="section-title" style="margin-top:2rem;">Historial reciente</p>
+<p class="section-title" style="margin-top:2rem;">{% trans "Recent history" %}</p>
 <div class="requests-grid">
     {% for c in historial %}
     <article class="request-card" style="opacity:.7;">
         <div class="request-card-body">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;">
                 <strong>{{ c.nombre_cliente }}</strong>
-                {% if c.estado == 'confirmada' %}<span class="badge badge-green">Confirmada</span>
-                {% elif c.estado == 'cancelada' %}<span class="badge badge-red">Cancelada</span>
-                {% elif c.estado == 'abierta' %}<span class="badge badge-gold">Fecha abierta</span>
-                {% elif c.estado == 'cotizada' %}<span class="badge badge-muted">Esperando anticipo</span>
+                {% if c.estado == 'confirmada' %}<span class="badge badge-green">{% trans "Confirmed" %}</span>
+                {% elif c.estado == 'cancelada' %}<span class="badge badge-red">{% trans "Cancelled" %}</span>
+                {% elif c.estado == 'abierta' %}<span class="badge badge-gold">{% trans "Open date" %}</span>
+                {% elif c.estado == 'cotizada' %}<span class="badge badge-muted">{% trans "Awaiting deposit" %}</span>
                 {% endif %}
             </div>
             <div class="meta-grid">
@@ -140,7 +140,7 @@
             {% endif %}
         </div>
         <div class="request-card-footer">
-            <a href="{% url 'detalle_cotizacion' c.id %}" class="btn btn-outline btn-block">Ver detalle &amp; mensajes</a>
+            <a href="{% url 'detalle_cotizacion' c.id %}" class="btn btn-outline btn-block">{% trans "View detail & messages" %}</a>
         </div>
     </article>
     {% endfor %}

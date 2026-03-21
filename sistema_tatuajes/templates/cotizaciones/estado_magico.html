@@ -1,6 +1,6 @@
 ﻿{% extends "base.html" %}
-
-{% block titulo %}Tu Tatuaje — Ink Studio{% endblock %}
+{% load i18n %}
+{% block titulo %}{% trans "Your Tattoo" %} — {{ estudio_config.nombre }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -53,8 +53,8 @@
 <div class="status-wrapper">
 
     <div class="greeting-block">
-        <h1>HOLA, <span class="accent">{{ cotizacion.nombre_cliente|upper }}</span></h1>
-        <p>Panel privado de tu tatuaje de <strong>{{ cotizacion.estilo }}</strong> con {{ cotizacion.tatuador.get_full_name|default:cotizacion.tatuador.username }}.</p>
+        <h1>{% trans "HELLO," %} <span class="accent">{{ cotizacion.nombre_cliente|upper }}</span></h1>
+        <p>{% trans "Private panel for your" %} <strong>{{ cotizacion.estilo }}</strong> {% trans "tattoo with" %} {{ cotizacion.tatuador.get_full_name|default:cotizacion.tatuador.username }}.</p>
     </div>
 
     <!-- STEPPER 6 ESTADOS -->
@@ -62,19 +62,19 @@
     <div class="stepper">
         <div class="step done">
             <div class="step-dot">✓</div>
-            <div class="step-label">Solicitado</div>
+            <div class="step-label">{% trans "Requested" %}</div>
         </div>
         <div class="step {% if e == 'cotizada' or e == 'anticipo_subido' or e == 'confirmada' or e == 'abierta' %}done{% elif e == 'cancelada' %}cancelled{% endif %}">
             <div class="step-dot">{% if e in 'cotizada,anticipo_subido,confirmada,abierta' %}✓{% elif e == 'cancelada' %}✕{% else %}2{% endif %}</div>
-            <div class="step-label">Cotizado</div>
+            <div class="step-label">{% trans "Quoted" %}</div>
         </div>
         <div class="step {% if e == 'anticipo_subido' or e == 'confirmada' %}done{% elif e == 'cancelada' %}cancelled{% endif %}">
             <div class="step-dot">{% if e == 'anticipo_subido' or e == 'confirmada' %}✓{% elif e == 'cancelada' %}✕{% else %}3{% endif %}</div>
-            <div class="step-label">Anticipo</div>
+            <div class="step-label">{% trans "Deposit" %}</div>
         </div>
         <div class="step {% if e == 'confirmada' %}done{% elif e == 'cancelada' %}cancelled{% elif e == 'abierta' %}done{% endif %}">
             <div class="step-dot">{% if e == 'confirmada' %}✓{% elif e == 'abierta' %}📅{% elif e == 'cancelada' %}✕{% else %}4{% endif %}</div>
-            <div class="step-label">{% if e == 'abierta' %}Fecha abierta{% else %}Agendado{% endif %}</div>
+            <div class="step-label">{% if e == 'abierta' %}{% trans "Open date" %}{% else %}{% trans "Scheduled" %}{% endif %}</div>
         </div>
     </div>
     {% endwith %}
@@ -82,36 +82,36 @@
     <!-- DATOS GENERALES -->
     <div class="info-grid">
         <div class="info-item">
-            <div class="label">Estado</div>
+            <div class="label">{% trans "Status" %}</div>
             <div class="value">
-                {% if cotizacion.estado == 'pendiente' %}<span class="badge badge-muted">En revisión</span>
-                {% elif cotizacion.estado == 'cotizada' %}<span class="badge badge-gold">Precio enviado</span>
-                {% elif cotizacion.estado == 'anticipo_subido' %}<span class="badge badge-green">Anticipo recibido ✓</span>
-                {% elif cotizacion.estado == 'confirmada' %}<span class="badge badge-green">¡Cita confirmada!</span>
-                {% elif cotizacion.estado == 'cancelada' %}<span class="badge badge-red">Cancelada</span>
-                {% elif cotizacion.estado == 'abierta' %}<span class="badge badge-gold">Fecha por definir</span>
+                {% if cotizacion.estado == 'pendiente' %}<span class="badge badge-muted">{% trans "Under review" %}</span>
+                {% elif cotizacion.estado == 'cotizada' %}<span class="badge badge-gold">{% trans "Price sent" %}</span>
+                {% elif cotizacion.estado == 'anticipo_subido' %}<span class="badge badge-green">{% trans "Deposit received" %} ✓</span>
+                {% elif cotizacion.estado == 'confirmada' %}<span class="badge badge-green">{% trans "Appointment confirmed!" %}</span>
+                {% elif cotizacion.estado == 'cancelada' %}<span class="badge badge-red">{% trans "Cancelled" %}</span>
+                {% elif cotizacion.estado == 'abierta' %}<span class="badge badge-gold">{% trans "Date to be defined" %}</span>
                 {% endif %}
             </div>
         </div>
         <div class="info-item">
-            <div class="label">Fecha preferida</div>
-            <div class="value">{% if cotizacion.fecha_solicitada %}{{ cotizacion.fecha_solicitada|date:"d M Y" }}{% else %}<em style="color:var(--text-muted);">Sin fecha fija</em>{% endif %}</div>
+            <div class="label">{% trans "Preferred date" %}</div>
+            <div class="value">{% if cotizacion.fecha_solicitada %}{{ cotizacion.fecha_solicitada|date:"d M Y" }}{% else %}<em style="color:var(--text-muted);">{% trans "No fixed date" %}</em>{% endif %}</div>
         </div>
         <div class="info-item">
-            <div class="label">Estilo</div>
+            <div class="label">{% trans "Style" %}</div>
             <div class="value"><span class="badge badge-gold">{{ cotizacion.estilo }}</span></div>
         </div>
         <div class="info-item">
-            <div class="label">Zona · Tamaño</div>
+            <div class="label">{% trans "Zone · Size" %}</div>
             <div class="value">{{ cotizacion.zona_cuerpo }} · {{ cotizacion.tamano }}</div>
         </div>
         {% if cotizacion.monto_total %}
         <div class="info-item">
-            <div class="label">Precio Total</div>
+            <div class="label">{% trans "Total Price" %}</div>
             <div class="value" style="font-weight:700;color:var(--text);">${{ cotizacion.monto_total }}</div>
         </div>
         <div class="info-item">
-            <div class="label">Anticipo</div>
+            <div class="label">{% trans "Deposit" %}</div>
             <div class="value" style="font-weight:700;color:var(--gold);">${{ cotizacion.monto_anticipo }}</div>
         </div>
         {% endif %}
@@ -142,26 +142,26 @@
     <!-- SUBIR COMPROBANTE -->
     {% if cotizacion.estado == 'cotizada' %}
     <div class="upload-section">
-        <h2>ENVIAR <span style="color:var(--gold);">ANTICIPO</span></h2>
-        <p>Realiza la transferencia y sube tu comprobante para confirmar la cita.</p>
+        <h2>{% trans "SEND" %} <span style="color:var(--gold);">{% trans "DEPOSIT" %}</span></h2>
+        <p>{% trans "Make the transfer and upload your receipt to confirm the appointment." %}</p>
         <div class="clabe-box">
-            Transferencia: &nbsp;<strong>BBVA — CLABE: 012345678901234567</strong>
+            {% trans "Transfer" %}: &nbsp;<strong>BBVA — CLABE: 012345678901234567</strong>
         </div>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-gold btn-block" style="margin-top:1rem;">Enviar Comprobante</button>
+            <button type="submit" class="btn btn-gold btn-block" style="margin-top:1rem;">{% trans "Send Receipt" %}</button>
         </form>
 
         <!-- Opciones adicionales -->
         <div class="action-section">
-            <p>¿No sabes tu fecha disponible aún?</p>
+            <p>{% trans "Don't know your available date yet?" %}</p>
             <a href="{% url 'dejar_abierta' cotizacion.token_acceso %}" class="btn btn-outline btn-block"
-               onclick="return confirm('¿Deseas dejar la fecha abierta? El artista te contactará cuando ambos tengan disponibilidad.')">
-                📅  Dejar fecha abierta (coordinar después)
+               onclick="return confirm('{% trans \'Do you want to leave the date open? The artist will contact you when you both have availability.\' %}')">
+                📅  {% trans "Leave date open (coordinate later)" %}
             </a>
-            <p style="margin-top:.5rem;">¿Ya no deseas continuar?</p>
-            <a href="{% url 'cancelar_por_cliente' cotizacion.token_acceso %}" class="btn btn-muted btn-block">Cancelar mi solicitud</a>
+            <p style="margin-top:.5rem;">{% trans "Don't want to continue?" %}</p>
+            <a href="{% url 'cancelar_por_cliente' cotizacion.token_acceso %}" class="btn btn-muted btn-block">{% trans "Cancel my request" %}</a>
         </div>
     </div>
     {% endif %}
@@ -169,15 +169,15 @@
     <!-- ESTADOS INFO -->
     {% if cotizacion.estado == 'pendiente' %}
     <div class="alert alert-info">
-        Tu solicitud está en revisión. En breve recibirás un correo con el precio y los pasos para confirmar tu cita.
+        {% trans "Your request is under review. You'll soon receive an email with the price and steps to confirm your appointment." %}
     </div>
     {% elif cotizacion.estado == 'anticipo_subido' %}
     <div class="alert alert-success">
-        <strong>✓ Comprobante recibido.</strong> El artista verificará el pago y te enviará la hora exacta de tu cita.
+        <strong>✓ {% trans "Receipt received." %}</strong> {% trans "The artist will verify the payment and send you the exact time of your appointment." %}
     </div>
     {% elif cotizacion.estado == 'abierta' %}
     <div class="alert alert-info">
-        <strong>Fecha coordinada manualmente.</strong> El artista te contactará para acordar un horario conveniente para ambos.
+        <strong>{% trans "Date coordinated manually." %}</strong> {% trans "The artist will contact you to arrange a time that works for both of you." %}
     </div>
     {% endif %}
 
