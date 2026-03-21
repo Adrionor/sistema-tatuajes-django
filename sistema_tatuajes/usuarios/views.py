@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count, Q
 
-from .models import Perfil, ConfiguracionEstudio, Anuncio
+from .models import Perfil, ConfiguracionEstudio, Anuncio, ImagenHero
 from .forms import CrearTatuadorForm, PerfilTatuadorForm, EditarUsuarioForm, ConfiguracionEstudioForm, AnuncioForm
 from cotizaciones.models import Cotizacion
 from citas.models import Cita
@@ -281,9 +281,11 @@ def panel_configuracion(request):
     else:
         form = ConfiguracionEstudioForm(instance=config)
 
+    imagenes_hero = ImagenHero.objects.filter(configuracion=config).order_by('orden', 'pk')
     return render(request, 'panel/configuracion.html', {
-        'form':   form,
-        'config': config,
+        'form':          form,
+        'config':        config,
+        'imagenes_hero': imagenes_hero,
     })
 
 
@@ -306,11 +308,37 @@ def landing(request):
             'trabajos': trabajos,
         })
 
+    imagenes_hero = list(
+        ImagenHero.objects.filter(configuracion=config, activo=True).order_by('orden', 'pk')
+    )
+
     layout = config.plantilla_layout or 'clasico'
     return render(request, f'landing_{layout}.html', {
         'config':        config,
         'anuncios_data': anuncios_data,
+        'imagenes_hero': imagenes_hero,
     })
+
+
+# ─── Imágenes Hero del carrusel ─────────────────────────────────────────
+
+@propietario_required
+def panel_subir_imagen_hero(request):
+    if request.method == 'POST':
+        config = ConfiguracionEstudio.get_config()
+        for imagen in request.FILES.getlist('imagenes'):
+            ImagenHero.objects.create(configuracion=config, imagen=imagen)
+        messages.success(request, 'Imágenes añadidas al carrusel.')
+    return redirect('panel_configuracion')
+
+
+@propietario_required
+def panel_eliminar_imagen_hero(request, imagen_id):
+    img = get_object_or_404(ImagenHero, pk=imagen_id)
+    img.imagen.delete(save=False)
+    img.delete()
+    messages.success(request, 'Imagen eliminada.')
+    return redirect('panel_configuracion')
 
 
 # ─── Panel de anuncios ─────────────────────────────────────────────────────────────────

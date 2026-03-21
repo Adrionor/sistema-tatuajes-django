@@ -23,6 +23,7 @@
         inset: 0;
         background-size: cover;
         background-position: center;
+        transition: opacity 0.6s ease;
     }
     .im-hero-overlay {
         position: absolute;
@@ -199,8 +200,8 @@
 
 <!-- HERO IMPACTO -->
 <section class="im-hero">
-    <div class="im-hero-bg"
-         style="{% if config.imagen_hero %}background-image:url('{{ config.imagen_hero.url }}');{% else %}background: radial-gradient(ellipse at 20% 70%, #1a0f00 0%, #050505 70%);{% endif %}"></div>
+    <div class="im-hero-bg" id="im-hero-bg"
+         style="{% if imagenes_hero %}background-image:url('{{ imagenes_hero.0.imagen.url }}');{% elif config.imagen_hero %}background-image:url('{{ config.imagen_hero.url }}');{% else %}background: radial-gradient(ellipse at 20% 70%, #1a0f00 0%, #050505 70%);{% endif %}"></div>
     <div class="im-hero-overlay"></div>
     <div class="im-hero-content">
         <p class="im-eyebrow">{% trans "Tattoo Studio" %} — {{ config.nombre }}</p>
@@ -289,8 +290,20 @@
 
 {% block extra_scripts %}
 <script>
-const imHeroBg = document.querySelector('.im-hero-bg');
+const imHeroBg = document.getElementById('im-hero-bg');
 if (imHeroBg) {
+    const _imImgs = [{% for img in imagenes_hero %}'{{ img.imagen.url }}'{% if not forloop.last %},{% endif %}{% endfor %}];
+    if (_imImgs.length > 1) {
+        let _imI = 0;
+        setInterval(() => {
+            _imI = (_imI + 1) % _imImgs.length;
+            imHeroBg.style.opacity = '0';
+            setTimeout(() => {
+                imHeroBg.style.backgroundImage = `url('${_imImgs[_imI]}')`;
+                imHeroBg.style.opacity = '1';
+            }, 600);
+        }, 5000);
+    }
     window.addEventListener('scroll', () => {
         imHeroBg.style.transform = `translateY(${window.scrollY * 0.3}px)`;
     }, { passive: true });

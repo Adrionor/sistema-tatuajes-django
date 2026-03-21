@@ -25,7 +25,7 @@
         background-size: cover;
         background-position: center;
         filter: brightness(.25) saturate(.6);
-        transition: transform 12s ease;
+        transition: opacity 0.6s ease, transform 12s ease;
     }
     .mn-hero:hover .mn-hero-bg { transform: scale(1.04); }
     .mn-hero > * { position: relative; z-index: 1; }
@@ -169,8 +169,10 @@
 
 <!-- HERO MINIMAL -->
 <section class="mn-hero" id="mn-top">
-    {% if config.imagen_hero %}
-    <div class="mn-hero-bg" style="background-image:url('{{ config.imagen_hero.url }}');"></div>
+    {% if imagenes_hero %}
+    <div class="mn-hero-bg" id="mn-hero-bg" style="background-image:url('{{ imagenes_hero.0.imagen.url }}');"></div>
+    {% elif config.imagen_hero %}
+    <div class="mn-hero-bg" id="mn-hero-bg" style="background-image:url('{{ config.imagen_hero.url }}');"></div>
     {% endif %}
     <p class="mn-eyebrow">{% trans "Tattoo Studio" %}</p>
     <h1 class="mn-title">
@@ -243,4 +245,24 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const _mnBg = document.getElementById('mn-hero-bg');
+    if (_mnBg) {
+        const _mnImgs = [{% for img in imagenes_hero %}'{{ img.imagen.url }}'{% if not forloop.last %},{% endif %}{% endfor %}];
+        if (_mnImgs.length > 1) {
+            let _mnI = 0;
+            setInterval(() => {
+                _mnI = (_mnI + 1) % _mnImgs.length;
+                _mnBg.style.opacity = '0';
+                setTimeout(() => {
+                    _mnBg.style.backgroundImage = `url('${_mnImgs[_mnI]}')`;
+                    _mnBg.style.opacity = '1';
+                }, 600);
+            }, 5000);
+        }
+    }
+</script>
 {% endblock %}

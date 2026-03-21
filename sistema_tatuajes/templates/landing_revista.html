@@ -201,7 +201,9 @@
 <!-- HERO REVISTA -->
 <section class="rv-hero">
     <div class="rv-hero-left">
-        {% if config.imagen_hero %}
+        {% if imagenes_hero %}
+        <div class="rv-hero-left-bg" style="background-image:url('{{ imagenes_hero.0.imagen.url }}');"></div>
+        {% elif config.imagen_hero %}
         <div class="rv-hero-left-bg" style="background-image:url('{{ config.imagen_hero.url }}');"></div>
         {% endif %}
         <p class="rv-label">{% trans "Tattoo Studio" %}</p>
@@ -224,7 +226,13 @@
     </div>
     <div class="rv-divider"></div>
     <div class="rv-hero-right">
-        {% if anuncios_data %}
+        {% if imagenes_hero %}
+            {% for img in imagenes_hero|slice:":4" %}
+                <div class="rv-hero-tile">
+                    <img src="{{ img.imagen.url }}" alt="">
+                </div>
+            {% endfor %}
+        {% elif anuncios_data %}
             {% for item in anuncios_data|slice:":4" %}
                 {% if item.anuncio.imagen %}
                     <div class="rv-hero-tile">

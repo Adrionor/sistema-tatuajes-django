@@ -161,7 +161,17 @@
 <!-- MOSAIC HERO -->
 <section class="mo-hero" id="mo-top">
     <div class="mo-grid">
-        {% if anuncios_data %}
+        {% if imagenes_hero %}
+            {% for img in imagenes_hero|slice:":8" %}
+                <div class="mo-grid-cell {% if forloop.first %}wide tall{% elif forloop.counter == 3 %}wide{% endif %}">
+                    <img src="{{ img.imagen.url }}" alt="">
+                </div>
+            {% endfor %}
+            {% if imagenes_hero|length < 3 %}
+            <div class="mo-grid-cell" style="background:#0a0a0a;"></div>
+            <div class="mo-grid-cell" style="background:#111111;"></div>
+            {% endif %}
+        {% elif anuncios_data %}
             {% for item in anuncios_data|slice:":8" %}
                 {% if item.anuncio.imagen %}
                     <div class="mo-grid-cell {% if forloop.first %}wide tall{% elif forloop.counter == 3 %}wide{% endif %}">
@@ -178,12 +188,8 @@
             <div class="mo-grid-cell" style="background:radial-gradient(ellipse at 70% 40%, #110a00, #050505);"></div>
             {% endif %}
         {% else %}
-            <!-- No announcements: use hero image or dark gradient -->
-            {% if config.imagen_hero %}
-            <div class="mo-grid-cell wide tall" style="background-image:url('{{ config.imagen_hero.url }}');background-size:cover;background-position:center;"></div>
-            {% else %}
+            <!-- Nothing at all — dark gradient -->
             <div class="mo-grid-cell wide tall" style="background:linear-gradient(135deg,#1a0f00,#050505);"></div>
-            {% endif %}
             <div class="mo-grid-cell" style="background:#0a0a0a;"></div>
             <div class="mo-grid-cell" style="background:#111111;"></div>
             <div class="mo-grid-cell" style="background:linear-gradient(225deg,#1a1408,#050505);"></div>

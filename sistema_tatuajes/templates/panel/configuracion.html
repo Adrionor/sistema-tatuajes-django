@@ -45,6 +45,49 @@
     </div>
 </div>
 
+<!-- Galería Hero -->
+<div class="section-card" style="margin-bottom:1.5rem;">
+    <div class="section-card-header">
+        <span class="section-card-title">🖼️ Imágenes Hero (Carrusel / Mosaico)</span>
+    </div>
+    <div class="section-card-body">
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">
+            Sube varias fotos para el hero de la landing. Se usan como carrusel (Clásico / Minimal / Impacto),
+            en la cuadrícula editorial (Revista) o como mosaico (Mosaico).
+            Si hay imágenes aquí, tienen prioridad sobre el campo de arriba.
+        </p>
+        {% if imagenes_hero %}
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1.25rem;">
+            {% for img in imagenes_hero %}
+            <div style="position:relative;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);">
+                <img src="{{ img.imagen.url }}" style="width:100%;height:100%;object-fit:cover;" alt="">
+                <form method="post" action="{% url 'panel_eliminar_imagen_hero' img.pk %}"
+                      style="position:absolute;top:.3rem;right:.3rem;"
+                      onsubmit="return confirm('¿Eliminar esta imagen?')">
+                    {% csrf_token %}
+                    <button type="submit" style="background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:.85rem;line-height:1;">✕</button>
+                </form>
+                <span style="position:absolute;bottom:.3rem;left:.4rem;font-size:.65rem;color:rgba(255,255,255,.6);">{{ forloop.counter }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form method="post" action="{% url 'panel_subir_imagen_hero' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                <input type="file" name="imagenes" accept="image/*" multiple
+                       style="font-size:.82rem;color:var(--text-muted);">
+                <button type="submit" class="btn btn-outline" style="font-size:.82rem;padding:.45rem 1.1rem;">
+                    ➕ Subir imágenes
+                </button>
+            </div>
+            <small style="color:var(--text-muted);font-size:.72rem;margin-top:.4rem;display:block;">
+                Puedes seleccionar varias al mismo tiempo. Recomendado 1920×1080 px.
+            </small>
+        </form>
+    </div>
+</div>
+
 <!-- Contacto -->
 <div class="section-card" style="margin-bottom:1.5rem;">
     <div class="section-card-header">

@@ -21,4 +21,7 @@ urlpatterns = [
     path('anuncios/<int:anuncio_id>/eliminar/',     views.panel_eliminar_anuncio,  name='panel_eliminar_anuncio'),
     # Configuración
     path('configuracion/',                    views.panel_configuracion,    name='panel_configuracion'),
+    # Imágenes Hero
+    path('hero/subir/',                       views.panel_subir_imagen_hero,    name='panel_subir_imagen_hero'),
+    path('hero/<int:imagen_id>/eliminar/',    views.panel_eliminar_imagen_hero, name='panel_eliminar_imagen_hero'),
 ]

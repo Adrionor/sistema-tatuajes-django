@@ -94,6 +94,29 @@ class ConfiguracionEstudio(models.Model):
         return obj
 
 
+# ─── Galería de imágenes hero ──────────────────────────────────────────────
+
+class ImagenHero(models.Model):
+    """Imágenes para el carrusel/mosaico del hero de la landing page."""
+    configuracion = models.ForeignKey(
+        ConfiguracionEstudio, on_delete=models.CASCADE, related_name='imagenes_hero'
+    )
+    imagen = models.ImageField(
+        upload_to='hero/',
+        help_text='Recomendado 1920×1080 px o superior'
+    )
+    orden  = models.PositiveSmallIntegerField(default=0, help_text='Menor número aparece primero')
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['orden', 'pk']
+        verbose_name = 'Imagen Hero'
+        verbose_name_plural = 'Imágenes Hero'
+
+    def __str__(self):
+        return f"Hero #{self.pk} — {self.configuracion.nombre}"
+
+
 # ─── Anuncios del estudio ────────────────────────────────────────────────────
 
 class Anuncio(models.Model):
