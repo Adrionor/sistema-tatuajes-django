@@ -137,7 +137,7 @@
     {% for trabajo in trabajos %}
     <div class="mn-work-card" data-estilo="{{ trabajo.estilo }}"
         onclick="openWork('{{ trabajo.imagen.url }}','{{ trabajo.titulo|default:''|escapejs }}','{{ trabajo.estilo|escapejs }}','{{ trabajo.descripcion|default:''|escapejs }}')">
-        <img src="{{ trabajo.imagen.url }}" alt="{{ trabajo.titulo|default:trabajo.estilo }}">
+        <img src="{{ trabajo.imagen.url }}" alt="{{ trabajo.alt_text|default:trabajo.titulo|default:trabajo.estilo }}" loading="lazy">
         <div class="mn-work-overlay">
             <div class="mn-work-text">
                 {% if trabajo.titulo %}<strong>{{ trabajo.titulo }}</strong>{% endif %}

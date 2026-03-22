@@ -169,7 +169,7 @@
     <article class="work-card" data-estilo="{{ trabajo.estilo }}"
         onclick="openWork('{{ trabajo.imagen.url }}','{{ trabajo.titulo|default:''|escapejs }}','{{ trabajo.estilo|escapejs }}','{{ trabajo.descripcion|default:''|escapejs }}')">
         <div class="work-img-wrap">
-            <img src="{{ trabajo.imagen.url }}" alt="{{ trabajo.titulo|default:trabajo.estilo }}">
+            <img src="{{ trabajo.imagen.url }}" alt="{{ trabajo.alt_text|default:trabajo.titulo|default:trabajo.estilo }}" loading="lazy">
             <div class="work-overlay">
                 <div class="work-overlay-text">
                     {% if trabajo.titulo %}<strong>{{ trabajo.titulo }}</strong>{% endif %}

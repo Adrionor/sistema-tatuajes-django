@@ -172,7 +172,8 @@
                     <div class="card-photos count-{{ item.preview|length }}">
                         {% for trabajo in item.preview %}
                             <img src="{{ trabajo.imagen.url }}"
-                                 alt="Trabajo de {{ item.tatuador.get_full_name|default:item.tatuador.username }}"
+                                 alt="{{ trabajo.alt_text|default:'Tatuaje' }}"
+                                 loading="lazy"
                                  class="{% if forloop.first %}photo-main{% else %}photo-sec{% endif %}">
                         {% endfor %}
                     </div>

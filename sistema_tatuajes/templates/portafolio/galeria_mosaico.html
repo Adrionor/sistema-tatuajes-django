@@ -112,7 +112,8 @@
             {% for trabajo in item.preview %}
             <a href="{% url 'perfil_tatuador' item.tatuador.id %}" class="ms-tile">
                 <img src="{{ trabajo.imagen.url }}"
-                     alt="{{ item.tatuador.get_full_name|default:item.tatuador.username }}">
+                     alt="{{ trabajo.alt_text|default:item.tatuador.get_full_name|default:item.tatuador.username }}"
+                     loading="lazy">
                 <div class="ms-tile-overlay">
                     <div class="ms-tile-label">
                         <span class="ms-tile-artist">

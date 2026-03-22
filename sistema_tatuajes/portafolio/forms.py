@@ -6,18 +6,21 @@ from usuarios.models import Perfil
 class TrabajoForm(forms.ModelForm):
     class Meta:
         model  = Trabajo
-        fields = ['imagen', 'titulo', 'estilo', 'descripcion']
+        fields = ['imagen', 'titulo', 'estilo', 'descripcion', 'alt_text']
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 3,
                 'placeholder': 'Describe brevemente este trabajo (técnica, tiempo, inspiración...)'}),
             'titulo': forms.TextInput(attrs={'placeholder': 'Ej: Manga floral, Retrato realista...'}),
             'estilo': forms.TextInput(attrs={'placeholder': 'Ej: Realismo, Blackwork, Neo-tradicional...'}),
+            'alt_text': forms.TextInput(attrs={
+                'placeholder': 'Se genera automáticamente si lo dejas vacío (recomendado)'}),
         }
         labels = {
             'imagen':      'Foto del tatuaje',
             'titulo':      'Título (opcional)',
             'estilo':      'Estilo',
             'descripcion': 'Descripción (opcional)',
+            'alt_text':    'Alt text SEO (opcional)',
         }
 
 
