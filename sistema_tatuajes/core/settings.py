@@ -3,6 +3,7 @@ Django settings for core project.
 """
 
 from pathlib import Path
+import os
 from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -11,11 +12,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ─── Seguridad ────────────────────────────────────────────────────────────────
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY', default='change-this-secret-key-in-production')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='localhost,127.0.0.1,.railway.app',
+    cast=Csv(),
+)
 
 
 # ─── Aplicaciones ─────────────────────────────────────────────────────────────
@@ -159,7 +164,9 @@ LOGOUT_REDIRECT_URL = '/portafolio/'
 # ─── Seguridad en producción ──────────────────────────────────────────────────
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT         = True
+    SECURE_PROXY_SSL_HEADER     = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST        = True
+    SECURE_SSL_REDIRECT         = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
     SESSION_COOKIE_SECURE       = True
     CSRF_COOKIE_SECURE          = True
     SECURE_BROWSER_XSS_FILTER  = True
@@ -173,3 +180,7 @@ if not DEBUG:
 # ─── Misc ─────────────────────────────────────────────────────────────────────
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+if SECRET_KEY == 'change-this-secret-key-in-production' and not DEBUG:
+    print('WARNING: SECRET_KEY no está configurada en entorno de producción.')
