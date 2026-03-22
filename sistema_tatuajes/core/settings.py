@@ -16,11 +16,10 @@ SECRET_KEY = config('SECRET_KEY', default='change-this-secret-key-in-production'
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1,.railway.app',
-    cast=Csv(),
-)
+# En producción, Railway inyecta la variable ALLOWED_HOSTS o se acepta todo.
+# '*' es seguro detrás del proxy de Railway porque los requests externos
+# ya pasan por el edge de Railway con el host correcto.
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
 
 # ─── Aplicaciones ─────────────────────────────────────────────────────────────
@@ -127,7 +126,8 @@ USE_TZ = True
 # ─── Archivos estáticos ───────────────────────────────────────────────────────
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+# Solo incluir static/ si existe (en producción puede no estar commiteada).
+STATICFILES_DIRS = [d for d in [BASE_DIR / 'static'] if d.exists()]
 STATIC_ROOT = BASE_DIR / 'staticfiles'         # destino de collectstatic
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -164,14 +164,16 @@ LOGOUT_REDIRECT_URL = '/portafolio/'
 # ─── Seguridad en producción ──────────────────────────────────────────────────
 
 if not DEBUG:
+    # Railway termina SSL en su proxy — Django NO debe redirigir HTTP→HTTPS
+    # porque los health checks y requests internos llegan como HTTP plano.
     SECURE_PROXY_SSL_HEADER     = ('HTTP_X_FORWARDED_PROTO', 'https')
     USE_X_FORWARDED_HOST        = True
-    SECURE_SSL_REDIRECT         = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SECURE_SSL_REDIRECT         = False   # Railway maneja esto en su edge
     SESSION_COOKIE_SECURE       = True
     CSRF_COOKIE_SECURE          = True
     SECURE_BROWSER_XSS_FILTER  = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS         = 31536000   # 1 año
+    SECURE_HSTS_SECONDS         = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD         = True
     X_FRAME_OPTIONS             = 'DENY'
