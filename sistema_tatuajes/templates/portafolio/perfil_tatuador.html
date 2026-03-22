@@ -284,13 +284,6 @@
             <a href="{% url 'nueva_cotizacion_artista' tatuador.pk %}" class="btn btn-gold">
                 {% trans "Quote with this artist" %}
             </a>
-            {% if tatuador.perfil.telefono %}
-            <a href="https://wa.me/{{ tatuador.perfil.telefono|cut:' '|cut:'+'|cut:'-'|cut:'('|cut:')' }}"
-               target="_blank"
-               style="display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border:1.5px solid #25d366;border-radius:var(--radius);color:#25d366;font-size:.85rem;font-weight:700;transition:background .2s;"
-               onmouseover="this.style.background='rgba(37,211,102,.1)'" onmouseout="this.style.background='transparent'">
-                WhatsApp
-            </a>
             {% endif %}
         </div>
     </div>

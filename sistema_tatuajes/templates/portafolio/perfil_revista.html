@@ -137,14 +137,6 @@
                     📸 {{ tatuador.perfil.instagram }}
                 </a>
                 {% endif %}
-                {% if tatuador.perfil.telefono %}
-                <a href="https://wa.me/{{ tatuador.perfil.telefono|cut:' '|cut:'+'|cut:'-'|cut:'('|cut:')' }}"
-                   target="_blank"
-                   style="display:block;padding:.5rem;border:1.5px solid #25d366;border-radius:var(--radius);color:#25d366;font-size:.8rem;font-weight:700;text-decoration:none;text-align:center;transition:background .2s;"
-                   onmouseover="this.style.background='rgba(37,211,102,.1)'" onmouseout="this.style.background='transparent'">
-                    WhatsApp
-                </a>
-                {% endif %}
             </div>
         </div>
     </aside>
