@@ -596,3 +596,21 @@ msgstr "Estudio"
 
 msgid "Settings"
 msgstr "Configuración"
+
+msgid "MEET THE ARTISTS"
+msgstr "CONOCE A LOS ARTISTAS"
+
+msgid "Book a Consultation"
+msgstr "Reservar Consulta"
+
+msgid "Check back soon."
+msgstr "Vuelve pronto."
+
+msgid "Ready to get inked?"
+msgstr "¿Listo para tu tatuaje?"
+
+msgid "Get a Quote"
+msgstr "Cotizar"
+
+msgid "The studio hasn't added any artists yet. Check back soon."
+msgstr "El estudio aún no ha añadido artistas. ¡Vuelve pronto!"
