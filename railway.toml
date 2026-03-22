@@ -9,7 +9,7 @@ builder = "nixpacks"
 startCommand = "sh -c 'gunicorn core.wsgi:application --chdir sistema_tatuajes --bind 0.0.0.0:${PORT} --workers 2 --timeout 90'"
 
 # Health check — Railway verifica que la app respondió antes de declarar éxito
-healthcheckPath = "/"
+healthcheckPath = "/health/"
 healthcheckTimeout = 300
 
 # Reintentar si crashea
