@@ -24,4 +24,9 @@ urlpatterns = [
     # Imágenes Hero
     path('hero/subir/',                       views.panel_subir_imagen_hero,    name='panel_subir_imagen_hero'),
     path('hero/<int:imagen_id>/eliminar/',    views.panel_eliminar_imagen_hero, name='panel_eliminar_imagen_hero'),
+    # Superadmin — Gestión de estudios
+    path('superadmin/estudios/',                        views.superadmin_estudios,       name='superadmin_estudios'),
+    path('superadmin/estudios/nuevo/',                  views.superadmin_crear_estudio,  name='superadmin_crear_estudio'),
+    path('superadmin/estudios/<int:estudio_id>/editar/', views.superadmin_editar_estudio, name='superadmin_editar_estudio'),
+    path('superadmin/estudios/<int:estudio_id>/eliminar/', views.superadmin_eliminar_estudio, name='superadmin_eliminar_estudio'),
 ]

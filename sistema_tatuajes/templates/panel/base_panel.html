@@ -310,6 +310,15 @@
                 <span class="sidebar-icon">⚙️</span> {% trans "Settings" %}
             </a>
         </div>
+        {% if request.user.is_superuser %}
+        <div class="sidebar-section">
+            <p class="sidebar-label">Superadmin</p>
+            <a class="sidebar-link {% block active_superadmin %}{% endblock %}"
+               href="{% url 'superadmin_estudios' %}">
+                <span class="sidebar-icon">🏢</span> Estudios
+            </a>
+        </div>
+        {% endif %}
     </aside>
 
     <!-- ── Main content ────────────────────────────────────── -->

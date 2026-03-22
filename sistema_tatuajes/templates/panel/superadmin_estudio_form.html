@@ -1,0 +1,162 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}{% if editando %}Editar Estudio{% else %}Nuevo Estudio{% endif %} — Superadmin{% endblock %}
+{% block active_superadmin %}active{% endblock %}
+
+{% block panel_content %}
+<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;">
+    <a href="{% url 'superadmin_estudios' %}" style="color:var(--text-muted);font-size:.85rem;">← Estudios</a>
+    <span style="color:var(--border);">/</span>
+    <span style="color:var(--text-muted);font-size:.85rem;">{% if editando %}Editar{% else %}Nuevo{% endif %}</span>
+</div>
+
+<h1 class="panel-title">
+    {% if editando %}EDITAR <span class="accent">ESTUDIO</span>{% else %}NUEVO <span class="accent">ESTUDIO</span>{% endif %}
+</h1>
+<p class="panel-subtitle">
+    {% if editando %}Modifica los datos de «{{ estudio.nombre }}».
+    {% else %}Registra un nuevo estudio y crea automáticamente su usuario propietario.{% endif %}
+</p>
+
+<form method="post">
+{% csrf_token %}
+
+<div style="display:grid;grid-template-columns:{% if not editando %}1fr 1fr{% else %}1fr{% endif %};gap:1.5rem;align-items:start;">
+
+    <!-- ── Datos del estudio ── -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <span class="section-card-title">🏢 Datos del Estudio</span>
+        </div>
+        <div class="section-card-body">
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="{{ estudio_form.nombre.id_for_label }}">Nombre del estudio *</label>
+                    {{ estudio_form.nombre }}
+                    {% if estudio_form.nombre.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ estudio_form.nombre.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ estudio_form.subdominio.id_for_label }}">Subdominio</label>
+                    {{ estudio_form.subdominio }}
+                    <small style="color:var(--text-muted);font-size:.75rem;">Ej: <code>miestudio</code> → miestudio.tudominio.com</small>
+                    {% if estudio_form.subdominio.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ estudio_form.subdominio.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="{{ estudio_form.email_contacto.id_for_label }}">Email de contacto</label>
+                    {{ estudio_form.email_contacto }}
+                    {% if estudio_form.email_contacto.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ estudio_form.email_contacto.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ estudio_form.whatsapp.id_for_label }}">WhatsApp</label>
+                    {{ estudio_form.whatsapp }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ estudio_form.instagram.id_for_label }}">Instagram</label>
+                {{ estudio_form.instagram }}
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="{{ estudio_form.skin.id_for_label }}">Skin (tema visual)</label>
+                    {{ estudio_form.skin }}
+                    {% if estudio_form.skin.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ estudio_form.skin.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ estudio_form.idioma.id_for_label }}">Idioma</label>
+                    {{ estudio_form.idioma }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ estudio_form.plantilla_layout.id_for_label }}">Plantilla / Layout</label>
+                {{ estudio_form.plantilla_layout }}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── Propietario (solo al crear) ── -->
+    {% if not editando and prop_form %}
+    <div class="section-card">
+        <div class="section-card-header">
+            <span class="section-card-title">👤 Usuario Propietario</span>
+        </div>
+        <div class="section-card-body">
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="{{ prop_form.first_name.id_for_label }}">Nombre *</label>
+                    {{ prop_form.first_name }}
+                    {% if prop_form.first_name.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ prop_form.first_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ prop_form.last_name.id_for_label }}">Apellido</label>
+                    {{ prop_form.last_name }}
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="{{ prop_form.username.id_for_label }}">Usuario (login) *</label>
+                    {{ prop_form.username }}
+                    {% if prop_form.username.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ prop_form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ prop_form.email.id_for_label }}">Correo electrónico</label>
+                    {{ prop_form.email }}
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="{{ prop_form.password.id_for_label }}">Contraseña *</label>
+                    {{ prop_form.password }}
+                    {% if prop_form.password.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ prop_form.password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ prop_form.password2.id_for_label }}">Confirmar contraseña *</label>
+                    {{ prop_form.password2 }}
+                    {% if prop_form.password2.errors %}
+                        <p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ prop_form.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Acciones -->
+<div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:flex-end;flex-wrap:wrap;">
+    <a href="{% url 'superadmin_estudios' %}"
+       style="padding:.6rem 1.4rem;border-radius:6px;border:1px solid var(--border);color:var(--text-muted);text-decoration:none;font-size:.9rem;">
+        Cancelar
+    </a>
+    <button type="submit" class="btn btn-gold" style="padding:.6rem 1.6rem;">
+        {% if editando %}💾 Guardar cambios{% else %}✅ Crear estudio{% endif %}
+    </button>
+</div>
+
+</form>
+{% endblock %}

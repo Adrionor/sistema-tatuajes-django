@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.db.models import Count, Q
 
 from .models import Perfil, ConfiguracionEstudio, Anuncio, ImagenHero
-from .forms import CrearTatuadorForm, PerfilTatuadorForm, EditarUsuarioForm, ConfiguracionEstudioForm, AnuncioForm
+from .forms import CrearTatuadorForm, PerfilTatuadorForm, EditarUsuarioForm, ConfiguracionEstudioForm, AnuncioForm, SuperadminEstudioForm, SuperadminPropietarioForm
 from cotizaciones.models import Cotizacion
 from citas.models import Cita
 
@@ -385,3 +385,82 @@ def panel_eliminar_anuncio(request, anuncio_id):
         anuncio.delete()
         messages.success(request, 'Anuncio eliminado.')
     return redirect('panel_anuncios')
+
+
+# ─── Superadmin: gestión de estudios ─────────────────────────────────────────
+
+def superadmin_required(view_func):
+    """Solo superusuarios pueden acceder."""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        if request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+        messages.error(request, 'Acceso restringido a superadministradores.')
+        return redirect('panel_dashboard')
+    return wrapper
+
+
+@superadmin_required
+def superadmin_estudios(request):
+    estudios = ConfiguracionEstudio.objects.annotate(
+        num_miembros=Count('miembros')
+    ).order_by('nombre')
+    return render(request, 'panel/superadmin_estudios.html', {'estudios': estudios})
+
+
+@superadmin_required
+def superadmin_crear_estudio(request):
+    estudio_form = SuperadminEstudioForm()
+    prop_form    = SuperadminPropietarioForm()
+
+    if request.method == 'POST':
+        estudio_form = SuperadminEstudioForm(request.POST)
+        prop_form    = SuperadminPropietarioForm(request.POST)
+        if estudio_form.is_valid() and prop_form.is_valid():
+            estudio = estudio_form.save()
+            d = prop_form.cleaned_data
+            user = User.objects.create_user(
+                username=d['username'], password=d['password'],
+                first_name=d['first_name'], last_name=d.get('last_name', ''),
+                email=d.get('email', ''),
+            )
+            Perfil.objects.filter(usuario=user).update(rol='propietario', estudio=estudio)
+            messages.success(request, f'Estudio "{estudio.nombre}" creado correctamente.')
+            return redirect('superadmin_estudios')
+
+    return render(request, 'panel/superadmin_estudio_form.html', {
+        'estudio_form': estudio_form,
+        'prop_form':    prop_form,
+        'editando':     False,
+    })
+
+
+@superadmin_required
+def superadmin_editar_estudio(request, estudio_id):
+    estudio = get_object_or_404(ConfiguracionEstudio, pk=estudio_id)
+    if request.method == 'POST':
+        form = SuperadminEstudioForm(request.POST, instance=estudio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Estudio actualizado.')
+            return redirect('superadmin_estudios')
+    else:
+        form = SuperadminEstudioForm(instance=estudio)
+    return render(request, 'panel/superadmin_estudio_form.html', {
+        'estudio_form': form,
+        'prop_form':    None,
+        'editando':     True,
+        'estudio':      estudio,
+    })
+
+
+@superadmin_required
+def superadmin_eliminar_estudio(request, estudio_id):
+    estudio = get_object_or_404(ConfiguracionEstudio, pk=estudio_id)
+    if request.method == 'POST':
+        nombre = estudio.nombre
+        estudio.delete()
+        messages.success(request, f'Estudio "{nombre}" eliminado.')
+    return redirect('superadmin_estudios')

@@ -116,3 +116,48 @@ class AnuncioForm(forms.ModelForm):
             .order_by('first_name')
         )
         self.fields['tatuador_asociado'].empty_label = '— Sin artista asociado —'
+
+
+# ─── Superadmin: crear / editar estudio ──────────────────────────────────────
+
+class SuperadminEstudioForm(forms.ModelForm):
+    """Campos del estudio para el formulario de creación/edición de un tenant."""
+    class Meta:
+        model  = ConfiguracionEstudio
+        fields = ('nombre', 'subdominio', 'email_contacto', 'whatsapp',
+                  'instagram', 'skin', 'idioma', 'plantilla_layout')
+        widgets = {
+            'subdominio': forms.TextInput(attrs={'placeholder': 'studio33'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+
+class SuperadminPropietarioForm(forms.Form):
+    """Datos del usuario propietario del nuevo estudio."""
+    first_name = forms.CharField(label='Nombre',   max_length=30)
+    last_name  = forms.CharField(label='Apellido', max_length=30, required=False)
+    username   = forms.CharField(label='Usuario (login)', max_length=150)
+    email      = forms.EmailField(label='Correo', required=False)
+    password   = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    password2  = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('Ese nombre de usuario ya está en uso.')
+        return username
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('password') != cleaned.get('password2'):
+            self.add_error('password2', 'Las contraseñas no coinciden.')
+        return cleaned
