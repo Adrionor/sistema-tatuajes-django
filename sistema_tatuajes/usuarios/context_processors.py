@@ -35,7 +35,8 @@ def estudio(request):
     from .models import ConfiguracionEstudio
     from .skins import get_skin, render_skin_css, SKINS
     from .layouts import LAYOUTS
-    config   = ConfiguracionEstudio.get_config()
+    # Usa el estudio resuelto por TenantMiddleware; fallback a get_config()
+    config   = getattr(request, 'studio', None) or ConfiguracionEstudio.get_config()
     skin_key = config.skin or 'noir'
     skin_d   = get_skin(skin_key)
     return {

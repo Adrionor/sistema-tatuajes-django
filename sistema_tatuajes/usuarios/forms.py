@@ -75,12 +75,13 @@ class EditarUsuarioForm(forms.ModelForm):
 class ConfiguracionEstudioForm(forms.ModelForm):
     class Meta:
         model  = ConfiguracionEstudio
-        fields = ('nombre', 'slogan', 'direccion', 'telefono', 'whatsapp',
+        fields = ('nombre', 'slogan', 'subdominio', 'direccion', 'telefono', 'whatsapp',
                   'instagram', 'facebook', 'email_contacto', 'descripcion',
                   'imagen_hero', 'moneda', 'porcentaje_anticipo',
                   'skin', 'plantilla_layout', 'idioma')
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 4}),
+            'subdominio':  forms.TextInput(attrs={'placeholder': 'studio33'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -18,6 +18,13 @@ class Perfil(models.Model):
     especialidad = models.CharField(max_length=120, blank=True, help_text='Ej: Realismo, Blackwork, Neo-tradicional')
     instagram    = models.CharField(max_length=60, blank=True, help_text='Solo el @usuario, sin URL')
     foto_perfil  = models.ImageField(upload_to='perfiles/', null=True, blank=True)
+    estudio      = models.ForeignKey(
+        'ConfiguracionEstudio',
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='miembros',
+        help_text='Estudio al que pertenece este usuario',
+    )
 
     # ── Colaboraciones temporales ────────────────────────────
     es_colaboracion        = models.BooleanField(default=False,
@@ -40,6 +47,10 @@ class Perfil(models.Model):
 
 class ConfiguracionEstudio(models.Model):
     nombre          = models.CharField(max_length=120, default='Mi Estudio de Tatuajes')
+    subdominio      = models.SlugField(
+        max_length=50, unique=True, null=True, blank=True,
+        help_text='Subdominio exclusivo del estudio. Ej: "studio33" → studio33.tudominio.com',
+    )
     slogan          = models.CharField(max_length=200, blank=True)
     direccion       = models.CharField(max_length=250, blank=True)
     telefono        = models.CharField(max_length=20, blank=True)
@@ -88,9 +99,16 @@ class ConfiguracionEstudio(models.Model):
         return self.nombre
 
     @classmethod
-    def get_config(cls):
-        """Devuelve siempre el único registro de configuración (lo crea si no existe)."""
-        obj, _ = cls.objects.get_or_create(pk=1)
+    def get_config(cls, request=None):
+        """Devuelve la configuración del estudio activo.
+        Si hay un request con request.studio ya resuelto, lo usa.
+        Si no, devuelve el primer estudio (compatibilidad hacia atrás).
+        """
+        if request is not None and hasattr(request, 'studio'):
+            return request.studio
+        obj = cls.objects.first()
+        if obj is None:
+            obj = cls.objects.create()
         return obj
 
 
@@ -126,6 +144,11 @@ class Anuncio(models.Model):
         ('voluntarios',  'Buscando voluntarios'),
         ('evento',       'Evento'),
         ('otro',         'Otro'),
+    )
+    estudio           = models.ForeignKey(
+        ConfiguracionEstudio, null=True, blank=True,
+        on_delete=models.CASCADE, related_name='anuncios',
+        help_text='Estudio al que pertenece este anuncio',
     )
     titulo            = models.CharField(max_length=200)
     descripcion       = models.TextField(blank=True)

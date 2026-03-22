@@ -9,15 +9,16 @@ from citas.models import BloqueoAgenda
 from usuarios.models import ConfiguracionEstudio
 
 
-def _layout():
-    """Return the active layout slug from studio config."""
-    return ConfiguracionEstudio.get_config().plantilla_layout or 'clasico'
+def _layout(studio):
+    """Return the active layout slug from the given studio config."""
+    return (studio.plantilla_layout if studio else None) or 'clasico'
 
 
 def galeria_portafolio(request):
+    studio = request.studio
     tatuadores = (
         User.objects
-        .filter(perfil__rol='tatuador')
+        .filter(perfil__rol='tatuador', perfil__estudio=studio)
         .prefetch_related('trabajos_portafolio')
         .distinct()
     )
@@ -42,11 +43,12 @@ def galeria_portafolio(request):
                 'estilos':  list({t.estilo for t in trabajos}),
                 'viajes':   viajes,
             })
-    return render(request, f'portafolio/galeria_{_layout()}.html', {'artistas': artistas})
+    return render(request, f'portafolio/galeria_{_layout(studio)}.html', {'artistas': artistas})
 
 
 def perfil_tatuador(request, tatuador_id):
-    tatuador = get_object_or_404(User, pk=tatuador_id, perfil__rol='tatuador')
+    studio   = request.studio
+    tatuador = get_object_or_404(User, pk=tatuador_id, perfil__rol='tatuador', perfil__estudio=studio)
     trabajos = tatuador.trabajos_portafolio.all()
     estilos  = list({t.estilo for t in trabajos})
     hoy      = timezone.localdate()
@@ -58,7 +60,7 @@ def perfil_tatuador(request, tatuador_id):
         fecha_fin__gte=hoy,
     ).order_by('fecha_inicio')[:6]
 
-    return render(request, f'portafolio/perfil_{_layout()}.html', {
+    return render(request, f'portafolio/perfil_{_layout(studio)}.html', {
         'tatuador':          tatuador,
         'trabajos':          trabajos,
         'estilos':           estilos,

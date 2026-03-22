@@ -49,7 +49,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',  # i18n: detecta idioma del visitante
+    'usuarios.middleware.TenantMiddleware',             # resuelve request.studio por subdominio
+    'django.middleware.locale.LocaleMiddleware',        # i18n: detecta idioma del visitante
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

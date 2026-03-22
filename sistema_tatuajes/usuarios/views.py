@@ -270,7 +270,7 @@ def panel_cotizaciones(request):
 
 @propietario_required
 def panel_configuracion(request):
-    config = ConfiguracionEstudio.get_config()
+    config = request.studio
 
     if request.method == 'POST':
         form = ConfiguracionEstudioForm(request.POST, request.FILES, instance=config)
@@ -292,8 +292,8 @@ def panel_configuracion(request):
 # ─── Landing page ──────────────────────────────────────────────────────────────────
 
 def landing(request):
-    config   = ConfiguracionEstudio.get_config()
-    anuncios = Anuncio.objects.filter(activo=True).select_related('tatuador_asociado')
+    config   = request.studio
+    anuncios = Anuncio.objects.filter(activo=True, estudio=config).select_related('tatuador_asociado')
 
     # Por cada anuncio con tatuador asociado, pre-cargar sus trabajos
     anuncios_data = []
@@ -325,7 +325,7 @@ def landing(request):
 @propietario_required
 def panel_subir_imagen_hero(request):
     if request.method == 'POST':
-        config = ConfiguracionEstudio.get_config()
+        config = request.studio
         for imagen in request.FILES.getlist('imagenes'):
             ImagenHero.objects.create(configuracion=config, imagen=imagen)
         messages.success(request, 'Imágenes añadidas al carrusel.')
@@ -345,7 +345,7 @@ def panel_eliminar_imagen_hero(request, imagen_id):
 
 @propietario_required
 def panel_anuncios(request):
-    anuncios = Anuncio.objects.select_related('tatuador_asociado').order_by('orden', '-created_at')
+    anuncios = Anuncio.objects.filter(estudio=request.studio).select_related('tatuador_asociado').order_by('orden', '-created_at')
     return render(request, 'panel/anuncios.html', {'anuncios': anuncios})
 
 
@@ -354,7 +354,9 @@ def panel_crear_anuncio(request):
     if request.method == 'POST':
         form = AnuncioForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            anuncio = form.save(commit=False)
+            anuncio.estudio = request.studio
+            anuncio.save()
             messages.success(request, 'Anuncio creado correctamente.')
             return redirect('panel_anuncios')
     else:
@@ -364,7 +366,7 @@ def panel_crear_anuncio(request):
 
 @propietario_required
 def panel_editar_anuncio(request, anuncio_id):
-    anuncio = get_object_or_404(Anuncio, pk=anuncio_id)
+    anuncio = get_object_or_404(Anuncio, pk=anuncio_id, estudio=request.studio)
     if request.method == 'POST':
         form = AnuncioForm(request.POST, request.FILES, instance=anuncio)
         if form.is_valid():

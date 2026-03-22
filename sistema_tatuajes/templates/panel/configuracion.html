@@ -30,6 +30,18 @@
             <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
             {{ form.descripcion }}
         </div>
+        <div class="form-group">
+            <label for="{{ form.subdominio.id_for_label }}">Subdominio</label>
+            <div style="display:flex;align-items:center;gap:.5rem;">
+                {{ form.subdominio }}
+                <span style="font-size:.82rem;color:var(--text-muted);white-space:nowrap;">.tudominio.com</span>
+            </div>
+            <small style="color:var(--text-muted);font-size:.75rem;">
+                Solo letras, números y guiones. Ej: <code>studio33</code> → <strong>studio33.tudominio.com</strong>.
+                Déjalo vacío si aún no tienes dominio propio.
+            </small>
+            {% if form.subdominio.errors %}<p style="color:var(--red);font-size:.8rem;margin-top:.3rem;">{{ form.subdominio.errors.0 }}</p>{% endif %}
+        </div>
     </div>
 </div>
 
