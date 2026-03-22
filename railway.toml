@@ -6,7 +6,7 @@ builder = "nixpacks"
 	releaseCommand = "pip install -r deps.txt && cd sistema_tatuajes && python manage.py migrate --no-input && python manage.py collectstatic --no-input"
 
 # Servidor de producción
-startCommand = "gunicorn core.wsgi:application --chdir sistema_tatuajes --workers 2 --timeout 90"
+startCommand = "sh -c 'gunicorn core.wsgi:application --chdir sistema_tatuajes --bind 0.0.0.0:${PORT} --workers 2 --timeout 90'"
 
 # Health check — Railway verifica que la app respondió antes de declarar éxito
 healthcheckPath = "/"
