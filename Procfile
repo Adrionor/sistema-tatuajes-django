@@ -1,1 +1,1 @@
-web: sh -c 'gunicorn core.wsgi:application --chdir sistema_tatuajes --bind 0.0.0.0:${PORT} --workers 2 --timeout 90'
+web: sh -c 'cd sistema_tatuajes && python manage.py migrate --no-input && python manage.py collectstatic --no-input && exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT} --workers 2 --timeout 90'
