@@ -3,7 +3,7 @@ builder = "nixpacks"
 
 [deploy]
 # Corre migraciones y collectstatic antes de que el nuevo deploy entre en vivo
-releaseCommand = "cd sistema_tatuajes && python manage.py migrate --no-input && python manage.py collectstatic --no-input"
+	releaseCommand = "pip install -r deps.txt && cd sistema_tatuajes && python manage.py migrate --no-input && python manage.py collectstatic --no-input"
 
 # Servidor de producción
 startCommand = "gunicorn core.wsgi:application --chdir sistema_tatuajes --workers 2 --timeout 90"
