@@ -45,7 +45,11 @@
 {% block contenido %}
 <div class="page-header">
     <h1>{% trans "QUOTE YOUR NEXT" %} <span class="accent">{% trans "TATTOO" %}</span></h1>
-    <p>{% trans "Choose your artist and tell us your idea. We'll be in touch soon." %}</p>
+    {% if tatuador_obj %}
+        <p>{% trans "Tell us your idea and we'll get back to you shortly." %}</p>
+    {% else %}
+        <p>{% trans "Choose your artist and tell us your idea. We'll be in touch soon." %}</p>
+    {% endif %}
     <div class="divider"></div>
 </div>
 
@@ -55,6 +59,26 @@
 
         {% if form.tatuador.is_hidden %}
             {{ form.tatuador }}
+            {% if tatuador_obj %}
+            <div style="display:flex;align-items:center;gap:1rem;background:var(--bg-muted);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;">
+                {% if tatuador_obj.perfil.foto_perfil %}
+                    <img src="{{ tatuador_obj.perfil.foto_perfil.url }}"
+                         alt="{{ tatuador_obj.get_full_name }}"
+                         style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex-shrink:0;">
+                {% else %}
+                    <div style="width:52px;height:52px;border-radius:50%;border:2px solid var(--gold);background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--gold);flex-shrink:0;font-family:var(--font-head);">
+                        {{ tatuador_obj.get_full_name|default:tatuador_obj.username|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+                <div>
+                    <p style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 .2rem;">{% trans "Quoting with" %}</p>
+                    <p style="font-size:1.05rem;font-weight:700;color:var(--text);margin:0;">{{ tatuador_obj.get_full_name|default:tatuador_obj.username }}</p>
+                    {% if tatuador_obj.perfil.especialidad %}
+                        <p style="font-size:.8rem;color:var(--text-muted);margin:.1rem 0 0;">{{ tatuador_obj.perfil.especialidad }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
         {% else %}
         <div class="form-group" style="margin-bottom:1.5rem;">
             <label for="{{ form.tatuador.id_for_label }}">{{ form.tatuador.label }}</label>
