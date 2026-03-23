@@ -222,7 +222,7 @@
     <div class="im-hero-content">
         <p class="im-eyebrow">{% trans "Tattoo Studio" %} — {{ config.nombre }}</p>
         {% if config.logo_hero %}
-            <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" style="max-height:200px;max-width:min(560px,80vw);width:auto;height:auto;object-fit:contain;display:block;margin:0 auto .75rem;padding:1rem 1.75rem;background:rgba(255,255,255,0.10);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:14px;box-shadow:0 4px 32px rgba(0,0,0,.45);">
+            <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" style="max-height:200px;max-width:min(560px,80vw);width:auto;height:auto;object-fit:contain;display:block;margin:0 auto .75rem;padding:1rem 1.75rem;background:rgba(255,255,255,0.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:14px;box-shadow:0 4px 32px rgba(0,0,0,.45);">
         {% else %}
         <h1 class="im-title">
             {% with nombre=config.nombre %}
