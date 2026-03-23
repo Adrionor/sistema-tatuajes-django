@@ -18,13 +18,13 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1,.pythonanywhere.com,.railway.app',
+    default='localhost,127.0.0.1,.pythonanywhere.com,.railway.app,mojberlin.pythonanywhere.com',
     cast=Csv(),
 )
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='https://*.pythonanywhere.com,https://*.railway.app',
+    default='https://*.pythonanywhere.com,https://*.railway.app,https://mojberlin.pythonanywhere.com',
     cast=Csv(),
 )
 
