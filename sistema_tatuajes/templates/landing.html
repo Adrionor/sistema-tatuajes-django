@@ -49,6 +49,16 @@
         max-width: 800px;
     }
 
+    .hero-logo-img {
+        max-height: 200px;
+        max-width: min(560px, 80vw);
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 24px rgba(0,0,0,.7));
+        margin-bottom: .5rem;
+    }
+
     .hero-logo {
         font-family: var(--font-head);
         font-size: clamp(4rem, 14vw, 10rem);
@@ -327,6 +337,9 @@
     <div class="hero-overlay"></div>
 
     <div class="hero-content">
+        {% if config.logo_hero %}
+            <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" class="hero-logo-img">
+        {% else %}
         {% with nombre=config.nombre %}
         {% if "ink" in nombre|lower or "studio" in nombre|lower or "tattoo" in nombre|lower %}
             <h1 class="hero-logo">
@@ -338,6 +351,7 @@
             <h1 class="hero-logo"><span>{{ nombre }}</span></h1>
         {% endif %}
         {% endwith %}
+        {% endif %}
 
         <div class="hero-divider"></div>
 

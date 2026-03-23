@@ -221,6 +221,9 @@
     <div class="im-hero-overlay"></div>
     <div class="im-hero-content">
         <p class="im-eyebrow">{% trans "Tattoo Studio" %} — {{ config.nombre }}</p>
+        {% if config.logo_hero %}
+            <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" style="max-height:200px;max-width:min(560px,80vw);width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,0,0,.7));margin-bottom:.5rem;">
+        {% else %}
         <h1 class="im-title">
             {% with nombre=config.nombre %}
             {% for word in nombre.split %}
@@ -228,6 +231,7 @@
             {% endfor %}
             {% endwith %}
         </h1>
+        {% endif %}
         <div class="im-divider"></div>
         {% if config.slogan %}
             <p class="im-slogan">{{ config.slogan }}</p>

@@ -62,6 +62,12 @@ class ConfiguracionEstudio(models.Model):
     descripcion     = models.TextField(blank=True, help_text='Descripción breve para la página de inicio')
     imagen_hero     = models.ImageField(upload_to='hero/', null=True, blank=True,
         help_text='Foto de fondo de la landing page (recomendado 1920x1080 px)')
+    logo_navbar     = models.ImageField(upload_to='logos/', null=True, blank=True,
+        verbose_name='Logo del navbar',
+        help_text='Se muestra en la barra de navegación en lugar del nombre. PNG transparente recomendado.')
+    logo_hero       = models.ImageField(upload_to='logos/', null=True, blank=True,
+        verbose_name='Logo del hero',
+        help_text='Se muestra en el hero de la landing en lugar de la tipografía. Puede ser distinto al del navbar.')
     moneda          = models.CharField(max_length=10, default='MXN')
     porcentaje_anticipo = models.PositiveSmallIntegerField(default=30,
         help_text='% de anticipo requerido para confirmar cita')

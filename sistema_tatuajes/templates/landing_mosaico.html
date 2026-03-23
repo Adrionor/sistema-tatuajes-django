@@ -215,6 +215,9 @@
     <div class="mo-overlay"></div>
     <div class="mo-hero-content">
         <p class="mo-eyebrow">{% trans "Tattoo Studio" %}</p>
+        {% if config.logo_hero %}
+            <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" style="max-height:200px;max-width:min(560px,80vw);width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,0,0,.7));margin-bottom:.5rem;">
+        {% else %}
         <h1 class="mo-title">
             {% with nombre=config.nombre %}
             {% if "ink" in nombre|lower or "studio" in nombre|lower or "tattoo" in nombre|lower %}
@@ -222,6 +225,7 @@
             {% else %}<span>{{ nombre }}</span>{% endif %}
             {% endwith %}
         </h1>
+        {% endif %}
         <div class="mo-divider"></div>
         {% if config.slogan %}<p class="mo-slogan">{{ config.slogan }}</p>
         {% else %}<p class="mo-slogan">{% trans "Art on your skin — Made to last" %}</p>{% endif %}

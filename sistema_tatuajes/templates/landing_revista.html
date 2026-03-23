@@ -224,6 +224,9 @@
         <div class="rv-hero-left-bg" style="background-image:url('{{ config.imagen_hero.url }}');"></div>
         {% endif %}
         <p class="rv-label">{% trans "Tattoo Studio" %}</p>
+        {% if config.logo_hero %}
+            <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" style="max-height:200px;max-width:min(560px,80vw);width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,0,0,.7));margin-bottom:.5rem;">
+        {% else %}
         {% with nombre=config.nombre %}
         <h1 class="rv-studio-name">
             {% for word in nombre.split %}
@@ -231,6 +234,7 @@
             {% endfor %}
         </h1>
         {% endwith %}
+        {% endif %}
         {% if config.slogan %}
             <p class="rv-slogan">{{ config.slogan }}</p>
         {% else %}
