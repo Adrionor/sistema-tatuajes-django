@@ -34,6 +34,11 @@ class TenantMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Healthcheck de infraestructura: no depender de BD/tenant.
+        if request.path.startswith('/health'):
+            request.studio = None
+            return self.get_response(request)
+
         from .models import ConfiguracionEstudio
 
         subdomain = _extract_subdomain(request)
