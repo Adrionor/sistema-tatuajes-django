@@ -180,7 +180,7 @@
                     </div>
                 </div>
                 <form method="post" action="{% url 'eliminar_bloqueo' b.pk %}"
-                      onsubmit="return confirm('{% trans \'Delete this block?\' %}')">
+                      onsubmit="return confirm('{% trans "Delete this block?" %}')">
                     {% csrf_token %}
                     <button type="submit"
                             style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;padding:.25rem;"

@@ -157,7 +157,7 @@
         <div class="action-section">
             <p>{% trans "Don't know your available date yet?" %}</p>
             <a href="{% url 'dejar_abierta' cotizacion.token_acceso %}" class="btn btn-outline btn-block"
-               onclick="return confirm('{% trans \'Do you want to leave the date open? The artist will contact you when you both have availability.\' %}')">
+               onclick="return confirm('{% trans "Do you want to leave the date open? The artist will contact you when you both have availability." %}')">
                 📅  {% trans "Leave date open (coordinate later)" %}
             </a>
             <p style="margin-top:.5rem;">{% trans "Don't want to continue?" %}</p>
