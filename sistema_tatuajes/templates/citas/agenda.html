@@ -201,6 +201,89 @@
         color: var(--text-muted);
         font-size: .9rem;
     }
+
+    /* ── Celda clickeable ── */
+    .cal-cell.has-citas { cursor: pointer; }
+    .cal-cell.has-citas:hover { background: rgba(201,168,76,.1); }
+    .cal-cell.has-citas .day-num { color: var(--gold); }
+
+    /* ── Modal genérico ── */
+    .agenda-modal-bg {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.75);
+        z-index: 9000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+    .agenda-modal-bg.open { display: flex; }
+    .agenda-modal {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 2rem;
+        width: 100%;
+        max-width: 520px;
+        max-height: 85vh;
+        overflow-y: auto;
+        position: relative;
+    }
+    .agenda-modal h3 { font-size: 1.4rem; margin-bottom: 1.25rem; }
+    .modal-close {
+        position: absolute; top: 1rem; right: 1rem;
+        background: none; border: none;
+        color: var(--text-muted); font-size: 1.4rem;
+        cursor: pointer; line-height: 1;
+        transition: color .2s;
+    }
+    .modal-close:hover { color: var(--gold); }
+    .detail-row {
+        display: flex; justify-content: space-between;
+        padding: .5rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: .88rem;
+        gap: 1rem;
+    }
+    .detail-row:last-of-type { border-bottom: none; }
+    .detail-row .lbl { color: var(--text-muted); flex-shrink: 0; }
+    .detail-row .val { font-weight: 600; color: var(--text); text-align: right; }
+    .detail-notas {
+        margin-top: .75rem;
+        background: var(--bg-muted);
+        border-radius: var(--radius);
+        padding: .75rem 1rem;
+        font-size: .85rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+    .btn-wa {
+        display: flex; align-items: center; justify-content: center; gap: .5rem;
+        background: #25D366; color: #fff; border-color: #25D366;
+        margin-top: 1.25rem;
+        text-decoration: none;
+        padding: .6rem 1rem;
+        border-radius: var(--radius);
+        font-weight: 700;
+        font-size: .88rem;
+        transition: opacity .2s;
+    }
+    .btn-wa:hover { opacity: .88; color: #fff; }
+    /* botón pequeño en proximas */
+    .btn-detail {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        padding: .25rem .75rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--gold-dim);
+        color: var(--gold);
+        background: transparent;
+        cursor: pointer;
+        transition: background .2s;
+    }
+    .btn-detail:hover { background: rgba(201,168,76,.12); }
 </style>
 {% endblock %}
 
@@ -244,7 +327,10 @@
                     {% if dia == 0 %}
                     <div class="cal-cell empty"></div>
                     {% else %}
-                    <div class="cal-cell {% if dia == hoy.day and mes == hoy.month and anio == hoy.year %}today{% endif %} {% if dia in dias_bloqueados %}bloqueado{% endif %}">
+                    {% with fecha_str=anio|stringformat:'d' %}
+                    <div class="cal-cell {% if dia == hoy.day and mes == hoy.month and anio == hoy.year %}today{% endif %} {% if dia in dias_bloqueados %}bloqueado{% endif %} {% if dia in citas_por_dia %}has-citas{% endif %}"
+                         {% if dia in citas_por_dia %}onclick="openDayModal('{{ anio }}-{{ mes|stringformat:'02d' }}-{{ dia|stringformat:'02d' }}')"
+                         title="Ver citas del día {{ dia }}"{% endif %}>
                         <div class="day-num">{{ dia }}</div>
                         {% if dia in dias_bloqueados %}<span class="bloq-label">bloqueado</span>{% endif %}
                         {% for cita_dia, citas_lista in citas_por_dia.items %}
@@ -258,6 +344,7 @@
                             {% endif %}
                         {% endfor %}
                     </div>
+                    {% endwith %}
                     {% endif %}
                 {% endfor %}
             {% endfor %}
@@ -282,9 +369,29 @@
                     {% if cita.cotizacion.telefono_cliente %}· 📱 {{ cita.cotizacion.telefono_cliente }}{% endif %}
                 </div>
                 <div class="proxima-actions">
+                    <button class="btn-detail" onclick="openCitaModal({{ cita.id }})">Ver detalle</button>
                     <a href="{% url 'cancelar_cita' cita.id %}">Cancelar</a>
                 </div>
             </div>
+
+            <!-- datos ocultos para el modal -->
+            <script type="application/json" id="cita-data-{{ cita.id }}">
+            {
+                "id": {{ cita.id }},
+                "fecha": "{{ cita.fecha_hora_inicio|date:'l d \\d\\e F Y' }}",
+                "hora_ini": "{{ cita.fecha_hora_inicio|date:'H:i' }}",
+                "hora_fin": "{% if cita.fecha_hora_fin %}{{ cita.fecha_hora_fin|date:'H:i' }}{% endif %}",
+                "cliente": "{{ cita.cotizacion.nombre_cliente|escapejs }}",
+                "email": "{{ cita.cotizacion.email_cliente|escapejs }}",
+                "telefono": "{{ cita.cotizacion.telefono_cliente|escapejs }}",
+                "estilo": "{{ cita.cotizacion.estilo|escapejs }}",
+                "zona": "{{ cita.cotizacion.zona_cuerpo|escapejs }}",
+                "tamano": "{{ cita.cotizacion.tamano|escapejs }}",
+                "notas": "{{ cita.cotizacion.notas_cliente|escapejs }}",
+                "estado": "{{ cita.estado }}"
+            }
+            </script>
+
             {% endfor %}
         {% else %}
             <div class="empty-proximas">
@@ -334,4 +441,149 @@
 </div>
 {% endif %}
 
+<!-- ══ MODAL: Detalle de cita ══ -->
+<div class="agenda-modal-bg" id="modal-cita" onclick="closeBg(event,'modal-cita')">
+    <div class="agenda-modal">
+        <button class="modal-close" onclick="closeModal('modal-cita')">&times;</button>
+        <h3 id="mc-fecha" style="color:var(--gold);margin-bottom:.75rem;"></h3>
+        <div id="mc-rows"></div>
+        <div id="mc-notas"></div>
+        <a id="mc-wa" href="#" target="_blank" class="btn-wa" style="display:none;margin-top:1rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326z"/></svg>
+            WhatsApp
+        </a>
+    </div>
+</div>
+
+<!-- ══ MODAL: Citas del día ══ -->
+<div class="agenda-modal-bg" id="modal-dia" onclick="closeBg(event,'modal-dia')">
+    <div class="agenda-modal">
+        <button class="modal-close" onclick="closeModal('modal-dia')">&times;</button>
+        <h3 id="md-titulo" style="color:var(--gold);margin-bottom:.75rem;"></h3>
+        <div id="md-contenido"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+/* ─────────────── datos del mes ─────────────── */
+const CITAS_MES = {
+    {% for dia, citas_lista in citas_por_dia.items %}
+    "{{ anio }}-{{ mes|stringformat:'02d' }}-{{ dia|stringformat:'02d' }}": [
+        {% for cita in citas_lista %}
+        {
+            id: {{ cita.id }},
+            hora_ini: "{{ cita.fecha_hora_inicio|date:'H:i' }}",
+            hora_fin: "{% if cita.fecha_hora_fin %}{{ cita.fecha_hora_fin|date:'H:i' }}{% endif %}",
+            cliente: "{{ cita.cotizacion.nombre_cliente|escapejs }}",
+            estilo: "{{ cita.cotizacion.estilo|escapejs }}",
+            zona: "{{ cita.cotizacion.zona_cuerpo|escapejs }}",
+            tamano: "{{ cita.cotizacion.tamano|escapejs }}",
+            telefono: "{{ cita.cotizacion.telefono_cliente|escapejs }}",
+            email: "{{ cita.cotizacion.email_cliente|escapejs }}",
+            notas: "{{ cita.cotizacion.notas_cliente|escapejs }}",
+            estado: "{{ cita.estado }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]{% if not forloop.last %},{% endif %}
+    {% endfor %}
+};
+
+/* ─────────────── helpers ─────────────── */
+const MESES_ES = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DIAS_ES  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+}
+function closeBg(e, id) {
+    if (e.target === document.getElementById(id)) closeModal(id);
+}
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal('modal-cita'); closeModal('modal-dia'); }
+});
+
+function waLink(tel, nombre) {
+    if (!tel) return null;
+    const num = tel.replace(/[\s\+\-\(\)]/g, '');
+    return `https://wa.me/${num}?text=Hola%20${encodeURIComponent(nombre)}`;
+}
+function row(lbl, val) {
+    if (!val) return '';
+    return `<div class="detail-row"><span class="lbl">${lbl}</span><span class="val">${val}</span></div>`;
+}
+
+/* ─────────────── modal cita (desde "Ver detalle") ─────────────── */
+function openCitaModal(id) {
+    const raw = document.getElementById('cita-data-' + id);
+    if (!raw) return;
+    const d = JSON.parse(raw.textContent);
+
+    const hora = d.hora_fin ? `${d.hora_ini} — ${d.hora_fin}` : d.hora_ini;
+    document.getElementById('mc-fecha').textContent = d.fecha;
+    document.getElementById('mc-rows').innerHTML =
+        row('Hora', hora) +
+        row('Cliente', d.cliente) +
+        row('Correo', d.email) +
+        row('Teléfono', d.telefono) +
+        row('Estilo', d.estilo) +
+        row('Zona', d.zona) +
+        row('Tamaño', d.tamano);
+
+    const notasEl = document.getElementById('mc-notas');
+    notasEl.innerHTML = d.notas
+        ? `<div class="detail-notas"><strong style="color:var(--gold);font-size:.73rem;letter-spacing:.07em;text-transform:uppercase;">Notas del cliente</strong><p style="margin:.4rem 0 0;line-height:1.5;">${d.notas.replace(/\n/g,'<br>')}</p></div>`
+        : '';
+
+    const waEl = document.getElementById('mc-wa');
+    const link = waLink(d.telefono, d.cliente);
+    if (link) {
+        waEl.href = link;
+        waEl.style.display = 'flex';
+    } else {
+        waEl.style.display = 'none';
+    }
+
+    document.getElementById('modal-cita').classList.add('open');
+}
+
+/* ─────────────── modal día (desde click en celda) ─────────────── */
+function openDayModal(fechaStr) {
+    const citas = CITAS_MES[fechaStr];
+    if (!citas || citas.length === 0) return;
+
+    const [y, m, d] = fechaStr.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    document.getElementById('md-titulo').textContent =
+        `${DIAS_ES[dt.getDay()]} ${d} de ${MESES_ES[m]} ${y}`;
+
+    let html = '';
+    citas.forEach((c, i) => {
+        const hora = c.hora_fin ? `${c.hora_ini} — ${c.hora_fin}` : c.hora_ini;
+        const wa   = waLink(c.telefono, c.cliente);
+        const cancelada = c.estado === 'cancelada';
+        html += `
+        <div style="background:var(--bg-muted);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;${i>0?'margin-top:.75rem':''}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+                <span style="font-size:1rem;font-weight:700;color:var(--gold);">${hora}</span>
+                ${cancelada ? '<span class="badge" style="background:rgba(230,48,48,.15);color:#e63030;border:1px solid #e63030;font-size:.7rem;">Cancelada</span>' : ''}
+            </div>
+            ${row('Cliente', c.cliente)}
+            ${row('Estilo', c.estilo)}
+            ${row('Zona · Tamaño', `${c.zona} · ${c.tamano}`)}
+            ${row('Teléfono', c.telefono)}
+            ${c.notas ? `<p style="font-size:.78rem;color:var(--text-muted);margin:.5rem 0 0;line-height:1.4;">${c.notas.replace(/\n/g,'<br>')}</p>` : ''}
+            ${wa ? `<a href="${wa}" target="_blank" class="btn-wa" style="margin-top:.75rem;font-size:.78rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326z"/></svg>
+                WhatsApp</a>` : ''}
+        </div>`;
+    });
+
+    document.getElementById('md-contenido').innerHTML = html;
+    document.getElementById('modal-dia').classList.add('open');
+}
+</script>
 {% endblock %}
