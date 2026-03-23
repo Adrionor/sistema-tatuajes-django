@@ -136,7 +136,26 @@
     .anuncio-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 12px 40px rgba(0,0,0,.5);
+        border-color: var(--gold-dim);
+        cursor: pointer;
     }
+
+    /* ── modal detalle anuncio ────────────────────────────────── */
+    .ld-ann-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.87); z-index:9000; align-items:center; justify-content:center; padding:1.5rem; overflow-y:auto; }
+    .ld-ann-bg.open { display:flex; }
+    .ld-ann-modal { background:#111; border:1px solid rgba(212,175,55,.3); border-radius:10px; max-width:680px; width:100%; max-height:92vh; overflow-y:auto; position:relative; padding-bottom:2rem; }
+    .ld-ann-modal-img { width:100%; max-height:380px; object-fit:cover; border-radius:10px 10px 0 0; display:block; }
+    .ld-ann-body { padding:1.5rem 1.75rem 0; }
+    .ld-ann-close { position:absolute; top:.75rem; right:.75rem; background:rgba(0,0,0,.7); border:1px solid rgba(212,175,55,.4); color:#d4af37; font-size:1.2rem; width:2rem; height:2rem; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; line-height:1; }
+    .ld-ann-close:hover { background:rgba(212,175,55,.18); }
+    .ld-ann-tipo { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#d4af37; margin:0 0 .4rem; }
+    .ld-ann-titulo { font-size:clamp(1.2rem,3vw,1.75rem); color:#f0e8d6; font-weight:700; margin:0 0 1rem; line-height:1.3; }
+    .ld-ann-desc { font-size:.93rem; color:#a0998c; line-height:1.75; margin:0 0 1rem; white-space:pre-line; }
+    .ld-ann-works { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; margin-top:1rem; }
+    .ld-ann-works img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:3px; cursor:zoom-in; }
+    .ld-ann-colab { display:flex; align-items:center; gap:.75rem; margin-top:1.25rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,.08); }
+    .ld-ann-colab img { width:48px; height:48px; border-radius:50%; object-fit:cover; }
+    .ld-ann-colab-ph { width:48px; height:48px; border-radius:50%; background:rgba(212,175,55,.15); display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:700; color:#d4af37; flex-shrink:0; }
 
     .anuncio-img {
         height: 220px;
@@ -352,7 +371,7 @@
     <div class="anuncios-grid">
         {% for item in anuncios_data %}
         {% with a=item.anuncio trabajos=item.trabajos %}
-        <div class="anuncio-card">
+        <div class="anuncio-card" onclick="if(event.target.tagName!=='A'&&event.target.tagName!=='IMG')openLdModal({{ forloop.counter0 }})">
 
             <!-- Imagen principal del anuncio -->
             {% if a.imagen %}
@@ -449,11 +468,38 @@
 
             </div>
         </div>
+        <script type="application/json" id="ld-ann-{{ forloop.counter0 }}">{
+            "titulo":"{{ a.titulo|escapejs }}",
+            "tipo_display":"{{ a.get_tipo_display|escapejs }}",
+            "fecha":"{% if a.fecha_evento %}{{ a.fecha_evento|date:'d M Y' }}{% endif %}",
+            "imagen":"{% if a.imagen %}{{ a.imagen.url }}{% endif %}",
+            "descripcion":"{{ a.descripcion|escapejs }}",
+            "tatuador_nombre":"{% if a.tatuador_asociado %}{{ a.tatuador_asociado.get_full_name|default:a.tatuador_asociado.username|escapejs }}{% endif %}",
+            "tatuador_pk":{% if a.tatuador_asociado %}{{ a.tatuador_asociado.pk }}{% else %}null{% endif %},
+            "tatuador_foto":"{% if a.tatuador_asociado %}{% if a.tatuador_asociado.perfil.foto_perfil %}{{ a.tatuador_asociado.perfil.foto_perfil.url }}{% endif %}{% endif %}",
+            "tatuador_inicial":"{% if a.tatuador_asociado %}{{ a.tatuador_asociado.first_name|first|upper|default:a.tatuador_asociado.username|first|upper }}{% endif %}",
+            "trabajos":[{% for t in trabajos %}"{{ t.imagen.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]
+        }</script>
         {% endwith %}
         {% endfor %}
     </div>
 </section>
 {% endif %}
+
+<!-- modal detalle anuncio -->
+<div class="ld-ann-bg" id="ld-ann-modal" onclick="if(event.target===this)closeLdModal()">
+    <div class="ld-ann-modal">
+        <button class="ld-ann-close" onclick="closeLdModal()">&times;</button>
+        <img id="lam-img" src="" alt="" class="ld-ann-modal-img">
+        <div class="ld-ann-body">
+            <p class="ld-ann-tipo" id="lam-tipo"></p>
+            <h2 class="ld-ann-titulo" id="lam-title"></h2>
+            <p class="ld-ann-desc" id="lam-desc"></p>
+            <div class="ld-ann-works" id="lam-works"></div>
+            <div class="ld-ann-colab" id="lam-colab"></div>
+        </div>
+    </div>
+</div>
 
 <!-- ══════════════════════════════════════════════════════ CONTACTO -->
 {% if config.direccion or config.telefono or config.instagram %}
@@ -509,7 +555,40 @@
 
 {% block extra_scripts %}
 <script>
+    function openLdModal(idx) {
+        const raw = document.getElementById('ld-ann-' + idx);
+        if (!raw) return;
+        const d = JSON.parse(raw.textContent);
+        const imgEl = document.getElementById('lam-img');
+        if (d.imagen) { imgEl.src = d.imagen; imgEl.style.display = 'block'; }
+        else { imgEl.style.display = 'none'; }
+        document.getElementById('lam-tipo').textContent = d.tipo_display + (d.fecha ? ' · ' + d.fecha : '');
+        document.getElementById('lam-title').textContent = d.titulo;
+        const descEl = document.getElementById('lam-desc');
+        descEl.textContent = d.descripcion || '';
+        descEl.style.display = d.descripcion ? '' : 'none';
+        const worksEl = document.getElementById('lam-works');
+        if (d.trabajos && d.trabajos.length) {
+            worksEl.innerHTML = d.trabajos.map(u => `<img src="${u}" alt="" onclick="event.stopPropagation();openLanding('${u}')">`).join('');
+            worksEl.style.display = 'grid';
+        } else { worksEl.style.display = 'none'; }
+        const colabEl = document.getElementById('lam-colab');
+        if (d.tatuador_nombre) {
+            const av = d.tatuador_foto
+                ? `<img src="${d.tatuador_foto}" alt="">`
+                : `<div class="ld-ann-colab-ph">${d.tatuador_inicial}</div>`;
+            colabEl.innerHTML = av + `<div><div style="font-weight:600;color:#f0e8d6;font-size:.9rem;">${d.tatuador_nombre}</div><a href="/portafolio/artista/${d.tatuador_pk}/" style="font-size:.78rem;color:#d4af37;font-weight:600;">Ver portafolio →</a></div>`;
+            colabEl.style.display = 'flex';
+        } else { colabEl.style.display = 'none'; }
+        document.getElementById('ld-ann-modal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLdModal() {
+        document.getElementById('ld-ann-modal').classList.remove('open');
+        document.body.style.overflow = '';
+    }
     function openLanding(src) {
+        closeLdModal();
         document.getElementById('landing-lb-img').src = src;
         const lb = document.getElementById('landing-lightbox');
         lb.style.display = 'flex';
@@ -519,7 +598,7 @@
         document.getElementById('landing-lightbox').style.display = 'none';
         document.body.style.overflow = '';
     }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLanding(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLanding(); closeLdModal(); } });
 
     // Hero images + parallax
     const heroBg = document.getElementById('hero-bg');
