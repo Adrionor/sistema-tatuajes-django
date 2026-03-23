@@ -18,7 +18,7 @@ def galeria_portafolio(request):
     studio = request.studio
     tatuadores = (
         User.objects
-        .filter(perfil__rol='tatuador', perfil__estudio=studio)
+        .filter(perfil__rol__in=['tatuador', 'propietario'], perfil__estudio=studio)
         .prefetch_related('trabajos_portafolio')
         .distinct()
     )

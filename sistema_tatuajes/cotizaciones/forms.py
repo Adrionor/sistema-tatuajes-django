@@ -10,7 +10,7 @@ class CotizacionForm(forms.ModelForm):
     se oculta y se pre-llena automáticamente.
     """
     tatuador = forms.ModelChoiceField(
-        queryset=User.objects.filter(perfil__rol='tatuador'),
+        queryset=User.objects.filter(perfil__rol__in=['tatuador', 'propietario']),
         empty_label="Escoge a tu artista favorito",
     )
 
