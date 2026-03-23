@@ -48,7 +48,15 @@ def galeria_portafolio(request):
 
 def perfil_tatuador(request, tatuador_id):
     studio   = request.studio
-    tatuador = get_object_or_404(User, pk=tatuador_id, perfil__rol='tatuador', perfil__estudio=studio)
+    # Permitir tatuadores y propietarios; el filtro por estudio es opcional
+    # (cubre el caso de usuarios creados antes de que se les asignara estudio)
+    qs = User.objects.filter(
+        pk=tatuador_id,
+        perfil__rol__in=['tatuador', 'propietario'],
+    )
+    if studio:
+        qs = qs.filter(perfil__estudio=studio)
+    tatuador = get_object_or_404(qs)
     trabajos = tatuador.trabajos_portafolio.all()
     estilos  = list({t.estilo for t in trabajos})
     hoy      = timezone.localdate()
