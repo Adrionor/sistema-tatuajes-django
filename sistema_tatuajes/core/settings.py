@@ -165,7 +165,7 @@ DEFAULT_FROM_EMAIL  = config('DEFAULT_FROM_EMAIL', default='estudio@tatuajes.com
 # ─── Autenticación ────────────────────────────────────────────────────────────
 
 LOGIN_URL          = '/cuentas/login/'
-LOGIN_REDIRECT_URL = '/cotizar/recepcion/'
+LOGIN_REDIRECT_URL = '/panel/post-login/'
 LOGOUT_REDIRECT_URL = '/portafolio/'
 
 

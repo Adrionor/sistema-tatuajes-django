@@ -34,21 +34,33 @@ def propietario_required(view_func):
 
 @propietario_required
 def panel_dashboard(request):
-    hoy = timezone.localdate()
+    hoy    = timezone.localdate()
+    studio = request.studio
 
-    total_tatuadores  = User.objects.filter(perfil__rol='tatuador', is_active=True).count()
+    total_tatuadores  = User.objects.filter(
+        perfil__rol='tatuador', perfil__estudio=studio, is_active=True
+    ).count()
     colaboraciones    = User.objects.filter(
-        perfil__rol='tatuador', perfil__es_colaboracion=True, is_active=True
+        perfil__rol='tatuador', perfil__estudio=studio,
+        perfil__es_colaboracion=True, is_active=True
     ).count()
     citas_hoy         = Cita.objects.filter(
+        tatuador__perfil__estudio=studio,
         fecha_hora_inicio__date=hoy, estado='programada'
     ).count()
-    pendientes        = Cotizacion.objects.filter(estado='pendiente').count()
-    anticipo_subido   = Cotizacion.objects.filter(estado='anticipo_subido').count()
-    confirmadas_total = Cotizacion.objects.filter(estado='confirmada').count()
+    pendientes        = Cotizacion.objects.filter(
+        tatuador__perfil__estudio=studio, estado='pendiente'
+    ).count()
+    anticipo_subido   = Cotizacion.objects.filter(
+        tatuador__perfil__estudio=studio, estado='anticipo_subido'
+    ).count()
+    confirmadas_total = Cotizacion.objects.filter(
+        tatuador__perfil__estudio=studio, estado='confirmada'
+    ).count()
 
     ultimas_cotizaciones = (
         Cotizacion.objects
+        .filter(tatuador__perfil__estudio=studio)
         .select_related('tatuador')
         .order_by('-fecha_creacion')[:8]
     )
@@ -56,7 +68,10 @@ def panel_dashboard(request):
     proximas_citas = (
         Cita.objects
         .select_related('tatuador', 'cotizacion')
-        .filter(estado='programada', fecha_hora_inicio__gte=timezone.now())
+        .filter(
+            tatuador__perfil__estudio=studio,
+            estado='programada', fecha_hora_inicio__gte=timezone.now()
+        )
         .order_by('fecha_hora_inicio')[:6]
     )
 
@@ -77,9 +92,11 @@ def panel_dashboard(request):
 @propietario_required
 def panel_tatuadores(request):
     filtro = request.GET.get('filtro', 'todos')
+    studio = request.studio
 
     qs = User.objects.filter(
-        Q(perfil__rol='tatuador') | Q(perfil__rol='propietario')
+        Q(perfil__rol='tatuador') | Q(perfil__rol='propietario'),
+        perfil__estudio=studio,
     ).select_related('perfil').order_by('first_name', 'username')
 
     if filtro == 'colaboracion':
@@ -123,6 +140,7 @@ def panel_crear_tatuador(request):
             pf = perfil_form.save(commit=False)
             pf.pk      = perfil.pk
             pf.usuario = user
+            pf.estudio = request.studio   # asignar al estudio actual
             pf.save()
 
             messages.success(request, f'Tatuador @{user.username} creado correctamente.')
@@ -139,7 +157,8 @@ def panel_crear_tatuador(request):
 
 @propietario_required
 def panel_editar_usuario(request, user_id):
-    usuario = get_object_or_404(User, pk=user_id)
+    # Solo permite editar usuarios que pertenezcan al mismo estudio
+    usuario = get_object_or_404(User, pk=user_id, perfil__estudio=request.studio)
     perfil, _ = Perfil.objects.get_or_create(usuario=usuario)
 
     if request.method == 'POST':
@@ -164,7 +183,7 @@ def panel_editar_usuario(request, user_id):
 
 @propietario_required
 def panel_toggle_activo(request, user_id):
-    usuario = get_object_or_404(User, pk=user_id)
+    usuario = get_object_or_404(User, pk=user_id, perfil__estudio=request.studio)
     if usuario == request.user:
         messages.warning(request, 'No puedes desactivar tu propia cuenta.')
         return redirect('panel_tatuadores')
@@ -177,7 +196,7 @@ def panel_toggle_activo(request, user_id):
 
 @propietario_required
 def panel_eliminar_tatuador(request, user_id):
-    usuario = get_object_or_404(User, pk=user_id)
+    usuario = get_object_or_404(User, pk=user_id, perfil__estudio=request.studio)
     if usuario == request.user:
         messages.warning(request, 'No puedes eliminar tu propia cuenta.')
         return redirect('panel_tatuadores')
@@ -193,9 +212,11 @@ def panel_eliminar_tatuador(request, user_id):
 @propietario_required
 def panel_clientes(request):
     busqueda = request.GET.get('q', '').strip()
+    studio   = request.studio
 
     clientes = (
         Cotizacion.objects
+        .filter(tatuador__perfil__estudio=studio)
         .values('nombre_cliente', 'email_cliente', 'telefono_cliente')
         .annotate(total=Count('id'))
         .order_by('nombre_cliente')
@@ -211,7 +232,10 @@ def panel_clientes(request):
     for c in clientes:
         ultima = (
             Cotizacion.objects
-            .filter(email_cliente=c['email_cliente'])
+            .filter(
+                tatuador__perfil__estudio=studio,
+                email_cliente=c['email_cliente'],
+            )
             .order_by('-fecha_creacion')
             .first()
         )
@@ -230,8 +254,14 @@ def panel_cotizaciones(request):
     estado   = request.GET.get('estado', '')
     artista  = request.GET.get('artista', '')
     busqueda = request.GET.get('q', '').strip()
+    studio   = request.studio
 
-    qs = Cotizacion.objects.select_related('tatuador').order_by('-fecha_creacion')
+    qs = (
+        Cotizacion.objects
+        .filter(tatuador__perfil__estudio=studio)
+        .select_related('tatuador')
+        .order_by('-fecha_creacion')
+    )
 
     if estado:
         qs = qs.filter(estado=estado)
@@ -244,7 +274,8 @@ def panel_cotizaciones(request):
         )
 
     tatuadores = User.objects.filter(
-        Q(perfil__rol='tatuador') | Q(perfil__rol='propietario')
+        Q(perfil__rol='tatuador') | Q(perfil__rol='propietario'),
+        perfil__estudio=studio,
     ).order_by('first_name')
 
     ESTADO_LABELS = {
@@ -287,6 +318,47 @@ def panel_configuracion(request):
         'config':        config,
         'imagenes_hero': imagenes_hero,
     })
+
+
+# ─── Redirección post-login ──────────────────────────────────────────────────────
+
+def post_login_redirect(request):
+    """
+    Redirige al usuario al subdominio correcto de su estudio después de iniciar sesión.
+    - Superusuario  → panel_dashboard (puede estar en cualquier subdominio)
+    - Propietario / tatuador → subdominio de su estudio si está mal ubicado, o recepción
+    """
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    if request.user.is_superuser:
+        return redirect('panel_dashboard')
+
+    try:
+        user_estudio = request.user.perfil.estudio
+    except (Perfil.DoesNotExist, AttributeError):
+        return redirect('recepcion_tatuador')
+
+    # Si el estudio del usuario ya coincide con el tenant actual, listo
+    if not user_estudio or user_estudio == request.studio:
+        return redirect('recepcion_tatuador')
+
+    # Intentar redirigir al subdominio correcto del estudio
+    if user_estudio.subdominio:
+        host = request.get_host().lower().split(':')[0]
+        parts = host.split('.')
+
+        # Local (localhost / 127.0.0.1): no hay subdomnios reales → ir directo
+        if host in ('localhost', '127.0.0.1'):
+            return redirect('recepcion_tatuador')
+
+        # Producción: construir URL con el subdominio correcto
+        if len(parts) >= 2:
+            base = '.'.join(parts[1:]) if len(parts) > 2 else host
+            scheme = 'https' if request.is_secure() else 'http'
+            return redirect(f'{scheme}://{user_estudio.subdominio}.{base}/cotizar/recepcion/')
+
+    return redirect('recepcion_tatuador')
 
 
 # ─── Landing page ──────────────────────────────────────────────────────────────────
@@ -426,7 +498,11 @@ def superadmin_crear_estudio(request):
                 first_name=d['first_name'], last_name=d.get('last_name', ''),
                 email=d.get('email', ''),
             )
-            Perfil.objects.filter(usuario=user).update(rol='propietario', estudio=estudio)
+            # get_or_create garantiza que el Perfil exista aunque no haya señal
+            perfil, _ = Perfil.objects.get_or_create(usuario=user)
+            perfil.rol    = 'propietario'
+            perfil.estudio = estudio
+            perfil.save()
             messages.success(request, f'Estudio "{estudio.nombre}" creado correctamente.')
             return redirect('superadmin_estudios')
 
