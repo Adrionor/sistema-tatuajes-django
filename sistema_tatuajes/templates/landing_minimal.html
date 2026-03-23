@@ -193,7 +193,7 @@
     {% endif %}
     <p class="mn-eyebrow">{% trans "Tattoo Studio" %}</p>
     {% if config.logo_hero %}
-        <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" style="max-height:200px;max-width:min(560px,80vw);width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,0,0,.7));margin-bottom:.5rem;">
+        <img src="{{ config.logo_hero.url }}" alt="{{ config.nombre }}" style="max-height:200px;max-width:min(560px,80vw);width:auto;height:auto;object-fit:contain;display:block;margin:0 auto .75rem;padding:1rem 1.75rem;background:rgba(255,255,255,0.10);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:14px;box-shadow:0 4px 32px rgba(0,0,0,.45);">
     {% else %}
     <h1 class="mn-title">
         {% with nombre=config.nombre %}
