@@ -1,6 +1,5 @@
 from functools import wraps
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.utils import timezone
@@ -10,10 +9,6 @@ from .models import Perfil, ConfiguracionEstudio, Anuncio, ImagenHero
 from .forms import CrearTatuadorForm, PerfilTatuadorForm, EditarUsuarioForm, ConfiguracionEstudioForm, AnuncioForm, SuperadminEstudioForm, SuperadminPropietarioForm
 from cotizaciones.models import Cotizacion
 from citas.models import Cita
-
-
-def healthcheck(request):
-    return HttpResponse('ok', content_type='text/plain')
 
 
 # ─── Decorador propietario ────────────────────────────────────────────────────

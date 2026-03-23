@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from usuarios.views import landing, healthcheck
+from usuarios.views import landing
 
 urlpatterns = [
-    path('health/',    healthcheck,                      name='healthcheck'),
+    path('health/',    include('health.urls')),
     path('',          landing,                          name='landing'),
     path('admin/',    admin.site.urls),
     path('portafolio/', include('portafolio.urls')),
