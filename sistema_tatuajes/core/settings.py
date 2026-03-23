@@ -173,15 +173,18 @@ LOGOUT_REDIRECT_URL = '/portafolio/'
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER     = ('HTTP_X_FORWARDED_PROTO', 'https')
-    USE_X_FORWARDED_HOST        = True
+    # USE_X_FORWARDED_HOST causa mismatch de referer en PythonAnywhere (proxy compartido)
+    USE_X_FORWARDED_HOST        = False
     SECURE_SSL_REDIRECT         = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
     SESSION_COOKIE_SECURE       = True
     CSRF_COOKIE_SECURE          = True
+    CSRF_COOKIE_SAMESITE        = 'Lax'
     SECURE_BROWSER_XSS_FILTER  = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+    # HSTS sin includeSubDomains porque pythonanywhere.com es un dominio compartido
     SECURE_HSTS_SECONDS         = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD         = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD         = False
     X_FRAME_OPTIONS             = 'DENY'
 
 
