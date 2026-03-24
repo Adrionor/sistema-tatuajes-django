@@ -31,7 +31,8 @@ class PerfilForm(forms.ModelForm):
 
     class Meta:
         model  = Perfil
-        fields = ['foto_perfil', 'bio', 'especialidad', 'instagram', 'telefono']
+        fields = ['foto_perfil', 'bio', 'especialidad', 'instagram', 'telefono',
+                  'banco', 'titular_cuenta', 'clabe']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4,
                 'placeholder': 'Cuéntale a los clientes quién eres, tu historia, tu filosofía de trabajo...'}),
@@ -39,13 +40,19 @@ class PerfilForm(forms.ModelForm):
                 'placeholder': 'Ej: Realismo en color, Blackwork, Japonés...'}),
             'instagram': forms.TextInput(attrs={'placeholder': '@tu_usuario'}),
             'telefono':  forms.TextInput(attrs={'placeholder': '+52 55 1234 5678'}),
+            'banco':          forms.TextInput(attrs={'placeholder': 'Ej: BBVA, Banamex, HSBC...'}),
+            'titular_cuenta': forms.TextInput(attrs={'placeholder': 'Nombre completo del titular'}),
+            'clabe':          forms.TextInput(attrs={'placeholder': '18 dígitos CLABE o número de tarjeta'}),
         }
         labels = {
-            'foto_perfil':  'Foto de perfil',
-            'bio':          'Sobre mí',
-            'especialidad': 'Especialidad(es)',
-            'instagram':    'Instagram',
-            'telefono':     'Teléfono / WhatsApp',
+            'foto_perfil':    'Foto de perfil',
+            'bio':            'Sobre mí',
+            'especialidad':   'Especialidad(es)',
+            'instagram':      'Instagram',
+            'telefono':       'Teléfono / WhatsApp',
+            'banco':          'Banco',
+            'titular_cuenta': 'Titular de la cuenta',
+            'clabe':          'CLABE / Número de cuenta',
         }
 
     def __init__(self, *args, user=None, **kwargs):
@@ -56,5 +63,6 @@ class PerfilForm(forms.ModelForm):
             self.fields['email'].initial      = user.email
         # Put name/email first
         ordered = ['first_name', 'last_name', 'email',
-                   'foto_perfil', 'especialidad', 'bio', 'instagram', 'telefono']
+                   'foto_perfil', 'especialidad', 'bio', 'instagram', 'telefono',
+                   'banco', 'titular_cuenta', 'clabe']
         self.fields = {k: self.fields[k] for k in ordered if k in self.fields}
