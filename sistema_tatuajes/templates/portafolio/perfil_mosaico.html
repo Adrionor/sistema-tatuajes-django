@@ -129,11 +129,6 @@
 
     <div class="ms-p-actions">
         <a href="{% url 'nueva_cotizacion_artista' tatuador.pk %}" class="btn btn-gold" style="font-size:.78rem;padding:.5rem 1rem;">{% trans "Get a Quote" %}</a>
-        {% if tatuador.perfil.telefono %}
-        <a href="https://wa.me/{{ tatuador.perfil.telefono|cut:' '|cut:'+'|cut:'-'|cut:'('|cut:')' }}" target="_blank"
-           style="padding:.5rem .85rem;border:1.5px solid #25d366;border-radius:var(--radius);color:#25d366;font-size:.78rem;font-weight:700;text-decoration:none;transition:background .2s;"
-           onmouseover="this.style.background='rgba(37,211,102,.1)'" onmouseout="this.style.background='transparent'">WA</a>
-        {% endif %}
     </div>
 </div>
 
