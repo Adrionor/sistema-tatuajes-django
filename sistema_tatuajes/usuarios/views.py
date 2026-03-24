@@ -424,7 +424,7 @@ def panel_anuncios(request):
 @propietario_required
 def panel_crear_anuncio(request):
     if request.method == 'POST':
-        form = AnuncioForm(request.POST, request.FILES)
+        form = AnuncioForm(request.POST, request.FILES, studio=request.studio)
         if form.is_valid():
             anuncio = form.save(commit=False)
             anuncio.estudio = request.studio
@@ -432,7 +432,7 @@ def panel_crear_anuncio(request):
             messages.success(request, 'Anuncio creado correctamente.')
             return redirect('panel_anuncios')
     else:
-        form = AnuncioForm()
+        form = AnuncioForm(studio=request.studio)
     return render(request, 'panel/crear_anuncio.html', {'form': form, 'editando': False})
 
 
@@ -440,19 +440,19 @@ def panel_crear_anuncio(request):
 def panel_editar_anuncio(request, anuncio_id):
     anuncio = get_object_or_404(Anuncio, pk=anuncio_id, estudio=request.studio)
     if request.method == 'POST':
-        form = AnuncioForm(request.POST, request.FILES, instance=anuncio)
+        form = AnuncioForm(request.POST, request.FILES, instance=anuncio, studio=request.studio)
         if form.is_valid():
             form.save()
             messages.success(request, 'Anuncio actualizado.')
             return redirect('panel_anuncios')
     else:
-        form = AnuncioForm(instance=anuncio)
+        form = AnuncioForm(instance=anuncio, studio=request.studio)
     return render(request, 'panel/crear_anuncio.html', {'form': form, 'editando': True, 'anuncio': anuncio})
 
 
 @propietario_required
 def panel_eliminar_anuncio(request, anuncio_id):
-    anuncio = get_object_or_404(Anuncio, pk=anuncio_id)
+    anuncio = get_object_or_404(Anuncio, pk=anuncio_id, estudio=request.studio)
     if request.method == 'POST':
         anuncio.delete()
         messages.success(request, 'Anuncio eliminado.')

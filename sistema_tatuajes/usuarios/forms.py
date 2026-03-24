@@ -104,19 +104,18 @@ class AnuncioForm(forms.ModelForm):
             'fecha_evento': forms.DateInput(attrs={'type': 'date'}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, studio=None, **kwargs):
         super().__init__(*args, **kwargs)
         for name, field in self.fields.items():
             if name not in ('activo',):
                 field.widget.attrs['class'] = 'form-control'
             else:
                 field.widget.attrs['class'] = 'form-check-input'
-        # Solo artistas para el FK
-        self.fields['tatuador_asociado'].queryset = (
-            User.objects
-            .filter(perfil__rol__in=('tatuador', 'propietario'), is_active=True)
-            .order_by('first_name')
-        )
+        # Solo artistas del estudio actual
+        qs = User.objects.filter(perfil__rol__in=('tatuador', 'propietario'), is_active=True)
+        if studio:
+            qs = qs.filter(perfil__estudio=studio)
+        self.fields['tatuador_asociado'].queryset = qs.order_by('first_name')
         self.fields['tatuador_asociado'].empty_label = '— Sin artista asociado —'
 
 
