@@ -194,7 +194,10 @@ def api_periodos_bloqueados(request, tatuador_id):
     Los días con citas ya agendadas NO se bloquean — el tatuador puede
     atender a varias personas en el mismo día en diferentes horarios.
     """
-    bloqueos = BloqueoAgenda.objects.filter(tatuador_id=tatuador_id)
+    bloqueos = BloqueoAgenda.objects.filter(
+        tatuador_id=tatuador_id,
+        tatuador__perfil__estudio=request.studio,
+    )
     rangos = [
         {'from': b.fecha_inicio.strftime('%Y-%m-%d'),
          'to':   b.fecha_fin.strftime('%Y-%m-%d')}

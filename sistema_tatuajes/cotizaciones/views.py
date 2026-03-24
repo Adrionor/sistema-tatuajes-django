@@ -18,7 +18,9 @@ def solicitar_cotizacion(request, tatuador_id=None):
     tatuador_obj     = None
 
     if tatuador_id:
-        tatuador_obj     = get_object_or_404(User, pk=tatuador_id, perfil__rol__in=['tatuador', 'propietario'])
+        tatuador_obj     = get_object_or_404(User, pk=tatuador_id,
+                               perfil__rol__in=['tatuador', 'propietario'],
+                               perfil__estudio=request.studio)
         tatuador_inicial = tatuador_obj
 
     if request.method == 'POST':

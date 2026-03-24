@@ -406,7 +406,7 @@ def panel_subir_imagen_hero(request):
 
 @propietario_required
 def panel_eliminar_imagen_hero(request, imagen_id):
-    img = get_object_or_404(ImagenHero, pk=imagen_id)
+    img = get_object_or_404(ImagenHero, pk=imagen_id, configuracion=request.studio)
     img.imagen.delete(save=False)
     img.delete()
     messages.success(request, 'Imagen eliminada.')

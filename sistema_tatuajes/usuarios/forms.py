@@ -111,10 +111,15 @@ class AnuncioForm(forms.ModelForm):
                 field.widget.attrs['class'] = 'form-control'
             else:
                 field.widget.attrs['class'] = 'form-check-input'
-        # Solo artistas del estudio actual
-        qs = User.objects.filter(perfil__rol__in=('tatuador', 'propietario'), is_active=True)
+        # Solo artistas del estudio actual — si no hay studio, lista vacía (fail-safe)
         if studio:
-            qs = qs.filter(perfil__estudio=studio)
+            qs = User.objects.filter(
+                perfil__rol__in=('tatuador', 'propietario'),
+                is_active=True,
+                perfil__estudio=studio,
+            )
+        else:
+            qs = User.objects.none()
         self.fields['tatuador_asociado'].queryset = qs.order_by('first_name')
         self.fields['tatuador_asociado'].empty_label = '— Sin artista asociado —'
 

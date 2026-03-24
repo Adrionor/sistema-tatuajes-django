@@ -44,10 +44,15 @@ class CotizacionForm(forms.ModelForm):
 
     def __init__(self, *args, tatuador_inicial=None, studio=None, **kwargs):
         super().__init__(*args, **kwargs)
-        # Filtrar artistas por estudio
-        qs = User.objects.filter(perfil__rol__in=['tatuador', 'propietario'], is_active=True)
+        # Filtrar artistas por estudio — si no hay studio, lista vacía (fail-safe)
         if studio:
-            qs = qs.filter(perfil__estudio=studio)
+            qs = User.objects.filter(
+                perfil__rol__in=['tatuador', 'propietario'],
+                is_active=True,
+                perfil__estudio=studio,
+            )
+        else:
+            qs = User.objects.none()
         self.fields['tatuador'].queryset = qs.order_by('first_name')
         if tatuador_inicial:
             self.fields['tatuador'].initial  = tatuador_inicial
