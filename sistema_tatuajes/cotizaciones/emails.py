@@ -71,7 +71,13 @@ def correo_cotizacion_enviada(cotizacion):
         f"  • Anticipo para reservar la fecha: ${cotizacion.monto_anticipo}\n\n"
         f"Para aceptar y subir tu comprobante de pago, entra a tu enlace personal:\n"
         f"{enlace}\n\n"
-        f"Este enlace es único y privado para ti."
+        f"Este enlace es único y privado para ti.\n\n"
+        f"---\n"
+        f"⚠️ IMPORTANTE: Los anticipos NO SON REEMBOLSABLES. En caso de ya no poder "
+        f"o no querer tatuarse, el anticipo NO ES TRANSFERIBLE DE PERSONA.\n\n"
+        f"PARA PODER REAGENDAR O DEJAR TU FECHA ABIERTA ES NECESARIO AVISAR MÍNIMO "
+        f"7 DÍAS ANTES DE LA FECHA DE TU CITA. De lo contrario la cita/anticipo se pierde. "
+        f"Agradecemos tu comprensión."
     )
     _mail(asunto, cuerpo, [cotizacion.email_cliente])
 
