@@ -10,7 +10,7 @@ class CotizacionForm(forms.ModelForm):
     se oculta y se pre-llena automáticamente.
     """
     tatuador = forms.ModelChoiceField(
-        queryset=User.objects.filter(perfil__rol__in=['tatuador', 'propietario']),
+        queryset=User.objects.none(),
         empty_label="Escoge a tu artista favorito",
     )
 
@@ -42,8 +42,13 @@ class CotizacionForm(forms.ModelForm):
             'notas_cliente',
         ]
 
-    def __init__(self, *args, tatuador_inicial=None, **kwargs):
+    def __init__(self, *args, tatuador_inicial=None, studio=None, **kwargs):
         super().__init__(*args, **kwargs)
+        # Filtrar artistas por estudio
+        qs = User.objects.filter(perfil__rol__in=['tatuador', 'propietario'], is_active=True)
+        if studio:
+            qs = qs.filter(perfil__estudio=studio)
+        self.fields['tatuador'].queryset = qs.order_by('first_name')
         if tatuador_inicial:
             self.fields['tatuador'].initial  = tatuador_inicial
             self.fields['tatuador'].widget   = forms.HiddenInput()

@@ -23,7 +23,8 @@ def solicitar_cotizacion(request, tatuador_id=None):
 
     if request.method == 'POST':
         form = CotizacionForm(request.POST, request.FILES,
-                               tatuador_inicial=tatuador_inicial)
+                               tatuador_inicial=tatuador_inicial,
+                               studio=request.studio)
         if form.is_valid():
             cotizacion = form.save()
             # Save uploaded reference images (up to 6)
@@ -33,7 +34,7 @@ def solicitar_cotizacion(request, tatuador_id=None):
             emails.correo_cotizacion_pedida(cotizacion)
             return redirect('galeria')
     else:
-        form = CotizacionForm(tatuador_inicial=tatuador_inicial)
+        form = CotizacionForm(tatuador_inicial=tatuador_inicial, studio=request.studio)
 
     return render(request, 'cotizaciones/formulario.html', {
         'form': form,
