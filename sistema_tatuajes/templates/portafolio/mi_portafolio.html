@@ -266,6 +266,22 @@
                 {{ perfil_form.telefono }}
             </div>
 
+            <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;">
+            <p style="font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:.75rem;">🏦 Datos bancarios para cobro de anticipos</p>
+            <div class="form-group">
+                <label for="{{ perfil_form.banco.id_for_label }}">Banco</label>
+                {{ perfil_form.banco }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.titular_cuenta.id_for_label }}">Titular de la cuenta</label>
+                {{ perfil_form.titular_cuenta }}
+            </div>
+            <div class="form-group">
+                <label for="{{ perfil_form.clabe.id_for_label }}">CLABE / Número de cuenta</label>
+                {{ perfil_form.clabe }}
+                <small style="color:var(--text-muted);font-size:.72rem;">Se mostrará al cliente cuando deba pagar el anticipo.</small>
+            </div>
+
             <button type="submit" class="btn btn-gold btn-block" style="margin-top:.5rem;">
                 Guardar Perfil
             </button>

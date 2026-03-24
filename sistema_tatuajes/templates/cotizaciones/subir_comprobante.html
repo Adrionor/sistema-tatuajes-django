@@ -76,11 +76,17 @@
 
         <div class="bank-row">
             <span class="bk-label">Banco</span>
-            <span class="bk-value">BBVA Bancomer</span>
+            <span class="bk-value">{% if cotizacion.tatuador.perfil.banco %}{{ cotizacion.tatuador.perfil.banco }}{% else %}—{% endif %}</span>
         </div>
+        {% if cotizacion.tatuador.perfil.titular_cuenta %}
+        <div class="bank-row">
+            <span class="bk-label">Titular</span>
+            <span class="bk-value">{{ cotizacion.tatuador.perfil.titular_cuenta }}</span>
+        </div>
+        {% endif %}
         <div class="bank-row">
             <span class="bk-label">CLABE</span>
-            <span class="bk-value">012 345 678 901 234 567</span>
+            <span class="bk-value">{% if cotizacion.tatuador.perfil.clabe %}{{ cotizacion.tatuador.perfil.clabe }}{% else %}Pendiente de configurar{% endif %}</span>
         </div>
         <div class="bank-row">
             <span class="bk-label">Concepto</span>

@@ -30,7 +30,8 @@ class PerfilTatuadorForm(forms.ModelForm):
     class Meta:
         model  = Perfil
         fields = ('rol', 'telefono', 'especialidad', 'bio', 'instagram',
-                  'foto_perfil', 'es_colaboracion', 'fecha_inicio_colab',
+                  'foto_perfil', 'banco', 'titular_cuenta', 'clabe',
+                  'es_colaboracion', 'fecha_inicio_colab',
                   'fecha_fin_colab')
         widgets = {
             'bio':               forms.Textarea(attrs={'rows': 3}),

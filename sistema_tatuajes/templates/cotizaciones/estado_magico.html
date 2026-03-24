@@ -145,7 +145,11 @@
         <h2>{% trans "SEND" %} <span style="color:var(--gold);">{% trans "DEPOSIT" %}</span></h2>
         <p>{% trans "Make the transfer and upload your receipt to confirm the appointment." %}</p>
         <div class="clabe-box">
-            {% trans "Transfer" %}: &nbsp;<strong>BBVA — CLABE: 012345678901234567</strong>
+            {% if cotizacion.tatuador.perfil.clabe %}
+                {% trans "Transfer to" %}: &nbsp;<strong>{{ cotizacion.tatuador.perfil.banco|default:"" }}{% if cotizacion.tatuador.perfil.banco %} — {% endif %}{% if cotizacion.tatuador.perfil.titular_cuenta %}{{ cotizacion.tatuador.perfil.titular_cuenta }} — {% endif %}CLABE: {{ cotizacion.tatuador.perfil.clabe }}</strong>
+            {% else %}
+                {% trans "Transfer" %}: &nbsp;<strong>{% trans "Contact the artist for payment details." %}</strong>
+            {% endif %}
         </div>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}

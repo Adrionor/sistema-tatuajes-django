@@ -26,6 +26,15 @@ class Perfil(models.Model):
         help_text='Estudio al que pertenece este usuario',
     )
 
+    # ── Datos bancarios ──────────────────────────────────────
+    banco            = models.CharField(max_length=60, blank=True,
+        verbose_name='Banco', help_text='Ej: BBVA, Banamex, Santander')
+    titular_cuenta   = models.CharField(max_length=120, blank=True,
+        verbose_name='Titular de la cuenta')
+    clabe            = models.CharField(max_length=30, blank=True,
+        verbose_name='CLABE / Número de cuenta',
+        help_text='CLABE interbancaria o número de tarjeta')
+
     # ── Colaboraciones temporales ────────────────────────────
     es_colaboracion        = models.BooleanField(default=False,
         help_text='Marcar si es un artista invitado / colaboración temporal')
