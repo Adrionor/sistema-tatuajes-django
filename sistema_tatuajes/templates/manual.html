@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Estudio Digital — Guía para el Dueño</title>
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --dark: #0d0d0d;
+    --dark2: #181818;
+    --dark3: #232323;
+    --border: #2e2e2e;
+    --text: #e8e8e8;
+    --muted: #888;
+    --green: #4caf7d;
+    --red: #e07070;
+    --blue: #6ab0e0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* COVER */
+  .cover {
+    background: linear-gradient(160deg, #0d0d0d 0%, #1a1200 60%, #0d0d0d 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(201,168,76,.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cover-tag {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: .72rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    padding: .3rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+  }
+  .cover h1 {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 800;
+    letter-spacing: .04em;
+    line-height: 1.15;
+    margin-bottom: 1.2rem;
+  }
+  .cover h1 span { color: var(--gold); }
+  .cover-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 580px;
+    margin: 0 auto 2rem;
+  }
+  .cover-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    justify-content: center;
+  }
+  .badge {
+    background: rgba(201,168,76,.12);
+    border: 1px solid rgba(201,168,76,.3);
+    color: var(--gold-light);
+    font-size: .78rem;
+    font-weight: 600;
+    padding: .35rem .9rem;
+    border-radius: 100px;
+  }
+
+  /* LAYOUT */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* VALUE PROPS */
+  .value-strip {
+    background: var(--dark2);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 1.5rem;
+  }
+  .value-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .value-item { text-align: center; }
+  .value-icon { font-size: 2rem; margin-bottom: .4rem; }
+  .value-item strong { display: block; color: var(--gold); font-size: .95rem; margin-bottom: .2rem; }
+  .value-item p { font-size: .82rem; color: var(--muted); }
+
+  /* SECTIONS */
+  .section {
+    padding: 3.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-label {
+    font-size: .7rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: .5rem;
+  }
+  .section h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: .6rem;
+    line-height: 1.25;
+  }
+  .section h2 span { color: var(--gold); }
+  .section .lead {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    max-width: 640px;
+  }
+
+  /* FEATURE CARDS */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .feature-card {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.25rem 1rem;
+  }
+  .feature-card .icon { font-size: 1.6rem; margin-bottom: .5rem; }
+  .feature-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: .4rem; color: var(--text); }
+  .feature-card p { font-size: .82rem; color: var(--muted); line-height: 1.55; }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: linear-gradient(135deg, rgba(201,168,76,.1) 0%, rgba(201,168,76,.04) 100%);
+    border: 1px solid rgba(201,168,76,.3);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin: 1.5rem 0;
+  }
+  .highlight .hl-title { font-size: .78rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .6rem; }
+  .highlight p { font-size: .9rem; color: var(--text); }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 1rem 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: .6rem;
+    font-size: .88rem;
+    color: var(--text);
+    padding: .3rem 0;
+  }
+  .checklist li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 800;
+    font-size: .85rem;
+    margin-top: .1rem;
+    flex-shrink: 0;
+  }
+
+  /* STEP LIST */
+  .steps { counter-reset: step; margin: 1.25rem 0; }
+  .step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: .85rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    counter-increment: step;
+    content: counter(step);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #000;
+    font-size: .8rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: .1rem;
+  }
+  .step-body strong { display: block; font-size: .9rem; margin-bottom: .2rem; }
+  .step-body p { font-size: .83rem; color: var(--muted); }
+
+  /* SEO SECTION SPECIAL */
+  .seo-section {
+    background: linear-gradient(160deg, #0a1a0f 0%, #0d0d0d 50%);
+    border-top: 1px solid #1e3a28;
+    border-bottom: 1px solid #1e3a28;
+    padding: 3.5rem 0;
+  }
+  .seo-section .section-label { color: var(--green); }
+  .seo-section h2 span { color: var(--green); }
+  .seo-card {
+    background: rgba(76,175,125,.06);
+    border: 1px solid rgba(76,175,125,.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .seo-card h3 { font-size: .95rem; font-weight: 700; color: #7de0a8; margin-bottom: .4rem; }
+  .seo-card p { font-size: .82rem; color: var(--muted); }
+  .seo-card .icon { font-size: 1.5rem; margin-bottom: .5rem; }
+  .seo-stat {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background: rgba(76,175,125,.08);
+    border: 1px solid rgba(76,175,125,.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: .75rem;
+  }
+  .seo-stat-num { font-size: 2rem; font-weight: 800; color: var(--green); line-height: 1; }
+  .seo-stat-desc strong { display: block; font-size: .88rem; }
+  .seo-stat-desc span { font-size: .78rem; color: var(--muted); }
+
+  /* EMAIL SECTION */
+  .email-flow {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin: 1.25rem 0;
+  }
+  .email-event {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .85rem 1rem;
+  }
+  .email-trigger {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 700;
+    color: var(--blue);
+    white-space: nowrap;
+    min-width: 120px;
+  }
+  .email-arrow { color: var(--muted); font-size: 1rem; }
+  .email-desc { font-size: .84rem; color: var(--text); }
+  .email-desc span { font-size: .75rem; color: var(--muted); display: block; }
+
+  /* QUOTE */
+  blockquote {
+    border-left: 3px solid var(--gold);
+    padding: .75rem 1.25rem;
+    margin: 1.5rem 0;
+    background: rgba(201,168,76,.05);
+    border-radius: 0 10px 10px 0;
+    font-size: .95rem;
+    font-style: italic;
+    color: var(--text);
+  }
+  blockquote cite { font-style: normal; font-size: .78rem; color: var(--muted); display: block; margin-top: .4rem; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--muted);
+    font-size: .82rem;
+  }
+  .footer strong { color: var(--gold); }
+
+  /* MODULE NAV */
+  .module-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: 2.5rem;
+  }
+  .module-tag {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .3rem .8rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 600px) {
+    .cover { padding: 3rem 1.25rem 2.5rem; }
+    .email-trigger { min-width: 80px; font-size: .65rem; }
+    .seo-stat-num { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ PORTADA ══════════════ -->
+<div class="cover">
+  <div class="cover-tag">Guía del Propietario</div>
+  <h1>Tu estudio de tatuajes,<br><span>en el siguiente nivel.</span></h1>
+  <p class="cover-sub">
+    Todo lo que necesitas para gestionar tu agenda, comunicarte con tus clientes y aparecer en Google —
+    desde un solo panel, sin complicaciones.
+  </p>
+  <div class="cover-badges">
+    <span class="badge">📅 Agenda inteligente</span>
+    <span class="badge">📧 Emails automáticos</span>
+    <span class="badge">🔍 SEO optimizado</span>
+    <span class="badge">💰 Cotizaciones en línea</span>
+    <span class="badge">🖼️ Portafolio digital</span>
+    <span class="badge">🎨 Tu marca, tu imagen</span>
+  </div>
+</div>
+
+<!-- ══════════════ VALUE STRIP ══════════════ -->
+<div class="value-strip">
+  <div class="value-grid">
+    <div class="value-item">
+      <div class="value-icon">⏱️</div>
+      <strong>Ahorra horas cada semana</strong>
+      <p>Sin llamadas para confirmar citas ni hojas de papel perdidas.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-icon">🌐</div>
+      <strong>Visible en Google 24/7</strong>
+      <p>Tu landing page está construida para aparecer en búsquedas locales.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-icon">📲</div>
+      <strong>Tus clientes siempre informados</strong>
+      <p>Correos automáticos en cada paso del proceso de cotización.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-icon">💼</div>
+      <strong>Imagen profesional al instante</strong>
+      <p>Landing page completa con tu logo, portafolio y reseñas.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CONTENIDO ══════════════ -->
+<div class="container">
+
+  <!-- ── MÓDULO 1: AGENDA ── -->
+  <div class="section">
+    <p class="section-label">Módulo 1</p>
+    <h2>Agenda y <span>citas</span></h2>
+    <p class="lead">
+      Olvídate de los grupos de WhatsApp, las notas de voz y el cuaderno de papel.
+      Tu agenda vive en la nube y tú la controlas desde cualquier dispositivo.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">📅</div>
+        <h3>Vista de calendario</h3>
+        <p>Ve todos tus días de un vistazo. Semana, mes o día — tú eliges cómo quieres revisar tu agenda.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔒</div>
+        <h3>Bloqueo de horarios</h3>
+        <p>Marca días de descanso, convenciones o cualquier bloqueo personalizado. Nadie podrá agendar en esas fechas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">✏️</div>
+        <h3>Citas desde el panel</h3>
+        <p>Crea, edita o cancela citas manualmente cuando lo necesites, sin depender del cliente.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">👁️</div>
+        <h3>Detalles en un clic</h3>
+        <p>Haz clic en cualquier cita para ver el diseño solicitado, referencias, datos del cliente y notas.</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p class="hl-title">🚀 Cómo funciona para el cliente</p>
+      <p>Tu cliente entra a tu landing page, ve el botón <strong>"Agenda tu cita"</strong>, elige fecha y horario disponible, sube sus referencias y listo. Tú recibes la solicitud en tu panel — sin intermediarios, sin WhatsApp, sin perder información.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>El cliente llena el formulario</strong>
+          <p>Nombre, fecha deseada, tipo de tatuaje, zona del cuerpo y referencias visuales.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Tú revisas la solicitud en el panel</strong>
+          <p>Aparece en tu agenda como pendiente. Puedes confirmarla, reagendarla o cancelarla.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>El cliente recibe confirmación automática por correo</strong>
+          <p>Sin que tengas que escribir nada — el sistema lo hace por ti.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MÓDULO 2: COTIZACIONES ── -->
+  <div class="section">
+    <p class="section-label">Módulo 2</p>
+    <h2>Cotizaciones y <span>pagos</span></h2>
+    <p class="lead">
+      Un flujo completo desde que el cliente pide precio hasta que confirma su lugar con anticipo —
+      todo documentado y sin papeles.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">💬</div>
+        <h3>Formulario de cotización</h3>
+        <p>El cliente describe su diseño, sube referencias y especifica tamaño y zona. Tú lo recibes ordenado.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💰</div>
+        <h3>Envío de precio</h3>
+        <p>Desde tu panel estableces el precio. El cliente lo recibe por correo con opción de aceptar o rechazar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🧾</div>
+        <h3>Comprobante de anticipo</h3>
+        <p>El cliente sube foto de su transferencia directamente en la plataforma. Tú la ves al instante.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📋</div>
+        <h3>Historial completo</h3>
+        <p>Todas las cotizaciones con su estado: pendiente, aceptada, rechazada, anticipo recibido.</p>
+      </div>
+    </div>
+
+    <blockquote>
+      "Antes perdía tiempo cotizando por DM y los clientes se me olvidaban. Ahora todo queda registrado y sé exactamente quién ya pagó anticipo."
+      <cite>— Artista tatuador, usuario de prueba</cite>
+    </blockquote>
+  </div>
+
+  <!-- ── MÓDULO 3: EMAILS ── -->
+  <div class="section">
+    <p class="section-label">Módulo 3</p>
+    <h2>Comunicación <span>automática</span> por correo</h2>
+    <p class="lead">
+      Cada interacción importante dispara un correo profesional a tu cliente —
+      sin que tengas que redactar nada. Tu estudio luce serio y organizado desde el primer contacto.
+    </p>
+
+    <div class="email-flow">
+      <div class="email-event">
+        <span class="email-trigger">Nueva cotización</span>
+        <span class="email-arrow">→</span>
+        <span class="email-desc">
+          Confirmación de recepción al cliente
+          <span>Tu cliente sabe que recibiste su solicitud y en cuánto tiempo le responderás.</span>
+        </span>
+      </div>
+      <div class="email-event">
+        <span class="email-trigger">Precio enviado</span>
+        <span class="email-arrow">→</span>
+        <span class="email-desc">
+          Correo con el precio y botón de aceptar
+          <span>El cliente puede confirmar (o rechazar) desde el enlace sin necesidad de escribirte.</span>
+        </span>
+      </div>
+      <div class="email-event">
+        <span class="email-trigger">Cotización aceptada</span>
+        <span class="email-arrow">→</span>
+        <span class="email-desc">
+          Instrucciones para el anticipo
+          <span>Datos de pago y enlace para subir el comprobante directamente en la plataforma.</span>
+        </span>
+      </div>
+      <div class="email-event">
+        <span class="email-trigger">Comprobante recibido</span>
+        <span class="email-arrow">→</span>
+        <span class="email-desc">
+          Aviso automático para ti
+          <span>Sabes al instante que un cliente pagó anticipo, sin revisar chats.</span>
+        </span>
+      </div>
+      <div class="email-event">
+        <span class="email-trigger">Cita confirmada</span>
+        <span class="email-arrow">→</span>
+        <span class="email-desc">
+          Recordatorio al cliente con fecha y hora
+          <span>Menos "no-shows". Tus clientes llegan porque quedó todo por escrito.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p class="hl-title">📧 Correos enviados desde tu Gmail</p>
+      <p>Los correos automáticos salen con tu propia dirección de Gmail — no de un dominio genérico. Tus clientes reciben un correo de <strong>tuestudio@gmail.com</strong>, lo que genera más confianza y menos probabilidad de ir a spam.</p>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ══════════════ SEO (SECCIÓN ESPECIAL) ══════════════ -->
+<div class="seo-section">
+  <div class="container">
+    <p class="section-label">Por qué esto vale oro</p>
+    <h2 style="font-size:1.75rem;font-weight:800;margin-bottom:.6rem;line-height:1.25;">Tu estudio <span style="color:var(--green);">aparece en Google.</span><br>El de al lado, no.</h2>
+    <p class="lead" style="color:var(--muted);font-size:1rem;margin-bottom:2rem;max-width:640px;">
+      La mayoría de estudios de tatuajes tienen solo un perfil de Instagram. Tú tienes una página web completa,
+      optimizada para que Google te encuentre cuando alguien busca tatuadores en tu ciudad.
+    </p>
+
+    <div class="feature-grid" style="margin-bottom:1.75rem;">
+      <div class="seo-card">
+        <div class="icon">🏷️</div>
+        <h3>Etiquetas SEO automáticas</h3>
+        <p>Cada página genera automáticamente su título, descripción y metadatos — los mismos que Google usa para indexarte.</p>
+      </div>
+      <div class="seo-card">
+        <div class="icon">⚡</div>
+        <h3>Velocidad de carga optimizada</h3>
+        <p>Las imágenes se cargan de forma inteligente. Google premia las páginas rápidas con mejor posición en resultados.</p>
+      </div>
+      <div class="seo-card">
+        <div class="icon">📱</div>
+        <h3>100% responsive</h3>
+        <p>Se ve perfecta en celular, tableta y escritorio. Google penaliza los sitios que no funcionan en móvil.</p>
+      </div>
+      <div class="seo-card">
+        <div class="icon">🗂️</div>
+        <h3>Estructura semántica</h3>
+        <p>El código usa etiquetas HTML correctas (h1, h2, article, section) para que los bots de Google entiendan tu contenido.</p>
+      </div>
+      <div class="seo-card">
+        <div class="icon">🔗</div>
+        <h3>URLs limpias y amigables</h3>
+        <p>Nada de <code style="color:#aaa;">/page?id=482</code>. Tus páginas tienen URLs legibles que Google valora positivamente.</p>
+      </div>
+      <div class="seo-card">
+        <div class="icon">🌍</div>
+        <h3>Open Graph para redes sociales</h3>
+        <p>Cuando alguien comparte tu link en WhatsApp o Facebook, aparece con imagen, título y descripción correctos — no un link pelón.</p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">
+      <div class="seo-stat">
+        <div class="seo-stat-num">97%</div>
+        <div class="seo-stat-desc">
+          <strong>de búsquedas locales</strong>
+          <span>terminan en un negocio con presencia web, no solo en redes sociales.</span>
+        </div>
+      </div>
+      <div class="seo-stat">
+        <div class="seo-stat-num">3×</div>
+        <div class="seo-stat-desc">
+          <strong>más confianza</strong>
+          <span>genera un negocio con sitio web propio vs. uno que solo tiene Instagram.</span>
+        </div>
+      </div>
+      <div class="seo-stat">
+        <div class="seo-stat-num">#1</div>
+        <div class="seo-stat-desc">
+          <strong>objetivo posible</strong>
+          <span>en búsquedas como "tatuador en [tu ciudad]" — si tu competencia no tiene web, la posición es tuya.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="background:rgba(76,175,125,.08);border-color:rgba(76,175,125,.25);margin-top:1.75rem;">
+      <p class="hl-title" style="color:var(--green);">🔍 Tu nombre de estudio y ciudad</p>
+      <p>Configura el nombre de tu estudio, ciudad y descripción desde el panel y esos datos se propagan automáticamente a todas las etiquetas SEO del sitio. No necesitas tocar código.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ RESTO DE MÓDULOS ══════════════ -->
+<div class="container">
+
+  <!-- ── MÓDULO 4: PORTAFOLIO ── -->
+  <div class="section">
+    <p class="section-label">Módulo 4</p>
+    <h2>Portafolio y <span>galería</span></h2>
+    <p class="lead">
+      Tu trabajo es tu mejor carta de presentación. Muéstralo de forma profesional
+      y deja que los clientes lleguen ya convencidos.
+    </p>
+    <ul class="checklist">
+      <li>Sube fotos de tus trabajos directamente desde el panel, sin depender de Instagram.</li>
+      <li>Organiza por categorías: realismo, blackwork, japonés, acuarela, etc.</li>
+      <li>La galería se integra en tu landing page y en el portafolio público.</li>
+      <li>Las imágenes se indexan en Google Images — más personas pueden encontrarte.</li>
+      <li>Cada imagen puede tener título y descripción, lo que mejora el SEO de las fotos.</li>
+    </ul>
+  </div>
+
+  <!-- ── MÓDULO 5: LANDING PAGE ── -->
+  <div class="section">
+    <p class="section-label">Módulo 5</p>
+    <h2>Tu landing page: <span>6 estilos, tu imagen</span></h2>
+    <p class="lead">
+      No necesitas contratar un diseñador. Elige el estilo que va con la personalidad de tu estudio y personalízalo desde el panel.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">🎨</div>
+        <h3>6 layouts a elegir</h3>
+        <p>Clásico, Mosaico, Minimal, Impacto, Revista. Cambia el estilo con un clic sin perder tu contenido.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🖼️</div>
+        <h3>Imagen y logo propios</h3>
+        <p>Sube tu logotipo para el navbar y para el hero. Sube fotos de fondo que representen tu estudio.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📣</div>
+        <h3>Anuncios y novedades</h3>
+        <p>Publica noticias de tu estudio: convenciones, promociones, nuevos artistas. Aparecen en tu página al instante.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚙️</div>
+        <h3>Todo desde el panel</h3>
+        <p>Nombre, slogan, colores de acento, redes sociales, horarios, dirección — todo configurable sin código.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MÓDULO 6: CONFIG ── -->
+  <div class="section">
+    <p class="section-label">Módulo 6</p>
+    <h2>Panel de <span>configuración</span></h2>
+    <p class="lead">Un solo lugar para controlar todo lo que el mundo ve de tu estudio.</p>
+    <ul class="checklist">
+      <li><strong>Identidad:</strong> nombre del estudio, slogan, descripción corta y larga.</li>
+      <li><strong>Logos:</strong> logo del navbar y logo del hero — archivos separados para máxima flexibilidad.</li>
+      <li><strong>Imágenes:</strong> foto de portada del hero y galería de fondo.</li>
+      <li><strong>Contacto:</strong> teléfono, email público, dirección y mapa.</li>
+      <li><strong>Horarios:</strong> días y horas de atención visibles en la landing.</li>
+      <li><strong>Redes sociales:</strong> Instagram, Facebook, TikTok — con íconos automáticos.</li>
+      <li><strong>SEO:</strong> palabras clave, ciudad y región para mejorar posicionamiento local.</li>
+      <li><strong>Moneda y región:</strong> para que los precios de cotización se muestren correctamente.</li>
+    </ul>
+  </div>
+
+  <!-- ── PRIMEROS PASOS ── -->
+  <div class="section" style="border-bottom:none;">
+    <p class="section-label">Para empezar hoy</p>
+    <h2>De cero a <span>en línea</span> en menos de 30 minutos</h2>
+    <p class="lead">Sigue estos pasos y tu estudio ya tendrá presencia digital profesional.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Entra al panel de administración</strong>
+          <p>Ve a <code style="background:var(--dark3);padding:.1rem .4rem;border-radius:4px;font-size:.82rem;">/panel/</code> e inicia sesión con tu usuario.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Configura la identidad de tu estudio</strong>
+          <p>Nombre, slogan, descripción, logo y foto de portada. Esto afecta toda la landing page y el SEO.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Sube tus primeras fotos al portafolio</strong>
+          <p>Mínimo 6 fotos para que la galería se vea bien. Cuantas más, mejor para el SEO de imágenes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Elige tu layout de landing</strong>
+          <p>En Configuración → Apariencia, selecciona el estilo que más va con tu estudio.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <strong>Configura tu correo electrónico</strong>
+          <p>Proporciona tu Gmail y contraseña de aplicación para que los correos automáticos funcionen.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <strong>Comparte tu link y empieza a recibir solicitudes</strong>
+          <p>Pon el link de tu página en tu bio de Instagram y empieza a recibir cotizaciones en línea.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<div class="footer">
+  <p style="font-size:1rem;margin-bottom:.4rem;">¿Dudas? Tu administrador de sistema está a un mensaje.</p>
+  <p>Desarrollado a medida para estudios de tatuajes que van en serio. <strong>Hecho para crecer contigo.</strong></p>
+</div>
+
+</body>
+</html>
