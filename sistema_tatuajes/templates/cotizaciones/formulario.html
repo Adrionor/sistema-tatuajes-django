@@ -183,23 +183,25 @@
             });
 
             // Cuando el cliente elige un tatuador, cargamos sus periodos bloqueados
-            selectTatuador.addEventListener('change', function() {
-                const tatuadorId = this.value;
+            if (selectTatuador) {
+                selectTatuador.addEventListener('change', function() {
+                    const tatuadorId = this.value;
 
-                if (tatuadorId) {
-                    // La nueva API devuelve rangos [{from, to}, ...] en vez de fechas sueltas
-                    fetch(`/citas/api/periodos-bloqueados/${tatuadorId}/`)
-                        .then(r => r.json())
-                        .then(rangos => {
-                            // Flatpickr acepta objetos {from, to} directamente en disable
-                            calendario.set('disable', rangos);
-                            inputFecha.placeholder = "Selecciona una fecha disponible";
-                        })
-                        .catch(err => console.error('Error cargando bloqueos:', err));
-                } else {
-                    calendario.set('disable', []);
-                }
-            });
+                    if (tatuadorId) {
+                        // La nueva API devuelve rangos [{from, to}, ...] en vez de fechas sueltas
+                        fetch(`/citas/api/periodos-bloqueados/${tatuadorId}/`)
+                            .then(r => r.json())
+                            .then(rangos => {
+                                // Flatpickr acepta objetos {from, to} directamente en disable
+                                calendario.set('disable', rangos);
+                                inputFecha.placeholder = "Selecciona una fecha disponible";
+                            })
+                            .catch(err => console.error('Error cargando bloqueos:', err));
+                    } else {
+                        calendario.set('disable', []);
+                    }
+                });
+            }
 
             // ── Multi-image drop zone ─────────────────────────────
             const dropZone   = document.getElementById('drop-zone');

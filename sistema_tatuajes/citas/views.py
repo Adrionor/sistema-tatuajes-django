@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse, HttpResponseForbidden
 from django.utils import timezone
 import calendar
@@ -158,7 +159,8 @@ def confirmar_y_agendar(request, cotizacion_id):
             nueva_cita.google_calendar_id = google_id
             nueva_cita.save()
 
-        return redirect('recepcion_tatuador')
+        messages.success(request, f'✅ Cita confirmada para {cotizacion.nombre_cliente}. Se enviaron los correos de confirmación.')
+        return redirect('detalle_cotizacion', cotizacion_id=cotizacion.id)
 
     return render(request, 'citas/agendar.html', {'cotizacion': cotizacion})
 
